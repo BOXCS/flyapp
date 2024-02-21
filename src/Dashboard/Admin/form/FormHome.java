@@ -117,6 +117,7 @@ public class FormHome extends javax.swing.JPanel {
             table1.getColumnModel().getColumn(5).setMaxWidth(75);
         }
 
+        buttonDash1.setForeground(new java.awt.Color(255, 255, 255));
         buttonDash1.setText("+ Add New");
         buttonDash1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         buttonDash1.addActionListener(new java.awt.event.ActionListener() {
@@ -126,6 +127,7 @@ public class FormHome extends javax.swing.JPanel {
         });
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("List Designer");
 
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);

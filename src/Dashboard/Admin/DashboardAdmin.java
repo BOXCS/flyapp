@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import raven.popup.GlassPanePopup;
 
 public class DashboardAdmin extends javax.swing.JFrame {
 
@@ -17,6 +18,7 @@ public class DashboardAdmin extends javax.swing.JFrame {
     
     public DashboardAdmin(ModelUser user) {
         this.user = user;
+        GlassPanePopup.install(this);
         initComponents();
         getContentPane().setBackground(new Color(63, 109, 217));
         

@@ -36,7 +36,7 @@ public class CellAction extends TableCustomCell {
             public void actionPerformed(ActionEvent ae) {
                 int designerID = ((ModelDesigner) data).getDesignerID();
                 if (designerID != 0) {
-                    int confirmDelete = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Penghapusan", JOptionPane.YES_NO_OPTION);
+                    int confirmDelete = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this designer?", "Delete Confirmation", JOptionPane.YES_NO_OPTION);
                     if (confirmDelete == JOptionPane.YES_OPTION) {
                         try {
                             new ServiceDesigner().deleteDesigner(designerID);
@@ -70,6 +70,11 @@ public class CellAction extends TableCustomCell {
         cmdEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Dashboard/icon/edit.png"))); // NOI18N
 
         cmdDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Dashboard/icon/delete.png"))); // NOI18N
+        cmdDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -92,6 +97,10 @@ public class CellAction extends TableCustomCell {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdDeleteActionPerformed
 
     @Override
     public void setData(Object o) {

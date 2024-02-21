@@ -1,7 +1,7 @@
 
-package Dashboard.Admin.Component;
+package Dashboard.User.Component;
 
-import Dashboard.Admin.Event.MenuEvent;
+import Dashboard.User.Event.MenuEvent;
 import Dashboard.Swing.MenuButton;
 import Dashboard.Swing.ScrollBarCustom;
 import Dashboard.Swing.Split;
@@ -49,13 +49,15 @@ public class Menu extends javax.swing.JPanel {
     public void initMenu(MenuEvent event) {
         this.event = event;
         addMenu("1", "Dashboard", 0);
-        addMenu("order", "View Order", 1);
-        addMenu("chat", "Cart", 2);
+        addMenu("order", "Place Order", 1);
+        addMenu("3", "Cart", 2);
 //        addMenu("chat", "Chat", 3);
-        split("Report");
-        addMenu("4", "Report Income", 3);
+        split("Job Apply");
+        addMenu("5", "Designer", 3);
+        addMenu("6", "Admin", 4);
         space();
-        addMenu("key", "Logout", 4);
+        addMenu("7", "Setting", 5);
+        addMenu("key", "Logout", 6);
     }
     
     private void addMenu(String icon, String text, int index) {
@@ -121,7 +123,7 @@ public class Menu extends javax.swing.JPanel {
         image.setBorderSpace(2);
         image.setGradientColor1(new java.awt.Color(63, 109, 217));
         image.setGradientColor2(new java.awt.Color(199, 42, 42));
-        image.setImage(new javax.swing.ImageIcon(getClass().getResource("/Dashboard/icon/BG.png"))); // NOI18N
+        image.setImage(new javax.swing.ImageIcon(getClass().getResource("/Dashboard/User/icon/profile.png"))); // NOI18N
 
         panelMenu.setOpaque(false);
 
