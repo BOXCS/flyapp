@@ -5,6 +5,7 @@ import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
 import Dashboard.User.Form.FormHomeU;
 import LoginRegister.Model.ModelUser;
+import User.PlaceOrder.Main.PlaceOrderMain;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -33,6 +34,8 @@ public class DashboardUser extends javax.swing.JFrame {
             public void menuSelected(int index) {
                 if (index == 0) {
 //                    showForm(new FormHomeU());
+                } else if (index == 1) {
+                    showForm(new PlaceOrderMain());
                 } else {
                     showForm(new Form(index + ""));
                 }

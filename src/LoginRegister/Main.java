@@ -191,8 +191,10 @@ public class Main extends javax.swing.JFrame {
                 this.dispose();
                 if ("admin".equalsIgnoreCase(user.getRole())) {
                     DashboardAdmin.Adminmain(user); // Jika username adalah "vinsce", akan di arahkan ke dashboard admin
+                } else if ("designer".equalsIgnoreCase(user.getRole())) {
+                    Designer.Main.DashboardDesigner.Designermain(user); // Jika username adalah yang lain, akan di arahkan ke dashboard user
                 } else {
-                    DashboardUser.Usermain(user); // Jika username adalah yang lain, akan di arahkan ke dashboard user
+                    DashboardUser.Usermain(user);
                 }
             } else {
                 showMessage(Message.MessageType.ERROR, "Email or Password incorrect");
@@ -345,6 +347,7 @@ public class Main extends javax.swing.JFrame {
         }
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+//                new splash.SplashScreen(null,true).setVisible(true);
                 new Main().setVisible(true);
             }
         });

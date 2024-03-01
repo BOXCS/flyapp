@@ -26,22 +26,22 @@ public class FormHome extends javax.swing.JPanel {
         chart.addLegend("Income", new Color(12, 84, 175), new Color(0, 108, 247));
         chart.addLegend("Cost", new Color(186, 37, 37), new Color(241, 100, 120));
         chart.addLegend("Profit", new Color(5, 125, 0), new Color(95, 209, 69));
-        chart.addData(new ModelChart("January", new double[]{500, 200, 80, 89}));
-        chart.addData(new ModelChart("February", new double[]{1000, 750, 90, 150}));
-        chart.addData(new ModelChart("March", new double[]{200, 350, 460, 900}));
-        chart.addData(new ModelChart("April", new double[]{480, 150, 750, 700}));
-        chart.addData(new ModelChart("May", new double[]{350, 540, 300, 150}));
-        chart.addData(new ModelChart("June", new double[]{190, 280, 81, 200}));
-        chart.start();
-//        try {
-//            List<ModelChart> datas = new ServiceReport().getData();
-//            for (int i = datas.size() - 1; i >= 0; i--) {
-//                chart.addData(datas.get(i));
-//            }
-//            chart.start();
-//        } catch (Exception e) {
-//            System.err.println(e);
-//        }
+//        chart.addData(new ModelChart("January", new double[]{500, 200, 80, 89}));
+//        chart.addData(new ModelChart("February", new double[]{1000, 750, 90, 150}));
+//        chart.addData(new ModelChart("March", new double[]{200, 350, 460, 900}));
+//        chart.addData(new ModelChart("April", new double[]{480, 150, 750, 700}));
+//        chart.addData(new ModelChart("May", new double[]{350, 540, 300, 150}));
+//        chart.addData(new ModelChart("June", new double[]{190, 280, 81, 200}));
+//        chart.start();
+        try {
+            List<ModelChart> datas = new ServiceReport().getData();
+            for (int i = datas.size() - 1; i >= 0; i--) {
+                chart.addData(datas.get(i));
+            }
+            chart.start();
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
     
     private void initDataTable() {
@@ -51,18 +51,18 @@ public class FormHome extends javax.swing.JPanel {
         table1.addTableCell(new Dashboard.Admin.Cell.CellStatus(), 3);
         table1.addTableCell(new Dashboard.Admin.Cell.CellLastProject(), 4);
         table1.addTableCell(new Dashboard.Admin.Cell.CellAction(), 5);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (ModelDesigner staff : new ServiceDesigner().getDesigner()) {
-                        table1.addRow(staff, false);
-                    }
-                } catch (SQLException e) {
-                    System.err.println(e);
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    for (ModelDesigner staff : new ServiceDesigner().getDesigner()) {
+//                        table1.addRow(staff, false);
+//                    }
+//                } catch (SQLException e) {
+//                    System.err.println(e);
+//                }
+//            }
+//        }).start();
 
     }
 

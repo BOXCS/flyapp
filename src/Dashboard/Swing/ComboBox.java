@@ -77,7 +77,7 @@ public class ComboBox<E> extends JComboBox<E> {
     }
 
     public ComboBox() {
-        setBackground(new Color(0, 0, 0, 50));
+        setBackground(new Color(132, 132, 215, 50));
         setBorder(new EmptyBorder(15, 3, 5, 3));
         installUI();
     }
@@ -224,16 +224,7 @@ public class ComboBox<E> extends JComboBox<E> {
             Rectangle2D r2 = ft.getStringBounds(combo.getLabeText(), g2);
             double height = getHeight() - in.top - in.bottom;
             double textY = (height - r2.getHeight()) / 2;
-            double size;
-            if (animateHinText) {
-                if (show) {
-                    size = 18 * (1 - location);
-                } else {
-                    size = 18 * location;
-                }
-            } else {
-                size = 18;
-            }
+            double size = 18;
             g2.drawString(combo.getLabeText(), in.right, (int) (in.top + textY + ft.getAscent() - size));
         }
 
@@ -242,12 +233,7 @@ public class ComboBox<E> extends JComboBox<E> {
                 double width = getWidth() - 4;
                 int height = getHeight();
                 g2.setColor(lineColor);
-                double size;
-                if (show) {
-                    size = width * (1 - location);
-                } else {
-                    size = width * location;
-                }
+                double size = width;
                 double x = (width - size) / 2;
                 g2.fillRect((int) (x + 2), height - 2, (int) size, 2);
             }

@@ -1,5 +1,6 @@
 package LoginRegister.Service;
 
+import Admin.AddDesigner.Service.ModelDesignerLogin;
 import LoginRegister.Model.ModelLogin;
 import LoginRegister.Model.ModelUser;
 import connection.DatabaseConnection;
@@ -22,11 +23,16 @@ public class ServiceLogin {
 
     public ModelUser login(ModelLogin login) throws SQLException {
         ModelUser data = loginUser(login);
-        
-        if (data == null) {
+
+        if (data != null) {
+            return data; // Return the regular user data
+        } else {
             data = loginAdmin(login);
+            if (data == null) {
+                data = loginDesigner(login);
+            }
+            return data;
         }
-        return data;
     }
 
     private ModelUser loginUser(ModelLogin login) throws SQLException {
@@ -37,11 +43,11 @@ public class ServiceLogin {
             p.setString(2, login.getPassword());
 
             try (ResultSet r = p.executeQuery()) {
-            if (r.next()) {
-                int userID = r.getInt("userID");
-                String username = r.getString("username");
-                String email = r.getString("email");
-                data = new ModelUser(userID, username, email, "user");
+                if (r.next()) {
+                    int userID = r.getInt("userID");
+                    String username = r.getString("username");
+                    String email = r.getString("email");
+                    data = new ModelUser(userID, username, email, "user");
                 }
             }
         }
@@ -60,7 +66,7 @@ public class ServiceLogin {
                 if (r.next()) {
                     int adminID = r.getInt("adminID");
                     String username = r.getString("username");
-                    String email = r.getString("email"); 
+                    String email = r.getString("email");
                     data = new ModelUser(adminID, username, email, "admin");
                 }
             }
@@ -68,11 +74,50 @@ public class ServiceLogin {
 
         return data;
     }
-    
+
+    private ModelUser loginDesigner(ModelLogin login) throws SQLException {
+        ModelUser data = null;
+
+        try (PreparedStatement p = con.prepareStatement("SELECT designerID, username, email FROM `designer` WHERE BINARY email=? AND BINARY `password`=? LIMIT 1")) {
+            p.setString(1, login.getEmail());
+            p.setString(2, login.getPassword());
+
+            try (ResultSet r = p.executeQuery()) {
+                if (r.next()) {
+                    int designerID = r.getInt("designerID");
+                    String username = r.getString("username");
+                    String email = r.getString("email");
+                    data = new ModelUser(designerID, username, email, "designer");
+                }
+            }
+        }
+
+        return data;
+    }
+
     public boolean isUserAdmin(ModelUser user) throws SQLException {
         // Mengecek apakah pengguna adalah admin dengan query SQL
         String query = "SELECT COUNT(*) FROM admin WHERE email = ? AND password = ?";
-        
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getPassword());
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0; // Jika count lebih dari 0, berarti pengguna adalah admin
+                }
+            }
+        }
+
+        return false; // Jika tidak ada hasil dari query, pengguna bukan admin
+    }
+
+    public boolean isUserDesigner(ModelUser user) throws SQLException {
+        // Mengecek apakah pengguna adalah admin dengan query SQL
+        String query = "SELECT COUNT(*) FROM designer WHERE email = ? AND password = ?";
+
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, user.getEmail());
             preparedStatement.setString(2, user.getPassword());
@@ -104,6 +149,23 @@ public class ServiceLogin {
         user.setUserID(userID);
         user.setVerifyCode(code);
     }
+    
+    public void insertDesigner(ModelDesignerLogin designer) throws SQLException {
+        PreparedStatement p = con.prepareStatement("insert into `designer` (username, email, password, instagram, typeContent, Status) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+        p.setString(1, designer.getUserName());
+        p.setString(2, designer.getEmail());
+        p.setString(3, designer.getPassword());
+        p.setString(4, designer.getInstagram());
+        p.setString(5, designer.getTypeContent());
+        p.setString(6, designer.getStatus());
+        p.execute();
+        ResultSet r = p.getGeneratedKeys();
+        r.next();
+        int designerID = r.getInt(1);
+        r.close();
+        p.close();
+        designer.setDesignerID(designerID);
+    }
 
     private String generateVerifyCode() throws SQLException {
         DecimalFormat df = new DecimalFormat("000000");
@@ -132,6 +194,19 @@ public class ServiceLogin {
         boolean duplicate = false;
         try (PreparedStatement p = con.prepareStatement("select userID from `user` where username=? and `status`='Verified' limit 1")) {
             p.setString(1, user);
+            try (ResultSet r = p.executeQuery()) {
+                if (r.next()) {
+                    duplicate = true;
+                }
+            }
+        }
+        return duplicate;
+    }
+    
+    public boolean checkDuplicateDesigner(String designer) throws SQLException {
+        boolean duplicate = false;
+        try (PreparedStatement p = con.prepareStatement("select designerID from `designer` where username=? limit 1")) {
+            p.setString(1, designer);
             try (ResultSet r = p.executeQuery()) {
                 if (r.next()) {
                     duplicate = true;
