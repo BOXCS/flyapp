@@ -20,21 +20,15 @@ public class PlaceOrderMain extends javax.swing.JPanel {
     }
 
     private void VideoEditing() {
-        Basic.setData(new ModelProduct(1, "Basic Package", "$10", "Leaning java swing ui design like and Subscribe thank for watch"));
-        Standard.setData(new ModelProduct(2, "Standard Package", "$30", "Standard Editing works"));
-        Premium.setData(new ModelProduct(3, "Premium Package", "$75", "Complex Editing works"));
+
     }
 
     private void DesignGraphic() {
-        Basic.setData(new ModelProduct(1, "Basic Package", "$10", "Simple Design works"));
-        Standard.setData(new ModelProduct(2, "Standard Package", "$25", "Standard Design works"));
-        Premium.setData(new ModelProduct(3, "Premium Package", "$50", "Complex Design works"));
+
     }
 
     private void Modelling3D() {
-        Basic.setData(new ModelProduct(1, "Basic Package", "$25", "Simple Modelling works"));
-        Standard.setData(new ModelProduct(2, "Standard Package", "$75", "Standard Modelling works"));
-        Premium.setData(new ModelProduct(3, "Premium Package", "$100", "Complex Modelling works"));
+
     }
 
     @SuppressWarnings("unchecked")
@@ -44,9 +38,7 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         roundPanel1 = new Dashboard.Swing.RoundPanel();
         jLabel2 = new javax.swing.JLabel();
-        Basic = new Dashboard.Swing.scroll.ProductCard();
-        Standard = new Dashboard.Swing.scroll.ProductCard();
-        Premium = new Dashboard.Swing.scroll.ProductCard();
+        panelPricing1 = new User.PlaceOrder.component.PanelPricing();
         jLabel1 = new javax.swing.JLabel();
         combobox = new javax.swing.JComboBox<>();
 
@@ -59,6 +51,9 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Package");
 
+        panelPricing1.setColor1(new java.awt.Color(145, 145, 220));
+        panelPricing1.setColor2(new java.awt.Color(120, 124, 214));
+
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
@@ -66,28 +61,21 @@ public class PlaceOrderMain extends javax.swing.JPanel {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(107, 107, 107)
-                        .addComponent(Basic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(130, 130, 130)
-                        .addComponent(Standard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(121, 121, 121)
-                        .addComponent(Premium, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addGap(540, 540, 540)
-                        .addComponent(jLabel2)))
-                .addContainerGap(143, Short.MAX_VALUE))
+                        .addComponent(jLabel2))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addGap(438, 438, 438)
+                        .addComponent(panelPricing1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Premium, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Standard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Basic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(panelPricing1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
@@ -119,7 +107,7 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                         .addGap(0, 1043, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(488, 488, 488)
+                .addGap(491, 491, 491)
                 .addComponent(combobox, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -128,11 +116,11 @@ public class PlaceOrderMain extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addComponent(jLabel1)
-                .addGap(110, 110, 110)
-                .addComponent(combobox, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(combobox, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(167, Short.MAX_VALUE))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -170,13 +158,11 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private Dashboard.Swing.scroll.ProductCard Basic;
-    private Dashboard.Swing.scroll.ProductCard Premium;
-    private Dashboard.Swing.scroll.ProductCard Standard;
     private javax.swing.JComboBox<String> combobox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private User.PlaceOrder.component.PanelPricing panelPricing1;
     private Dashboard.Swing.RoundPanel roundPanel1;
     // End of variables declaration//GEN-END:variables
 }

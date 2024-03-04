@@ -53,7 +53,7 @@ public class Menu extends javax.swing.JPanel {
         addMenu("3", "Cart", 2);
 //        addMenu("chat", "Chat", 3);
         split("Report");
-        addMenu("2", "Add Product", 3);
+        addMenu("2", "Pricing", 3);
         addMenu("2", "Add Designer", 4);
         addMenu("2", "Add Admin", 5);
         addMenu("4", "Report Income", 6);

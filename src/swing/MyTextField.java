@@ -46,7 +46,7 @@ public class MyTextField extends JTextField{
     public MyTextField() {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
-        setForeground(Color.decode("#7A8C8D"));
+        setForeground(Color.decode("#03002D"));
         setFont(new java.awt.Font("sansserif", 0, 13));
         setSelectionColor(new Color(75, 175, 152));
     }
