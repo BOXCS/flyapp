@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ServiceLogin {
 
@@ -287,6 +289,15 @@ public class ServiceLogin {
 
         // Kembalikan password dari database
         return passwordFromDatabase;
+    }
+    
+    public boolean isPasswordValid(String password) {
+        // Password should have a minimum length of 8 characters
+        // and should contain at least one digit and one special character.
+        String passwordRegex = "^(?=.*[0-9])(?=.*[!@#$%^&*])(?=\\S+$).{8,}$";
+        Pattern pattern = Pattern.compile(passwordRegex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
     }
 
 }

@@ -84,7 +84,7 @@ public class Main extends javax.swing.JFrame {
                 } else {
                     size += addSize - fraction * addSize;
                 }
-                if(isLogin) {
+                if (isLogin) {
                     fractionCover = 1f - fraction;
                     fractionLogin = fraction;
                     if (fraction >= 0.5f) {
@@ -133,12 +133,12 @@ public class Main extends javax.swing.JFrame {
         bg.setLayout(layout);
         bg.setLayer(loading, JLayeredPane.POPUP_LAYER);
         bg.setLayer(verifyCode, JLayeredPane.POPUP_LAYER);
-        bg.setLayer(cover, JLayeredPane.POPUP_LAYER);  // Sesuaikan dengan lapisan yang sesuai
-        bg.setLayer(loginRegister, JLayeredPane.POPUP_LAYER);  // Sesuaikan dengan lapisan yang sesuai
-        bg.add(loading, "pos 0 0 100% 100%");
-        bg.add(verifyCode, "pos 0 0 100% 100%");
+        bg.setLayer(loginRegister, JLayeredPane.POPUP_LAYER);
+        bg.setLayer(cover, JLayeredPane.PALETTE_LAYER);  // Pindahkan ke lapisan yang lebih rendah
         bg.add(cover, "width " + coverSize + "%, pos 0al 0 n 100%");
         bg.add(loginRegister, "width " + loginSize + "%, pos 1al 0 n 100%");
+        bg.add(loading, "pos 0 0 100% 100%");
+        bg.add(verifyCode, "pos 0 0 100% 100%");
         cover.addEvent(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -165,14 +165,18 @@ public class Main extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void register() {
         ModelUser user = loginRegister.getUser();
+        String password = user.getPassword();
+
         try {
             if (service.checkDuplicateUser(user.getUserName())) {
-                showMessage(Message.MessageType.ERROR, "User name already exist");
+                showMessage(Message.MessageType.ERROR, "User name already exists");
             } else if (service.checkDuplicateEmail(user.getEmail())) {
-                showMessage(Message.MessageType.ERROR, "Email already exist");
+                showMessage(Message.MessageType.ERROR, "Email already exists");
+            } else if (!service.isPasswordValid(password)) {
+                showMessage(Message.MessageType.ERROR, "Password must have at least 8 characters, including a digit and a special character");
             } else {
                 service.insertUser(user);
                 sendMain(user);
@@ -182,7 +186,7 @@ public class Main extends javax.swing.JFrame {
             showMessage(Message.MessageType.ERROR, "Error Register");
         }
     }
-    
+
     private void login() {
         ModelLogin data = loginRegister.getDataLogin();
         try {
@@ -204,7 +208,7 @@ public class Main extends javax.swing.JFrame {
             showMessage(Message.MessageType.ERROR, "Error Login");
         }
     }
-    
+
     private void sendMain(ModelUser user) {
         new Thread(new Runnable() {
             @Override
@@ -221,7 +225,7 @@ public class Main extends javax.swing.JFrame {
             }
         }).start();
     }
-    
+
     private void showMessage(Message.MessageType messageType, String message) {
         Message ms = new Message();
         ms.showMessage(messageType, message);

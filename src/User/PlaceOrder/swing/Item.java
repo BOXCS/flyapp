@@ -3,6 +3,7 @@ package User.PlaceOrder.swing;
 import User.PlaceOrder.model.Model_Data;
 import java.awt.Color;
 import java.awt.Graphics;
+import javax.swing.ImageIcon;
 
 public class Item extends javax.swing.JPanel {
 
@@ -10,19 +11,20 @@ public class Item extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         if (!data.isStatus()) {
-            lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/raven/icon/no.png")));
+            lblcon.setIcon(new ImageIcon(getClass().getResource("/User/PlaceOrder/icon/no.png")));
         }
-        lbName.setText(data.getText());
+        lbName.setText(data.getDescription());
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lbIcon = new javax.swing.JLabel();
+        lblcon = new javax.swing.JLabel();
         lbName = new javax.swing.JLabel();
 
-        lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/raven/icon/yes.png"))); // NOI18N
+        lblcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/User/PlaceOrder/icon/yes.png"))); // NOI18N
+        lblcon.setPreferredSize(new java.awt.Dimension(18, 18));
 
         lbName.setText("Name");
 
@@ -32,15 +34,18 @@ public class Item extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(lbIcon)
+                .addComponent(lblcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
-                .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbName)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-            .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblcon, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -52,7 +57,8 @@ public class Item extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbIcon;
     private javax.swing.JLabel lbName;
+    private javax.swing.JLabel lblcon;
     // End of variables declaration//GEN-END:variables
+
 }

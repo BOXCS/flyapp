@@ -1,6 +1,7 @@
 package User.PlaceOrder.component;
 
 import User.PlaceOrder.model.Model_Data;
+import User.PlaceOrder.swing.List;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -8,15 +9,21 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 
 public class PanelPricing extends javax.swing.JPanel {
 
+    private List list = new List();
+    
     public Color getColor1() {
         return color1;
     }
 
     public void setColor1(Color color1) {
         this.color1 = color1;
+        title1.setForeground(color1);
     }
 
     public Color getColor2() {
@@ -25,14 +32,23 @@ public class PanelPricing extends javax.swing.JPanel {
 
     public void setColor2(Color color2) {
         this.color2 = color2;
-//        PanelDetail.setButtonColor(color2);
+        panelDetail.setButtonColor(color2);
+    }
+    
+    public void addItem(Model_Data data) {
+        panelDetail.getList().addItem(data);
+    }
+    
+    public void clearItems() {
+        panelDetail.getList().clearItems();
     }
 
     public PanelPricing() {
         initComponents();
         setOpaque(false);
         setPreferredSize(new Dimension(300, 430));
-//        panelDetail.setButtonColor(color2);
+        panelDetail.setButtonColor(color2);
+        title1.setForeground(color1);
     }
     private Color color1 = new Color(20, 203, 144);
     private Color color2 = new Color(17, 139, 40);
@@ -41,19 +57,54 @@ public class PanelPricing extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelDetail1 = new User.PlaceOrder.component.PanelDetail();
+        panelDetail = new User.PlaceOrder.component.PanelDetail();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        lb1 = new javax.swing.JLabel();
+        lb2 = new javax.swing.JLabel();
+        jLayeredPane2 = new javax.swing.JLayeredPane();
+        title1 = new User.PlaceOrder.swing.Title();
+
+        jLayeredPane1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+
+        lb1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
+        lb1.setForeground(new java.awt.Color(255, 255, 255));
+        lb1.setText("$59.");
+        jLayeredPane1.add(lb1);
+
+        lb2.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        lb2.setForeground(new java.awt.Color(255, 255, 255));
+        lb2.setText("99");
+        lb2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        jLayeredPane1.add(lb2);
+
+        jLayeredPane2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+
+        title1.setForeground(new java.awt.Color(0, 0, 0));
+        title1.setText("TITLE");
+        jLayeredPane2.add(title1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelDetail1, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(panelDetail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 11, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLayeredPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLayeredPane1)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 95, Short.MAX_VALUE)
-                .addComponent(panelDetail1, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(panelDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -75,16 +126,57 @@ public class PanelPricing extends javax.swing.JPanel {
         g2.fillOval(getWidth() - 115, getHeight() - 115, 100, 100);
         g2.fillOval(getWidth() - 180, getHeight() - 50, 150, 150);
     }
-
-//    public void addItem(Model_Data data) {
-//        panelDetail.getList().addItem(data);
-//    }
-//
-//    public void addEventBuy(ActionListener event) {
-//        panelDetail.addEventBuy(event);
-//    }
     
+    // Metode untuk menetapkan item-item ke dalam JList
+    public void setListItems(List<Model_Data> packageItems) {
+//    try {
+//        // Clear existing items
+//        list.clearItems();
+//
+//        // Add new items to the list
+//        DefaultListModel<Model_Data> model = (DefaultListModel<Model_Data>) list.getModel();
+//        model.addAll(new ArrayList<>(packageItems));
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//    }
+}
+
+
+
+    public void setPrice(String title, double price) {
+        this.title1.setText(title);
+        DecimalFormat df = new DecimalFormat("#,#00");
+        String p = price + "";
+        String priceArray[] = p.split("\\.");
+
+        // Mengatur lb1 dan lb2 sesuai dengan harga yang diberikan
+        if (priceArray.length == 2) {
+            lb1.setText("$" + df.format(Double.valueOf(priceArray[0])) + ".");
+            lb2.setText(df.format(Double.valueOf(priceArray[1])));
+        } else {
+            lb1.setText("$" + df.format(Double.valueOf(priceArray[0])) + ".");
+            lb2.setText("");
+        }
+    }
+
+    // Metode untuk menetapkan harga pada lb1 dan lb2
+    public void setPriceComponents(String lb1Text, String lb2Text) {
+        lb1.setText(lb1Text);
+        lb2.setText(lb2Text);
+    }
+
+    public void addEventBuy(ActionListener event) {
+        panelDetail.addEventBuy(event);
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private User.PlaceOrder.component.PanelDetail panelDetail1;
+    private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JLayeredPane jLayeredPane2;
+    private javax.swing.JLabel lb1;
+    private javax.swing.JLabel lb2;
+    private User.PlaceOrder.component.PanelDetail panelDetail;
+    private User.PlaceOrder.swing.Title title1;
     // End of variables declaration//GEN-END:variables
+
 }

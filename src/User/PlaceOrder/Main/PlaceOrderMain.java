@@ -1,35 +1,108 @@
 package User.PlaceOrder.Main;
 
-import User.Model.ModelProduct;
-import java.util.HashMap;
-import java.util.Map;
+import User.PlaceOrder.Service.ServicePricing;
+import User.PlaceOrder.component.PanelPricing;
+import User.PlaceOrder.model.Model_Data;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 
 public class PlaceOrderMain extends javax.swing.JPanel {
 
-    Map<String, Runnable> categoryActions;
-    
+    private ServicePricing servicePricing;
+    private PanelPricing pricingPanel;
+
+    // Variabel untuk menyimpan item-item pada masing-masing level
+    private List<Model_Data> basicItems;
+    private List<Model_Data> standardItems;
+    private List<Model_Data> proItems;
+
     public PlaceOrderMain() {
         initComponents();
         setOpaque(false);
-        
-        categoryActions = new HashMap<>();
-        categoryActions.put("Video Editing", this::VideoEditing);
-        categoryActions.put("Design Graphic", this::DesignGraphic);
-        categoryActions.put("3D Modelling", this::Modelling3D);
-
+        // Inisialisasi objek ServicePricing
+//        servicePricing = new ServicePricing();
+//        pricingPanel = new PanelPricing();
+//
+//        // Mendapatkan daftar produk dari database
+//        String[] productList = servicePricing.getProductList();
+//
+//        // Mengisi ComboBox dengan daftar produk
+//        productComboBox.setModel(new DefaultComboBoxModel<>(productList));
+//
+//        // Mendapatkan item-item untuk masing-masing level pada saat inisialisasi
+//        // BASIC
+//        basicItems = servicePricing.getPackageItems("1", "1");
+//        displayPackageItems(basicItems);
+//
+//        // STANDARD
+//        standardItems = servicePricing.getPackageItems("1", "2");
+//        displayPackageItems(standardItems);
+//
+//        // PRO
+//        proItems = servicePricing.getPackageItems("1", "3");
+//        displayPackageItems(proItems);
     }
 
-    private void VideoEditing() {
+    // Metode untuk menampilkan harga dan item-item terkait pada antarmuka pengguna
+    private void displayPackageDetails(String product) {
+        // Mendapatkan daftar level paket untuk produk yang dipilih
+        String[] levelList = servicePricing.getLevelList(product);
 
+        // Menampilkan daftar level pada panel atau ComboBox level jika Anda ingin menambahkannya
+        // ...
+        // Mendapatkan harga dan item-item terkait untuk level paket yang dipilih
+        for (String level : levelList) {
+        double price = servicePricing.getPrice(product, level);
+
+        // Format harga dengan DecimalFormat
+        DecimalFormat df = new DecimalFormat("#,#00");
+        String formattedPrice = df.format(price);
+
+        // Memisahkan harga menjadi bagian sebelum dan setelah desimal
+        String[] priceArray = formattedPrice.split("\\.");
+
+        // Menyimpan bagian harga ke dalam lb1 dan lb2 di PanelPricing
+        switch (level) {
+            case "basic":
+                basicPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                break;
+            case "pro":
+                proPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                break;
+            case "standard":
+                standardPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                break;
+            // Add more cases if you have additional levels
+        }
+
+        // Mendapatkan item-item terkait dengan level paket
+        List<Model_Data> packageItems = servicePricing.getPackageItems(product, level);
+
+        // Menampilkan item-item pada antarmuka pengguna
+        // Panggil metode displayPackageItems untuk menampilkan item-item
+        displayPackageItems(level, packageItems);
     }
+}
 
-    private void DesignGraphic() {
-
-    }
-
-    private void Modelling3D() {
-
-    }
+    // Metode untuk menampilkan item-item pada antarmuka pengguna
+private void displayPackageItems(String level, List<Model_Data> packageItems) {
+    // Menyimpan item-item ke dalam JList masing-masing level
+//    switch (level) {
+//        case "basic":
+//            basicPricing.setListItems(packageItems);
+//            break;
+//        case "pro":
+//            proPricing.setListItems(packageItems);
+//            break;
+//        case "standard":
+//            standardPricing.setListItems(packageItems);
+//            break;
+//        // Add more cases if you have additional levels
+//    }
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -38,9 +111,11 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         roundPanel1 = new Dashboard.Swing.RoundPanel();
         jLabel2 = new javax.swing.JLabel();
-        panelPricing1 = new User.PlaceOrder.component.PanelPricing();
+        standardPricing = new User.PlaceOrder.component.PanelPricing();
+        proPricing = new User.PlaceOrder.component.PanelPricing();
+        basicPricing = new User.PlaceOrder.component.PanelPricing();
         jLabel1 = new javax.swing.JLabel();
-        combobox = new javax.swing.JComboBox<>();
+        productComboBox = new javax.swing.JComboBox<>();
 
         jPanel1.setOpaque(false);
 
@@ -51,21 +126,30 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Package");
 
-        panelPricing1.setColor1(new java.awt.Color(145, 145, 220));
-        panelPricing1.setColor2(new java.awt.Color(120, 124, 214));
+        standardPricing.setColor1(new java.awt.Color(145, 145, 220));
+        standardPricing.setColor2(new java.awt.Color(120, 124, 214));
+
+        proPricing.setColor1(new java.awt.Color(145, 145, 220));
+        proPricing.setColor2(new java.awt.Color(120, 124, 214));
+
+        basicPricing.setColor1(new java.awt.Color(145, 145, 220));
+        basicPricing.setColor2(new java.awt.Color(120, 124, 214));
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(540, 540, 540)
-                        .addComponent(jLabel2))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(438, 438, 438)
-                        .addComponent(panelPricing1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(75, Short.MAX_VALUE)
+                .addComponent(basicPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(74, 74, 74)
+                .addComponent(standardPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(84, 84, 84)
+                .addComponent(proPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(91, 91, 91))
+            .addGroup(roundPanel1Layout.createSequentialGroup()
+                .addGap(527, 527, 527)
+                .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundPanel1Layout.setVerticalGroup(
@@ -74,7 +158,10 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(panelPricing1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(standardPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(proPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(basicPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(55, Short.MAX_VALUE))
         );
 
@@ -82,13 +169,10 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Place Order");
 
-        combobox.setBackground(new java.awt.Color(255, 255, 255));
-        combobox.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        combobox.setForeground(new java.awt.Color(0, 0, 0));
-        combobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Video Editing", "Design Graphic", "3D Modelling" }));
-        combobox.addActionListener(new java.awt.event.ActionListener() {
+        productComboBox.setBackground(new java.awt.Color(255, 255, 255));
+        productComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboboxActionPerformed(evt);
+                productComboBoxActionPerformed(evt);
             }
         });
 
@@ -103,22 +187,20 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                         .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(54, 54, 54)
-                        .addComponent(jLabel1)
-                        .addGap(0, 1043, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(productComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(491, 491, 491)
-                .addComponent(combobox, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(combobox, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(20, 20, 20)
+                .addComponent(productComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(87, Short.MAX_VALUE))
         );
@@ -135,34 +217,22 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void comboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboboxActionPerformed
-        String selectedCategory = (String) combobox.getSelectedItem();
-
-    // Use a map for cleaner and more maintainable code:
-    Map<String, Runnable> actionMap = new HashMap<>();
-    actionMap.put("Video Editing", () -> VideoEditing());
-    actionMap.put("Design Graphic", () -> DesignGraphic());
-    actionMap.put("3D Modelling", () -> Modelling3D());
-
-    // Get the appropriate action based on the selected item:
-    Runnable action = actionMap.get(selectedCategory);
-
-    // Execute the action if it exists, otherwise handle the default case:
-    if (action != null) {
-        action.run();
-    } else {
-        // Handle the default case here, e.g., display an error message or do nothing
-        System.out.println("Invalid category selected: " + selectedCategory);
-    }
-    }//GEN-LAST:event_comboboxActionPerformed
+    private void productComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productComboBoxActionPerformed
+        String selectedProduct = (String) productComboBox.getSelectedItem();
+        if (selectedProduct != null) {
+            displayPackageDetails(selectedProduct);
+        }
+    }//GEN-LAST:event_productComboBoxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> combobox;
+    private User.PlaceOrder.component.PanelPricing basicPricing;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private User.PlaceOrder.component.PanelPricing panelPricing1;
+    private User.PlaceOrder.component.PanelPricing proPricing;
+    private javax.swing.JComboBox<String> productComboBox;
     private Dashboard.Swing.RoundPanel roundPanel1;
+    private User.PlaceOrder.component.PanelPricing standardPricing;
     // End of variables declaration//GEN-END:variables
 }

@@ -21,32 +21,58 @@ public class PanelDetail extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        list = new User.PlaceOrder.swing.List<>();
         jLayeredPane1 = new javax.swing.JLayeredPane();
+        cmdBuy = new User.PlaceOrder.swing.Button();
+
+        list.setBackground(new java.awt.Color(255, 255, 255));
+        list.setForeground(new java.awt.Color(0, 0, 0));
+        list.setOpaque(false);
+
+        jLayeredPane1.setPreferredSize(new java.awt.Dimension(276, 57));
+
+        cmdBuy.setText("Buy Now");
+        cmdBuy.setPreferredSize(new java.awt.Dimension(66, 27));
+
+        jLayeredPane1.setLayer(cmdBuy, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 276, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane1Layout.createSequentialGroup()
+                .addContainerGap(112, Short.MAX_VALUE)
+                .addComponent(cmdBuy, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(64, 64, 64))
         );
         jLayeredPane1Layout.setVerticalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 48, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane1Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(cmdBuy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(list, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(304, Short.MAX_VALUE)
-                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(15, 15, 15)
+                .addComponent(list, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
+                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
+
+        list.getAccessibleContext().setAccessibleParent(this);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
@@ -78,8 +104,27 @@ public class PanelDetail extends javax.swing.JPanel {
         g.drawImage(img, 0, 0, null);
         super.paintComponent(grphcs);
     }
+    
+    public List getList() {
+        return list;
+    }
+    
+    public void clearItems() {
+        // Clear items in the list
+        list.clearItems();
+    }
+    
+    public void setButtonColor(Color color) {
+        cmdBuy.setBackground(color);
+    }
+
+    public void addEventBuy(ActionListener event) {
+        cmdBuy.addActionListener(event);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private User.PlaceOrder.swing.Button cmdBuy;
     private javax.swing.JLayeredPane jLayeredPane1;
+    private User.PlaceOrder.swing.List<String> list;
     // End of variables declaration//GEN-END:variables
 }
