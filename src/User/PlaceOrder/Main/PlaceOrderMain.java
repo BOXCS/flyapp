@@ -64,17 +64,17 @@ public class PlaceOrderMain extends javax.swing.JPanel {
             // Menyimpan bagian harga ke dalam lb1 dan lb2 di PanelPricing
             switch (level) {
                 case "Basic":
-                    basicPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                    basicPricing.setPriceComponents("$" + String.valueOf((int) price), getDecimalPart(price));
                     basicPricing.setTitleText(level);
                     basicPricing.setPackageItems(servicePricing.getPackageItems(product, level));
                     break;
                 case "Pro":
-                    proPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                    proPricing.setPriceComponents("$" + String.valueOf((int) price), getDecimalPart(price));
                     proPricing.setTitleText(level);
                     proPricing.setPackageItems(servicePricing.getPackageItems(product, level));
                     break;
                 case "Standard":
-                    standardPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                    standardPricing.setPriceComponents("$" + String.valueOf((int) price), getDecimalPart(price));
                     standardPricing.setTitleText(level);
                     standardPricing.setPackageItems(servicePricing.getPackageItems(product, level));
                     break;
@@ -114,6 +114,15 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                 // Atau tambahkan tanggapan lain sesuai kebutuhan
                 break;
         }
+    }
+
+    // Metode untuk mendapatkan bagian desimal dari harga
+    private String getDecimalPart(double price) {
+        String priceStr = String.valueOf(price);
+    int dotIndex = priceStr.indexOf(".");
+    
+    // Menambahkan simbol desimal (.) di tengah tengah
+    return (dotIndex != -1) ? "." + priceStr.substring(dotIndex + 1) : "";
     }
 
     @SuppressWarnings("unchecked")
