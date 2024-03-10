@@ -1,7 +1,9 @@
 package User.PlaceOrder.component;
 
+import User.PlaceOrder.Service.ServicePricing;
+import User.PlaceOrder.model.Model_Data;
 import User.PlaceOrder.shadow.ShadowRenderer;
-import User.PlaceOrder.swing.List;
+import User.PlaceOrder.swing.PricingList;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,6 +11,8 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
+import javax.swing.DefaultListModel;
 
 public class PanelDetail extends javax.swing.JPanel {
 
@@ -21,7 +25,7 @@ public class PanelDetail extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        list = new User.PlaceOrder.swing.List<>();
+        list = new User.PlaceOrder.swing.PricingList<>();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         cmdBuy = new User.PlaceOrder.swing.Button();
 
@@ -104,16 +108,16 @@ public class PanelDetail extends javax.swing.JPanel {
         g.drawImage(img, 0, 0, null);
         super.paintComponent(grphcs);
     }
-    
-    public List getList() {
+
+    public PricingList getList() {
         return list;
     }
-    
+
     public void clearItems() {
         // Clear items in the list
         list.clearItems();
     }
-    
+
     public void setButtonColor(Color color) {
         cmdBuy.setBackground(color);
     }
@@ -122,9 +126,46 @@ public class PanelDetail extends javax.swing.JPanel {
         cmdBuy.addActionListener(event);
     }
 
+    // Method to set items into the JList in PanelDetail
+    public void setListItems(List<Model_Data> packageItems) {
+        try {
+            // Clear existing items
+            if (list != null) {
+                list.clearItems();
+            } else {
+                System.out.println("Error: PricingList is null.");
+                return;
+            }
+
+            // Add new items to the PricingList<Model_Data>
+            DefaultListModel<Model_Data> model = (DefaultListModel<Model_Data>) list.getModel();
+
+            // Use the setListItems method from PricingList to add items
+            if (packageItems != null) {
+                packageItems.forEach(model::addElement);
+            } else {
+                System.out.println("Error: packageItems is null.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePricingList(ServicePricing servicePricing, String productName, String levelName) {
+    // Memanggil ServicePricing untuk mendapatkan daftar item paket
+    List<Model_Data> packageItems = servicePricing.getPackageItems(productName, levelName);
+
+    // Menetapkan daftar item pada PricingList
+    list.setListItems(packageItems);
+
+    // Memanggil repaint untuk memperbarui tampilan
+    list.repaint();
+}
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private User.PlaceOrder.swing.Button cmdBuy;
     private javax.swing.JLayeredPane jLayeredPane1;
-    private User.PlaceOrder.swing.List<String> list;
+    private User.PlaceOrder.swing.PricingList<Model_Data> list;
     // End of variables declaration//GEN-END:variables
 }

@@ -10,6 +10,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class DashboardUser extends javax.swing.JFrame {
@@ -35,7 +38,11 @@ public class DashboardUser extends javax.swing.JFrame {
                 if (index == 0) {
 //                    showForm(new FormHomeU());
                 } else if (index == 1) {
-                    showForm(new PlaceOrderMain());
+                    try {
+                        showForm(new PlaceOrderMain());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } else {
                     showForm(new Form(index + ""));
                 }

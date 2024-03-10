@@ -13,8 +13,10 @@ import java.util.List;
 public class ServicePricing {
     private final Connection con;
 
-    public ServicePricing() {
-        con = (Connection) DatabaseConnection.getInstance().getConnection();
+    public ServicePricing() throws SQLException {
+        DatabaseConnection databaseConnection = DatabaseConnection.getInstance();
+        databaseConnection.connectToDatabase();
+        con = databaseConnection.getConnection();
     }
     
     public double getPrice(String productName, String levelName) {
@@ -74,26 +76,32 @@ public class ServicePricing {
     }
     
     public List<Model_Data> getPackageItems(String productName, String levelName) {
-        List<Model_Data> packageItems = new ArrayList<>();
-        String query = "SELECT item_name, is_enabled FROM packageitem " +
-                       "JOIN product ON packageitem.product_id = product.product_id " +
-                       "JOIN packagelevel ON packageitem.level_id = packagelevel.level_id " +
-                       "WHERE product.product_name = ? AND packagelevel.level_name = ?";
+    List<Model_Data> packageItems = new ArrayList<>();
+    String query = "SELECT item_name, is_enabled FROM packageitem " +
+                   "JOIN product ON packageitem.product_id = product.product_id " +
+                   "JOIN packagelevel ON packageitem.level_id = packagelevel.level_id " +
+                   "WHERE product.product_name = ? AND packagelevel.level_name = ?";
 
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setString(1, productName);
-            preparedStatement.setString(2, levelName);
+    try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        preparedStatement.setString(1, productName);
+        preparedStatement.setString(2, levelName);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                boolean isEnabled = resultSet.getBoolean("is_enabled");
-                String itemName = resultSet.getString("item_name");
-                packageItems.add(new Model_Data(isEnabled, itemName));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            boolean isEnabled = resultSet.getBoolean("is_enabled");
+            String itemName = resultSet.getString("item_name");
+            packageItems.add(new Model_Data(isEnabled, itemName));
         }
-
-        return packageItems;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    // Debugging statements
+    System.out.println("Debugging - Query: " + query);
+    System.out.println("Debugging - Product Name: " + productName);
+    System.out.println("Debugging - Level Name: " + levelName);
+    System.out.println("Debugging - Number of items retrieved: " + packageItems.size());
+
+    return packageItems;
+}
 }

@@ -4,26 +4,26 @@
  */
 package User.PlaceOrder.swing;
 
-import User.PlaceOrder.component.PanelDetail;
 import User.PlaceOrder.model.Model_Data;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import User.PlaceOrder.swing.List;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Zaky
  * @param <E>
  */
-public class List<E extends Object> extends JList<E> {
+public class PricingList<E extends Object> extends JList<E> {
 
     private final DefaultListModel<E> model;
 
-    public List() {
-        model = new DefaultListModel();
+    public PricingList() {
+        model = new DefaultListModel<>();
         setModel(model);
     }
 
@@ -31,7 +31,7 @@ public class List<E extends Object> extends JList<E> {
     public ListCellRenderer<? super E> getCellRenderer() {
         return new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList<?> jlist, Object o, int index, boolean Selected, boolean focus) {
+            public Component getListCellRendererComponent(JList<?> jlist, Object o, int index, boolean selected, boolean focus) {
                 Model_Data data;
                 if (o instanceof Model_Data model_Data) {
                     data = model_Data;
@@ -41,7 +41,6 @@ public class List<E extends Object> extends JList<E> {
                 Item item = new Item(data);
                 return item;
             }
-
         };
     }
 
@@ -51,5 +50,22 @@ public class List<E extends Object> extends JList<E> {
 
     public void addItem(E element) {
         model.addElement(element);
+    }
+
+    public void setListItems(List<Model_Data> packageItems) {
+        try {
+            // Clear existing items
+            clearItems();
+
+            // Add new items to the list
+            DefaultListModel<E> model = (DefaultListModel<E>) getModel();
+
+            // Add items to the model one by one
+            for (Model_Data item : packageItems) {
+                model.addElement((E) item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -13,7 +13,7 @@ public class Item extends javax.swing.JPanel {
         if (!data.isStatus()) {
             lblcon.setIcon(new ImageIcon(getClass().getResource("/User/PlaceOrder/icon/no.png")));
         }
-        lbName.setText(data.getDescription());
+        lbName.setText(data.getItemName());
     }
 
     @SuppressWarnings("unchecked")

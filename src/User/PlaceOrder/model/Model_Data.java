@@ -3,11 +3,9 @@ package User.PlaceOrder.model;
 public class Model_Data {
 
     private boolean status;
-    private String description;
     private double price;
     private String level;
-    private boolean isEnabled;  
-    private String itemName;   
+    private String itemName;
 
     public boolean isStatus() {
         return status;
@@ -15,14 +13,6 @@ public class Model_Data {
 
     public void setStatus(boolean status) {
         this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public double getPrice() {
@@ -41,14 +31,6 @@ public class Model_Data {
         this.level = level;
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
-    }
-
     public String getItemName() {
         return itemName;
     }
@@ -57,22 +39,19 @@ public class Model_Data {
         this.itemName = itemName;
     }
 
-    public Model_Data(boolean status, String description, double price, String level, boolean isEnabled, String itemName) {
+    public Model_Data(boolean status, double price, String level, String itemName) {
         this.status = status;
-        this.description = description;
         this.price = price;
         this.level = level;
-        this.isEnabled = isEnabled;
         this.itemName = itemName;
     }
 
-    public Model_Data(boolean status, String description) {
+    public Model_Data(boolean status, String itemName) {
         this.status = status;
-        this.description = description;
+        this.itemName = itemName;
     }
-    
-    public Model_Data(String itemName, boolean isEnabled) {
-        this.isEnabled = isEnabled;
+
+    public Model_Data(String itemName) {
         this.itemName = itemName;
     }
 

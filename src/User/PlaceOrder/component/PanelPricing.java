@@ -1,7 +1,7 @@
 package User.PlaceOrder.component;
 
 import User.PlaceOrder.model.Model_Data;
-import User.PlaceOrder.swing.List;
+import User.PlaceOrder.swing.PricingList;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -11,12 +11,14 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
+//import java.util.List;
 import javax.swing.DefaultListModel;
 
 public class PanelPricing extends javax.swing.JPanel {
 
-    private List list = new List();
-    
+    private PricingList<Model_Data> list = new PricingList();
+
     public Color getColor1() {
         return color1;
     }
@@ -34,11 +36,11 @@ public class PanelPricing extends javax.swing.JPanel {
         this.color2 = color2;
         panelDetail.setButtonColor(color2);
     }
-    
+
     public void addItem(Model_Data data) {
         panelDetail.getList().addItem(data);
     }
-    
+
     public void clearItems() {
         panelDetail.getList().clearItems();
     }
@@ -126,22 +128,31 @@ public class PanelPricing extends javax.swing.JPanel {
         g2.fillOval(getWidth() - 115, getHeight() - 115, 100, 100);
         g2.fillOval(getWidth() - 180, getHeight() - 50, 150, 150);
     }
-    
+
     // Metode untuk menetapkan item-item ke dalam JList
     public void setListItems(List<Model_Data> packageItems) {
-//    try {
-//        // Clear existing items
-//        list.clearItems();
-//
-//        // Add new items to the list
-//        DefaultListModel<Model_Data> model = (DefaultListModel<Model_Data>) list.getModel();
-//        model.addAll(new ArrayList<>(packageItems));
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//    }
-}
+        try {
+            // Clear existing items
+            if (list != null) {
+                list.clearItems();
+            } else {
+                System.out.println("Error: PricingList is null.");
+                return;
+            }
 
+            // Add new items to the CustomList<Model_Data>
+            DefaultListModel<Model_Data> model = (DefaultListModel<Model_Data>) list.getModel();
 
+            // Gunakan metode setListItems dari PricingList untuk menambahkan item
+            if (packageItems != null) {
+                packageItems.forEach(model::addElement);
+            } else {
+                System.out.println("Warning: packageItems is null. No items to add.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void setPrice(String title, double price) {
         this.title1.setText(title);
@@ -168,6 +179,21 @@ public class PanelPricing extends javax.swing.JPanel {
     public void addEventBuy(ActionListener event) {
         panelDetail.addEventBuy(event);
     }
+
+    // Tambahkan metode berikut di kelas PanelPricing
+    public void setTitleText(String text) {
+        title1.setText(text);
+    }
+
+    public void setPackageItems(List<Model_Data> packageItems) {
+    // Menyimpan item-item ke dalam JList masing-masing level
+    setListItems(packageItems);
+
+    // Juga, Anda dapat menambahkan logika lain yang berkaitan dengan tampilan PanelDetail
+    // Contoh: Menetapkan daftar item ke PanelDetail jika diperlukan
+    panelDetail.setListItems(packageItems);
+}
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

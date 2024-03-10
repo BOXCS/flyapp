@@ -1,10 +1,12 @@
 package User.PlaceOrder.Main;
 
 import User.PlaceOrder.Service.ServicePricing;
+import User.PlaceOrder.component.PanelDetail;
 import User.PlaceOrder.component.PanelPricing;
 import User.PlaceOrder.model.Model_Data;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -18,32 +20,27 @@ public class PlaceOrderMain extends javax.swing.JPanel {
     private List<Model_Data> basicItems;
     private List<Model_Data> standardItems;
     private List<Model_Data> proItems;
+    PanelDetail panelDetail = new PanelDetail();
+    PanelPricing panelPricing = new PanelPricing();
 
-    public PlaceOrderMain() {
+    public PlaceOrderMain() throws SQLException {
         initComponents();
         setOpaque(false);
         // Inisialisasi objek ServicePricing
-//        servicePricing = new ServicePricing();
-//        pricingPanel = new PanelPricing();
+        servicePricing = new ServicePricing();
+        pricingPanel = new PanelPricing();
+
 //
 //        // Mendapatkan daftar produk dari database
-//        String[] productList = servicePricing.getProductList();
+        String[] productList = servicePricing.getProductList();
 //
 //        // Mengisi ComboBox dengan daftar produk
-//        productComboBox.setModel(new DefaultComboBoxModel<>(productList));
+        productComboBox.setModel(new DefaultComboBoxModel<>(productList));
 //
-//        // Mendapatkan item-item untuk masing-masing level pada saat inisialisasi
-//        // BASIC
-//        basicItems = servicePricing.getPackageItems("1", "1");
-//        displayPackageItems(basicItems);
-//
-//        // STANDARD
-//        standardItems = servicePricing.getPackageItems("1", "2");
-//        displayPackageItems(standardItems);
-//
-//        // PRO
-//        proItems = servicePricing.getPackageItems("1", "3");
-//        displayPackageItems(proItems);
+// Mendapatkan dan menampilkan item untuk masing-masing level
+        displayPackageItems("Basic", servicePricing.getPackageItems("Video Editing", "Basic"));
+        displayPackageItems("Standard", servicePricing.getPackageItems("Design Graphic", "Standard"));
+        displayPackageItems("Pro", servicePricing.getPackageItems("3D Modelling", "Pro"));
     }
 
     // Metode untuk menampilkan harga dan item-item terkait pada antarmuka pengguna
@@ -55,54 +52,69 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         // ...
         // Mendapatkan harga dan item-item terkait untuk level paket yang dipilih
         for (String level : levelList) {
-        double price = servicePricing.getPrice(product, level);
+            double price = servicePricing.getPrice(product, level);
 
-        // Format harga dengan DecimalFormat
-        DecimalFormat df = new DecimalFormat("#,#00");
-        String formattedPrice = df.format(price);
+            // Format harga dengan DecimalFormat
+            DecimalFormat df = new DecimalFormat("#,#00");
+            String formattedPrice = df.format(price);
 
-        // Memisahkan harga menjadi bagian sebelum dan setelah desimal
-        String[] priceArray = formattedPrice.split("\\.");
+            // Memisahkan harga menjadi bagian sebelum dan setelah desimal
+            String[] priceArray = formattedPrice.split("\\.");
 
-        // Menyimpan bagian harga ke dalam lb1 dan lb2 di PanelPricing
-        switch (level) {
-            case "basic":
-                basicPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
-                break;
-            case "pro":
-                proPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
-                break;
-            case "standard":
-                standardPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
-                break;
-            // Add more cases if you have additional levels
+            // Menyimpan bagian harga ke dalam lb1 dan lb2 di PanelPricing
+            switch (level) {
+                case "Basic":
+                    basicPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                    basicPricing.setTitleText(level);
+                    basicPricing.setPackageItems(servicePricing.getPackageItems(product, level));
+                    break;
+                case "Pro":
+                    proPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                    proPricing.setTitleText(level);
+                    proPricing.setPackageItems(servicePricing.getPackageItems(product, level));
+                    break;
+                case "Standard":
+                    standardPricing.setPriceComponents("$" + priceArray[0] + ".", priceArray.length == 2 ? priceArray[1] : "");
+                    standardPricing.setTitleText(level);
+                    standardPricing.setPackageItems(servicePricing.getPackageItems(product, level));
+                    break;
+                // Add more cases if you have additional levels
+            }
+
+            // Menampilkan item-item pada antarmuka pengguna
+            // Panggil metode displayPackageItems untuk menampilkan item-item
+            displayPackageItems(level, servicePricing.getPackageItems(product, level));
         }
-
-        // Mendapatkan item-item terkait dengan level paket
-        List<Model_Data> packageItems = servicePricing.getPackageItems(product, level);
-
-        // Menampilkan item-item pada antarmuka pengguna
-        // Panggil metode displayPackageItems untuk menampilkan item-item
-        displayPackageItems(level, packageItems);
     }
-}
 
     // Metode untuk menampilkan item-item pada antarmuka pengguna
-private void displayPackageItems(String level, List<Model_Data> packageItems) {
-    // Menyimpan item-item ke dalam JList masing-masing level
-//    switch (level) {
-//        case "basic":
-//            basicPricing.setListItems(packageItems);
-//            break;
-//        case "pro":
-//            proPricing.setListItems(packageItems);
-//            break;
-//        case "standard":
-//            standardPricing.setListItems(packageItems);
-//            break;
-//        // Add more cases if you have additional levels
-//    }
-}
+    private void displayPackageItems(String level, List<Model_Data> packageItems) {
+        // Memastikan daftar item paket tidak kosong sebelum menampilkan
+        if (packageItems == null || packageItems.isEmpty()) {
+            // Mungkin tambahkan log atau tangani sesuai kebutuhan
+            System.out.println("Daftar item paket kosong atau null.");
+            return;
+        }
+
+        // Menyimpan item-item ke dalam JList masing-masing level
+        switch (level) {
+            case "Basic":
+                basicPricing.setListItems(packageItems);
+                break;
+            case "Pro":
+                proPricing.setListItems(packageItems);
+                break;
+            case "Standard":
+                standardPricing.setListItems(packageItems);
+                break;
+            // Tambahkan lebih banyak kasus jika Anda memiliki tingkatan tambahan
+            default:
+                // Menangani tingkatan yang tidak dikenali
+                System.out.println("Tingkatan tidak dikenali: " + level);
+                // Atau tambahkan tanggapan lain sesuai kebutuhan
+                break;
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -219,8 +231,12 @@ private void displayPackageItems(String level, List<Model_Data> packageItems) {
 
     private void productComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productComboBoxActionPerformed
         String selectedProduct = (String) productComboBox.getSelectedItem();
+        String selectedLevel = "Basic";  // Ganti dengan level yang sesuai
         if (selectedProduct != null) {
             displayPackageDetails(selectedProduct);
+
+            // Gunakan selectedProduct dan selectedLevel dalam pemanggilan updatePricingList
+            panelDetail.updatePricingList(servicePricing, selectedProduct, selectedLevel);
         }
     }//GEN-LAST:event_productComboBoxActionPerformed
 

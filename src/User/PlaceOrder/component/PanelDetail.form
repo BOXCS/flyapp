@@ -36,7 +36,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="User.PlaceOrder.swing.List" name="list">
+    <Component class="User.PlaceOrder.swing.PricingList" name="list">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -55,7 +55,7 @@
         </Property>
       </AccessibilityProperties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Model_Data&gt;"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JLayeredPane" name="jLayeredPane1">
