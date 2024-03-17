@@ -1,5 +1,6 @@
 package User.PlaceOrder.Service;
 
+import PaymentGateaway.Model.Model_PG;
 import User.PlaceOrder.model.ModelItem;
 import User.PlaceOrder.model.Model_Data;
 import connection.DatabaseConnection;
@@ -9,8 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ServicePricing {
+
     private final Connection con;
 
     public ServicePricing() throws SQLException {
@@ -18,13 +23,13 @@ public class ServicePricing {
         databaseConnection.connectToDatabase();
         con = databaseConnection.getConnection();
     }
-    
+
     public double getPrice(String productName, String levelName) {
         double price = 0.0;
-        String query = "SELECT price_value FROM price " +
-                       "JOIN Product ON price.product_id = Product.product_id " +
-                       "JOIN packagelevel ON price.level_id = packagelevel.level_id " +
-                       "WHERE Product.product_name = ? AND packagelevel.level_name = ?";
+        String query = "SELECT price_value FROM price "
+                + "JOIN Product ON price.product_id = Product.product_id "
+                + "JOIN packagelevel ON price.level_id = packagelevel.level_id "
+                + "WHERE Product.product_name = ? AND packagelevel.level_name = ?";
 
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, productName);
@@ -74,34 +79,152 @@ public class ServicePricing {
 
         return levelList.toArray(new String[0]);
     }
-    
+
     public List<Model_Data> getPackageItems(String productName, String levelName) {
-    List<Model_Data> packageItems = new ArrayList<>();
-    String query = "SELECT item_name, is_enabled FROM packageitem " +
-                   "JOIN product ON packageitem.product_id = product.product_id " +
-                   "JOIN packagelevel ON packageitem.level_id = packagelevel.level_id " +
-                   "WHERE product.product_name = ? AND packagelevel.level_name = ?";
+        List<Model_Data> packageItems = new ArrayList<>();
+        String query = "SELECT item_name, is_enabled FROM packageitem "
+                + "JOIN product ON packageitem.product_id = product.product_id "
+                + "JOIN packagelevel ON packageitem.level_id = packagelevel.level_id "
+                + "WHERE product.product_name = ? AND packagelevel.level_name = ?";
 
-    try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-        preparedStatement.setString(1, productName);
-        preparedStatement.setString(2, levelName);
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, productName);
+            preparedStatement.setString(2, levelName);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            boolean isEnabled = resultSet.getBoolean("is_enabled");
-            String itemName = resultSet.getString("item_name");
-            packageItems.add(new Model_Data(isEnabled, itemName));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                boolean isEnabled = resultSet.getBoolean("is_enabled");
+                String itemName = resultSet.getString("item_name");
+                packageItems.add(new Model_Data(isEnabled, itemName));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        // Debugging statements
+//    System.out.println("Debugging - Query: " + query);
+//    System.out.println("Debugging - Product Name: " + productName);
+//    System.out.println("Debugging - Level Name: " + levelName);
+//    System.out.println("Debugging - Number of items retrieved: " + packageItems.size());
+        return packageItems;
     }
 
-    // Debugging statements
-    System.out.println("Debugging - Query: " + query);
-    System.out.println("Debugging - Product Name: " + productName);
-    System.out.println("Debugging - Level Name: " + levelName);
-    System.out.println("Debugging - Number of items retrieved: " + packageItems.size());
+    public Model_PG getProductInfo(String productName, String levelName) {
+        double price = getPrice(productName, levelName);
+        List<Model_Data> packageItems = getPackageItems(productName, levelName);
 
-    return packageItems;
-}
+        // Debugging statement
+        System.out.println("Debugging - Product Name: " + productName);
+        System.out.println("Debugging - Level Name: " + levelName);
+        System.out.println("Debugging - Price: " + price);
+        System.out.println("Debugging - Number of package items: " + packageItems.size());
+
+        return new Model_PG(productName, levelName, price, packageItems);
+    }
+
+    // Metode untuk melakukan transaksi dan menyimpannya ke dalam tabel transaction
+    public boolean placeOrder(String productName, String levelName, double price) {
+        String transactionNumber = generateTransactionNumber();
+        String status = "Pending";
+        Timestamp createdAt = getCurrentTimestamp();
+
+        String query = "INSERT INTO transaction (transaction_number, amount, status, created_at) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, transactionNumber);
+            preparedStatement.setDouble(2, price);
+            preparedStatement.setString(3, status);
+            preparedStatement.setTimestamp(4, createdAt);
+
+            // Execute the insert statement
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Check if the insertion was successful
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Generate a transaction number (e.g., TSR-1234)
+    private String generateTransactionNumber() {
+        String prefix = "TSR-";
+        int randomNumber = (int) (Math.random() * 10000);  // You may need a more robust method to generate a random number
+        return prefix + randomNumber;
+    }
+
+    private String[] getColumnList(String columnName, String tableName, String condition) {
+        List<String> columnList = new ArrayList<>();
+        String query = "SELECT " + columnName + " FROM " + tableName + " WHERE " + condition;
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                columnList.add(resultSet.getString(columnName));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return columnList.toArray(new String[0]);
+    }
+
+    // Get the current timestamp
+    private Timestamp getCurrentTimestamp() {
+        Date currentDate = new Date();
+        return new Timestamp(currentDate.getTime());
+    }
+
+    public List<String> getDesigner(String category, String typeContent) {
+        List<String> designerList = new ArrayList<>();
+        String query = "SELECT username FROM designer WHERE typeContent = ? AND Status = 'Available'";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, category);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                designerList.add(resultSet.getString("username"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return designerList;
+    }
+
+    public List<String> getDesignersByProduct(String productName) throws SQLException {
+        List<String> designers = new ArrayList<>();
+
+        // Dapatkan kategori atau jenis konten dari produk
+        String category = getCategoryByProduct(productName);
+
+        // Pastikan kategori tidak kosong
+        if (category != null && !category.isEmpty()) {
+            // Dapatkan daftar desainer berdasarkan kategori dan status yang tersedia
+            designers = getDesigner(category, "Available");
+        } else {
+            System.out.println("Error: Category not found for the product: " + productName);
+        }
+
+        return designers;
+    }
+
+    private String getCategoryByProduct(String productName) {
+        String category = null;
+        String query = "SELECT category FROM product WHERE product_name = ?";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, productName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                category = resultSet.getString("category");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return category;
+    }
+
 }

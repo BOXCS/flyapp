@@ -1,7 +1,11 @@
 package User.PlaceOrder.component;
 
+import PaymentGateaway.Component.PGDetail;
+import PaymentGateaway.PGMain;
+import User.PlaceOrder.Main.PlaceOrderMain;
 import User.PlaceOrder.model.Model_Data;
 import User.PlaceOrder.swing.PricingList;
+import User.PlaceOrder.swing.Title;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -17,7 +21,20 @@ import javax.swing.DefaultListModel;
 
 public class PanelPricing extends javax.swing.JPanel {
 
+    public boolean isIsSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
     private PricingList<Model_Data> list = new PricingList();
+    private PGDetail selectedPanelPricing;
+    private PGMain pgMain;
+    private PlaceOrderMain POMain;
+    private boolean selected;
+    private boolean isSelected;
 
     public Color getColor1() {
         return color1;
@@ -34,7 +51,7 @@ public class PanelPricing extends javax.swing.JPanel {
 
     public void setColor2(Color color2) {
         this.color2 = color2;
-        panelDetail.setButtonColor(color2);
+//        panelDetail.setButtonColor(color2);
     }
 
     public void addItem(Model_Data data) {
@@ -45,11 +62,29 @@ public class PanelPricing extends javax.swing.JPanel {
         panelDetail.getList().clearItems();
     }
 
+    // Metode untuk memeriksa apakah panel pricing dipilih atau tidak
+    public boolean isSelected() {
+        return selected;
+    }
+
+    // Metode untuk menetapkan status pilihan panel pricing
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public Title getTitle() {
+        return title1;
+    }
+
+    public PanelPricing getselectedPanelPricing(PlaceOrderMain POMain) {
+        return null;
+    }
+
     public PanelPricing() {
         initComponents();
         setOpaque(false);
         setPreferredSize(new Dimension(300, 430));
-        panelDetail.setButtonColor(color2);
+//        panelDetail.setButtonColor(color2);
         title1.setForeground(color1);
     }
     private Color color1 = new Color(20, 203, 144);
@@ -59,7 +94,7 @@ public class PanelPricing extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelDetail = new User.PlaceOrder.component.PanelDetail();
+        panelDetail = new User.PlaceOrder.component.PanelDetail(POMain);
         jLayeredPane1 = new javax.swing.JLayeredPane();
         lb1 = new javax.swing.JLabel();
         lb2 = new javax.swing.JLabel();
@@ -154,19 +189,36 @@ public class PanelPricing extends javax.swing.JPanel {
         }
     }
 
+    public PricingList<Model_Data> getList() {
+        return list;
+    }
+
     public void setPrice(String title, double price) {
         this.title1.setText(title);
         DecimalFormat df = new DecimalFormat("#,#00");
-        String p = price + "";
-        String priceArray[] = p.split("\\.");
+        String formattedPrice = df.format(price);
+        String[] priceArray = formattedPrice.split("\\.");
 
-        // Mengatur lb1 dan lb2 sesuai dengan harga yang diberikan
-        if (priceArray.length == 2) {
-            lb1.setText("$" + df.format(Double.valueOf(priceArray[0])) + ".");
-            lb2.setText(df.format(Double.valueOf(priceArray[1])));
-        } else {
-            lb1.setText("$" + df.format(Double.valueOf(priceArray[0])) + ".");
-            lb2.setText("");
+        lb1.setText("$" + priceArray[0] + ".");
+        lb2.setText(priceArray.length > 1 ? priceArray[1] : "");
+    }
+
+    // Metode untuk mendapatkan harga dari panel
+    public double getPrice() {
+        try {
+            // Ambil nilai lb1 dan lb2 sebagai teks
+            String lb1Text = lb1.getText().replaceAll("[^\\d.]", ""); // Hapus semua karakter kecuali digit dan titik
+            String lb2Text = lb2.getText().replaceAll("[^\\d]", "");  // Hapus semua karakter kecuali digit
+
+            // Gabungkan bagian lb1 dan lb2 untuk membentuk harga
+            String priceText = lb1Text + (lb2Text.isEmpty() ? "" : "." + lb2Text);
+
+            // Parsing teks harga menjadi tipe data double
+            return Double.parseDouble(priceText);
+        } catch (NumberFormatException e) {
+            // Tangani kesalahan parsing
+            e.printStackTrace();
+            return 0.0; // Mengembalikan nilai default jika parsing gagal
         }
     }
 
@@ -176,8 +228,12 @@ public class PanelPricing extends javax.swing.JPanel {
         lb2.setText(lb2Text);
     }
 
-    public void addEventBuy(ActionListener event) {
-        panelDetail.addEventBuy(event);
+    public String getLb1() {
+        return lb1.getText();
+    }
+
+    public String getLb2() {
+        return lb2.getText();
     }
 
     // Tambahkan metode berikut di kelas PanelPricing
@@ -186,14 +242,24 @@ public class PanelPricing extends javax.swing.JPanel {
     }
 
     public void setPackageItems(List<Model_Data> packageItems) {
-    // Menyimpan item-item ke dalam JList masing-masing level
-    setListItems(packageItems);
+        // Menyimpan item-item ke dalam JList masing-masing level
+        setListItems(packageItems);
 
-    // Juga, Anda dapat menambahkan logika lain yang berkaitan dengan tampilan PanelDetail
-    // Contoh: Menetapkan daftar item ke PanelDetail jika diperlukan
-    panelDetail.setListItems(packageItems);
-}
+        // Juga, Anda dapat menambahkan logika lain yang berkaitan dengan tampilan PanelDetail
+        // Contoh: Menetapkan daftar item ke PanelDetail jika diperlukan
+        panelDetail.setListItems(packageItems);
+    }
 
+    public List<Model_Data> getListItems() {
+        DefaultListModel<Model_Data> model = (DefaultListModel<Model_Data>) list.getModel();
+        List<Model_Data> items = new ArrayList<>();
+
+        for (int i = 0; i < model.getSize(); i++) {
+            items.add(model.getElementAt(i));
+        }
+
+        return items;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

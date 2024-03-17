@@ -11,6 +11,8 @@ import LoginRegister.Model.ModelMessage;
 import LoginRegister.Model.ModelUser;
 import LoginRegister.Service.ServiceLogin;
 import LoginRegister.Service.ServiceMail;
+import User.PlaceOrder.Main.PlaceOrderMain;
+import User.PlaceOrder.component.PanelPricing;
 import connection.DatabaseConnection;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -60,6 +62,7 @@ public class Main extends javax.swing.JFrame {
         cover = new PanelCover();
         loading = new PanelLoading();
         verifyCode = new PanelVerifyCode();
+        Message ms = new Message();
         ActionListener eventRegister = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,14 +134,16 @@ public class Main extends javax.swing.JFrame {
         bg.add(bgLabel, Integer.valueOf(0));
         bgLabel.setSize(bg.getWidth(), bg.getHeight());
         bg.setLayout(layout);
+        bg.setLayer(ms, JLayeredPane.POPUP_LAYER);
         bg.setLayer(loading, JLayeredPane.POPUP_LAYER);
         bg.setLayer(verifyCode, JLayeredPane.POPUP_LAYER);
-        bg.setLayer(loginRegister, JLayeredPane.POPUP_LAYER);
+        bg.setLayer(loginRegister, JLayeredPane.PALETTE_LAYER);
         bg.setLayer(cover, JLayeredPane.PALETTE_LAYER);  // Pindahkan ke lapisan yang lebih rendah
         bg.add(cover, "width " + coverSize + "%, pos 0al 0 n 100%");
         bg.add(loginRegister, "width " + loginSize + "%, pos 1al 0 n 100%");
         bg.add(loading, "pos 0 0 100% 100%");
         bg.add(verifyCode, "pos 0 0 100% 100%");
+        bg.add(ms, "pos 0.5al -30");
         cover.addEvent(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -229,6 +234,9 @@ public class Main extends javax.swing.JFrame {
     private void showMessage(Message.MessageType messageType, String message) {
         Message ms = new Message();
         ms.showMessage(messageType, message);
+        // Tambahkan komponen Message ke lapisan teratas
+        bg.setLayer(ms, JLayeredPane.MODAL_LAYER);
+        bg.add(ms, "pos 0.5al -30", 0);
         TimingTarget target = new TimingTargetAdapter() {
             @Override
             public void begin() {
@@ -319,7 +327,7 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws SQLException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -349,6 +357,7 @@ public class Main extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 //                new splash.SplashScreen(null,true).setVisible(true);

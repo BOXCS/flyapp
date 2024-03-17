@@ -68,4 +68,8 @@ public class PricingList<E extends Object> extends JList<E> {
             e.printStackTrace();
         }
     }
+    
+    public E getSelectedItem() {
+        return getSelectedValue();
+    }
 }

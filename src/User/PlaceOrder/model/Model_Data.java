@@ -2,10 +2,19 @@ package User.PlaceOrder.model;
 
 public class Model_Data {
 
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
     private boolean status;
     private double price;
     private String level;
     private String itemName;
+    private String product;
 
     public boolean isStatus() {
         return status;
