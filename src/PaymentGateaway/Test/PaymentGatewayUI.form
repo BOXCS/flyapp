@@ -57,13 +57,9 @@
                   <EmptySpace min="-2" pref="180" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="cmdCheckout" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="119" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="lblCVV" min="-2" max="-2" attributes="0"/>
                               <Component id="lblCard" min="-2" max="-2" attributes="0"/>
@@ -72,9 +68,16 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="txtCard" max="32767" attributes="0"/>
-                              <Component id="txtCVV" alignment="1" max="32767" attributes="0"/>
                               <Component id="dateChooserExpiredDate" alignment="1" min="-2" pref="259" max="-2" attributes="0"/>
+                              <Component id="txtCVV" max="32767" attributes="0"/>
                           </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="299" max="-2" attributes="0"/>
+                          <Component id="buttonGradient1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                          <Component id="cmdCheckout" min="-2" pref="116" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="228" max="-2" attributes="0"/>
@@ -92,11 +95,12 @@
                       <Component id="txtCard" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lblCard" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="36" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lblCVV" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtCVV" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblCVV" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -108,7 +112,10 @@
                       </Group>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="cmdCheckout" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="cmdCheckout" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="buttonGradient1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -207,7 +214,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="$99.99"/>
+                <Property name="text" type="java.lang.String" value="$49.99"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -234,17 +241,15 @@
             <Property name="text" type="java.lang.String" value="CVV :"/>
           </Properties>
         </Component>
-        <Component class="PaymentGateaway.Swing.PasswordField" name="txtCVV">
-          <Properties>
-            <Property name="labelText" type="java.lang.String" value="CVV"/>
-          </Properties>
-        </Component>
         <Component class="PaymentGateaway.Swing.TextField" name="txtCard">
           <Properties>
             <Property name="labelText" type="java.lang.String" value="Card Number"/>
           </Properties>
         </Component>
         <Component class="com.toedter.calendar.JDateChooser" name="dateChooserExpiredDate">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="dateChooserExpiredDatePropertyChange"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblExpiredDate">
           <Properties>
@@ -259,13 +264,32 @@
         </Component>
         <Component class="PaymentGateaway.Swing.ButtonGradient" name="cmdCheckout">
           <Properties>
-            <Property name="text" type="java.lang.String" value="buttonGradient1"/>
+            <Property name="text" type="java.lang.String" value="Checkout"/>
             <Property name="color1" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="dc" green="91" red="91" type="rgb"/>
             </Property>
             <Property name="color2" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="d6" green="7c" red="78" type="rgb"/>
             </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdCheckoutActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="PaymentGateaway.Swing.ButtonGradient" name="buttonGradient1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="CETAK NOTA"/>
+            <Property name="color1" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="dc" green="91" red="91" type="rgb"/>
+            </Property>
+            <Property name="color2" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="d6" green="7c" red="78" type="rgb"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="PaymentGateaway.Swing.TextField" name="txtCVV">
+          <Properties>
+            <Property name="labelText" type="java.lang.String" value="CVV"/>
           </Properties>
         </Component>
       </SubComponents>

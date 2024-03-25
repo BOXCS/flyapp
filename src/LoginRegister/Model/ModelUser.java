@@ -32,6 +32,14 @@ public class ModelUser {
         this.userID = userID;
     }
 
+    public ModelUser(String userName) {
+        this.userName = userName;
+    }
+
+    public ModelUser() {
+    }
+    
+
     // getters and setters
 
     public String getRole() {

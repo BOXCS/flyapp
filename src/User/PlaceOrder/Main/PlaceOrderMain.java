@@ -1,6 +1,8 @@
 package User.PlaceOrder.Main;
 
+import LoginRegister.Model.ModelUser;
 import PaymentGateaway.PGMain;
+import PaymentGateaway.Test.CetakNota;
 import User.PlaceOrder.Service.ServicePricing;
 import User.PlaceOrder.component.PanelDetail;
 import User.PlaceOrder.component.PanelPricing;
@@ -186,8 +188,39 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
     // Create a method to handle the Buy action with the retrieved price
     private void processBuyAction(String level, String lb1, String lb2) {
-        // Perform actions with the retrieved price, for example, display a message
-        JOptionPane.showMessageDialog(this, "You have selected a " + level + " product with price: " + lb1 + lb2, "Purchase Confirmation", JOptionPane.INFORMATION_MESSAGE);
+        // Mendapatkan informasi yang diperlukan
+        String selectedProduct = getSelectedProduct();
+        String selectedDesigner = (String) designerCombobox.getSelectedItem();
+
+        // Memastikan produk dan desainer tidak null
+        if (selectedProduct != null && selectedDesigner != null) {
+            try {
+                // Mendapatkan harga dalam bentuk numerik
+                double price = Double.parseDouble(lb1.substring(1)) + Double.parseDouble(lb2);
+
+                // Buat objek ModelUser dengan informasi username pengguna
+                // Anda dapat menggantikan "john_doe" dengan username pengguna yang sesuai
+                ModelUser user = new ModelUser("wee");
+
+                // Lakukan operasi insert ke dalam basis data dengan objek ModelUser yang sesuai
+                boolean success = servicePricing.insertOrder(selectedProduct, selectedDesigner, level, price, user);
+
+                if (success) {
+                    // Jika operasi insert berhasil, tampilkan pesan keberhasilan
+                    JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    // Jika operasi insert gagal, tampilkan pesan kegagalan
+                    JOptionPane.showMessageDialog(this, "Failed to place order. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                // Tangani jika terjadi kesalahan saat mengkonversi harga ke bentuk numerik
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error occurred while processing the order. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            // Jika produk atau desainer null, tampilkan pesan kesalahan
+            JOptionPane.showMessageDialog(this, "Please select a product and a designer before placing the order.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void handleBuyAction(String level) {
@@ -200,6 +233,10 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
             // Lakukan tindakan yang sesuai dengan pembelian
             processBuyAction(level, lb1, lb2);
+
+            // Setelah selesai pembelian, buat instance JFrame CetakNota dan tampilkan
+//            CetakNota cetakNotaFrame = new CetakNota();
+//            cetakNotaFrame.setVisible(true);
         } else {
             System.out.println("Error: Selected PanelPricing is null.");
         }
@@ -420,6 +457,9 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         standardPricing.setIsSelected(false);
         proPricing.setIsSelected(false);
 
+        // Memanggil handleBuyAction dengan informasi "Basic"
+        handleBuyAction("Basic");
+
         // Initialize the paymentGateway instance
         paymentGateaway = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
 
@@ -440,6 +480,9 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         // Atur properti isSelected pada standardPricing dan proPricing menjadi false
         standardPricing.setIsSelected(true);
         proPricing.setIsSelected(false);
+        
+        // Memanggil handleBuyAction dengan informasi "Standard"
+        handleBuyAction("Standard");
 
         // Initialize the paymentGateway instance
         paymentGateaway = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
@@ -461,6 +504,9 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         // Atur properti isSelected pada basicPricing dan standardPricing menjadi false
         basicPricing.setIsSelected(false);
         standardPricing.setIsSelected(false);
+
+        // Memanggil handleBuyAction dengan informasi "Pro"
+        handleBuyAction("Pro");
 
         // Initialize the paymentGateway instance
         paymentGateaway = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);

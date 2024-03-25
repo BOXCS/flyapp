@@ -1,5 +1,6 @@
 package User.PlaceOrder.Service;
 
+import LoginRegister.Model.ModelUser;
 import PaymentGateaway.Model.Model_PG;
 import User.PlaceOrder.model.ModelItem;
 import User.PlaceOrder.model.Model_Data;
@@ -149,9 +150,13 @@ public class ServicePricing {
 
     // Generate a transaction number (e.g., TSR-1234)
     private String generateTransactionNumber() {
-        String prefix = "TSR-";
-        int randomNumber = (int) (Math.random() * 10000);  // You may need a more robust method to generate a random number
-        return prefix + randomNumber;
+        String prefix = "TRS-";
+        int randomNumber = (int) (Math.random() * 10000); // Menghasilkan nomor acak antara 0 dan 9999
+
+        // Menambahkan angka nol di depan jika nomor acaknya memiliki tiga digit atau kurang
+        String transactionNumber = String.format("%04d", randomNumber);
+
+        return prefix + transactionNumber;
     }
 
     private String[] getColumnList(String columnName, String tableName, String condition) {
@@ -225,6 +230,35 @@ public class ServicePricing {
         }
 
         return category;
+    }
+
+    public boolean insertOrder(String productName, String designer, String level, double price, ModelUser user) {
+        String transactionNumber = generateTransactionNumber();
+        String status = "Pending";
+        Timestamp createdAt = getCurrentTimestamp();
+
+        String query = "INSERT INTO transaction (transaction_number, product_name, designer, level, amount, status, created_at, username) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, transactionNumber);
+            preparedStatement.setString(2, productName);
+            preparedStatement.setString(3, designer);
+            preparedStatement.setString(4, level);
+            preparedStatement.setDouble(5, price);
+            preparedStatement.setString(6, status);
+            preparedStatement.setTimestamp(7, createdAt);
+            preparedStatement.setString(8, user.getUserName()); // Mengambil username dari objek ModelUser
+
+            // Execute the insert statement
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Check if the insertion was successful
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
