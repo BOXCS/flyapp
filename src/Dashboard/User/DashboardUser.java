@@ -1,10 +1,10 @@
-
 package Dashboard.User;
 
 import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
 import Dashboard.User.Form.FormHomeU;
 import LoginRegister.Model.ModelUser;
+import User.JobApply.Designer.DesignerApply;
 import User.PlaceOrder.Main.PlaceOrderMain;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,31 +18,33 @@ import javax.swing.ImageIcon;
 public class DashboardUser extends javax.swing.JFrame {
 
     private final ModelUser user;
-    
+
     public DashboardUser(ModelUser user) {
         this.user = user;
         initComponents();
         getContentPane().setBackground(new Color(63, 109, 217));
-        
+
         bg = new javax.swing.JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Image img = new ImageIcon(getClass().getResource("/png/Group 17.png")).getImage();
                 g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-            }     
+            }
         };
         MenuEvent event = new MenuEvent() {
             @Override
             public void menuSelected(int index) {
                 if (index == 0) {
-//                    showForm(new FormHomeU());
+                    showForm(new Form(index + "User"));
                 } else if (index == 1) {
                     try {
                         showForm(new PlaceOrderMain());
                     } catch (SQLException ex) {
                         Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } else if (index == 3) {
+                    showForm(new DesignerApply());
                 } else {
                     showForm(new Form(index + ""));
                 }
@@ -52,7 +54,7 @@ public class DashboardUser extends javax.swing.JFrame {
         menu.setSelected(0);
         setExtendedState(MAXIMIZED_BOTH);
     }
-    
+
     private void showForm(Component com) {
         body.removeAll();
         body.add(com);

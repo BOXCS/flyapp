@@ -81,14 +81,7 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
         lblTransactionNumber = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         lblTotalAmount = new javax.swing.JLabel();
-        lblCard = new javax.swing.JLabel();
-        lblCVV = new javax.swing.JLabel();
-        txtCard = new PaymentGateaway.Swing.TextField();
-        dateChooserExpiredDate = new com.toedter.calendar.JDateChooser();
-        lblExpiredDate = new javax.swing.JLabel();
         cmdCheckout = new PaymentGateaway.Swing.ButtonGradient();
-        buttonGradient1 = new PaymentGateaway.Swing.ButtonGradient();
-        txtCVV = new PaymentGateaway.Swing.TextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -145,26 +138,6 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
                 .addGap(20, 20, 20))
         );
 
-        lblCard.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblCard.setForeground(new java.awt.Color(255, 255, 255));
-        lblCard.setText("Card Number :");
-
-        lblCVV.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblCVV.setForeground(new java.awt.Color(255, 255, 255));
-        lblCVV.setText("CVV :");
-
-        txtCard.setLabelText("Card Number");
-
-        dateChooserExpiredDate.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                dateChooserExpiredDatePropertyChange(evt);
-            }
-        });
-
-        lblExpiredDate.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblExpiredDate.setForeground(new java.awt.Color(255, 255, 255));
-        lblExpiredDate.setText("Expiration Date :");
-
         cmdCheckout.setText("Checkout");
         cmdCheckout.setColor1(new java.awt.Color(145, 145, 220));
         cmdCheckout.setColor2(new java.awt.Color(120, 124, 214));
@@ -173,12 +146,6 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
                 cmdCheckoutActionPerformed(evt);
             }
         });
-
-        buttonGradient1.setText("CETAK NOTA");
-        buttonGradient1.setColor1(new java.awt.Color(145, 145, 220));
-        buttonGradient1.setColor2(new java.awt.Color(120, 124, 214));
-
-        txtCVV.setLabelText("CVV");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -192,26 +159,10 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
                 .addGap(187, 187, 187)
                 .addComponent(pGDetail1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(180, 180, 180))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblCVV)
-                            .addComponent(lblCard)
-                            .addComponent(lblExpiredDate))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dateChooserExpiredDate, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCVV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(299, 299, 299)
-                        .addComponent(buttonGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44)
-                        .addComponent(cmdCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(228, 228, 228))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(341, 341, 341)
+                .addComponent(cmdCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,27 +170,9 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pGDetail1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCard))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCVV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCVV))
-                .addGap(13, 13, 13)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(dateChooserExpiredDate, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(lblExpiredDate)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmdCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addComponent(cmdCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -257,17 +190,6 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void dateChooserExpiredDatePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateChooserExpiredDatePropertyChange
-        if (dateChooserExpiredDate.getDate() != null) {
-            // Mengubah format tanggal kadaluwarsa menjadi "MM-yyyy"
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
-            String formattedExpirationDate = dateFormat.format(dateChooserExpiredDate.getDate());
-
-            // Menampilkan tanggal kadaluwarsa yang diformat pada label atau di tempat lain yang sesuai
-            System.out.println("Formatted Expiration Date: " + formattedExpirationDate);
-        }
-    }//GEN-LAST:event_dateChooserExpiredDatePropertyChange
 
     private void cmdCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCheckoutActionPerformed
         processPayment();
@@ -349,20 +271,13 @@ public class PaymentGatewayUI extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private PaymentGateaway.Swing.ButtonGradient buttonGradient1;
     private PaymentGateaway.Swing.ButtonGradient cmdCheckout;
-    private com.toedter.calendar.JDateChooser dateChooserExpiredDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel lblCVV;
-    private javax.swing.JLabel lblCard;
-    private javax.swing.JLabel lblExpiredDate;
     private javax.swing.JLabel lblTotalAmount;
     private javax.swing.JLabel lblTransactionNumber;
     private PaymentGateaway.Component.PGDetail pGDetail1;
-    private PaymentGateaway.Swing.TextField txtCVV;
-    private PaymentGateaway.Swing.TextField txtCard;
     // End of variables declaration//GEN-END:variables
 }

@@ -36,7 +36,7 @@ public class DashboardAdmin extends javax.swing.JFrame {
             public void menuSelected(int index) {
                 if (index == 0) {
                     showForm(new FormHome());
-                } else if (index == 4) {
+                } else if (index == 2) {
                     showForm(new AddDesignerMain());
                 } else {
                     showForm(new Form(index + ""));

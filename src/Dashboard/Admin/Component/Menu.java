@@ -50,15 +50,13 @@ public class Menu extends javax.swing.JPanel {
         this.event = event;
         addMenu("1", "Dashboard", 0);
         addMenu("order", "View Order", 1);
-        addMenu("3", "Cart", 2);
 //        addMenu("chat", "Chat", 3);
         split("Report");
-        addMenu("2", "Pricing", 3);
-        addMenu("2", "Add Designer", 4);
-        addMenu("2", "Add Admin", 5);
-        addMenu("4", "Report Income", 6);
+        addMenu("2", "Add Designer", 2);
+        addMenu("2", "Add Admin", 3);
+        addMenu("4", "Report Income", 4);
         space();
-        addMenu("key", "Logout", 7);
+        addMenu("key", "Logout", 5);
     }
     
     private void addMenu(String icon, String text, int index) {
