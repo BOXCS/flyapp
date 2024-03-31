@@ -12,18 +12,31 @@ public class ServiceReport {
 
     public List<ModelChart> getData() throws SQLException {
         List<ModelChart> list = new ArrayList<>();
-        String sql = "select DATE_FORMAT(Date,'%M') as M, SUM(Total) as Total, SUM(Cost) as Cost, SUM(Profit) as Profit from invoice GROUP BY DATE_FORMAT(Date,'%Y-%M') order by Date DESC limit 6";
+        String sql = "SELECT MONTH(created_at) AS Month, "
+                + "SUM(CASE WHEN status = 'Finished' THEN 1 ELSE 0 END) AS Finished, "
+                + "SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS Canceled, "
+                + "SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS Pending "
+                + "FROM transaction "
+                + "GROUP BY MONTH(created_at) "
+                + "ORDER BY MONTH(created_at)";
         PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
         ResultSet r = p.executeQuery();
         while (r.next()) {
-            String month = r.getString(1);
-            double total = r.getDouble(2);
-            double cost = r.getDouble(3);
-            double profit = r.getDouble(4);
-            list.add(new ModelChart(month, new double[]{total, cost, profit}));
+            int month = r.getInt("Month");
+            int finishedCount = r.getInt("Finished");
+            int canceledCount = r.getInt("Canceled");
+            int pendingCount = r.getInt("Pending");
+            list.add(new ModelChart(getMonthName(month), new double[]{finishedCount, canceledCount, pendingCount}));
         }
         r.close();
         p.close();
         return list;
+    }
+
+    // Method untuk mengembalikan nama bulan berdasarkan angka bulan
+    private String getMonthName(int month) {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"};
+        return monthNames[month - 1];
     }
 }

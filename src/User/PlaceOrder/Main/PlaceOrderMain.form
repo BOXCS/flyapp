@@ -101,13 +101,13 @@
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="248" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
                       <Component id="cmdBasic" min="-2" pref="104" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="165" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="279" max="-2" attributes="0"/>
                       <Component id="cmdStandard" min="-2" pref="104" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="cmdPro" min="-2" pref="104" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="183" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="174" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -124,11 +124,11 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="cmdStandard" alignment="0" min="-2" pref="32" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="cmdStandard" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                              <Component id="cmdPro" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                               <Component id="cmdBasic" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="cmdPro" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>

@@ -21,29 +21,27 @@ public class FormHome extends javax.swing.JPanel {
         init();
         initDataTable();
     }
-    
+
     private void init() {
-        chart.addLegend("Income", new Color(12, 84, 175), new Color(0, 108, 247));
-        chart.addLegend("Cost", new Color(186, 37, 37), new Color(241, 100, 120));
-        chart.addLegend("Profit", new Color(5, 125, 0), new Color(95, 209, 69));
-//        chart.addData(new ModelChart("January", new double[]{500, 200, 80, 89}));
-//        chart.addData(new ModelChart("February", new double[]{1000, 750, 90, 150}));
-//        chart.addData(new ModelChart("March", new double[]{200, 350, 460, 900}));
-//        chart.addData(new ModelChart("April", new double[]{480, 150, 750, 700}));
-//        chart.addData(new ModelChart("May", new double[]{350, 540, 300, 150}));
-//        chart.addData(new ModelChart("June", new double[]{190, 280, 81, 200}));
-//        chart.start();
+        chart.addLegend("Finished", new Color(5, 125, 0), new Color(95, 209, 69));
+        chart.addLegend("Canceled", new Color(186, 37, 37), new Color(241, 100, 120));
+        chart.addLegend("Pending", new Color(12, 84, 175), new Color(0, 108, 247));
+
         try {
             List<ModelChart> datas = new ServiceReport().getData();
-            for (int i = datas.size() - 1; i >= 0; i--) {
-                chart.addData(datas.get(i));
+
+            // Tambahkan data ke dalam chart
+            for (ModelChart data : datas) {
+                chart.addData(data);
             }
+
+            // Mulai chart
             chart.start();
         } catch (Exception e) {
             System.err.println(e);
         }
     }
-    
+
     private void initDataTable() {
         table1.addTableCell(new Dashboard.Admin.Cell.CellUserName(), 0);
         table1.addTableCell(new Dashboard.Admin.Cell.CellInstagram(), 1);
@@ -105,13 +103,14 @@ public class FormHome extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Username", "Instagram", "Type Content", "Status", "Last Project", "Action"
+                "Username", "Instagram", "Type Content", "Status", "URL", "Action"
             }
         ));
         jScrollPane1.setViewportView(table1);
         if (table1.getColumnModel().getColumnCount() > 0) {
-            table1.getColumnModel().getColumn(0).setPreferredWidth(200);
-            table1.getColumnModel().getColumn(2).setPreferredWidth(75);
+            table1.getColumnModel().getColumn(1).setPreferredWidth(50);
+            table1.getColumnModel().getColumn(2).setPreferredWidth(20);
+            table1.getColumnModel().getColumn(3).setPreferredWidth(20);
             table1.getColumnModel().getColumn(5).setMinWidth(75);
             table1.getColumnModel().getColumn(5).setPreferredWidth(75);
             table1.getColumnModel().getColumn(5).setMaxWidth(75);

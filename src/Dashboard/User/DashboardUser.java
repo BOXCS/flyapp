@@ -39,7 +39,7 @@ public class DashboardUser extends javax.swing.JFrame {
                     showForm(new Form(index + "User"));
                 } else if (index == 1) {
                     try {
-                        showForm(new PlaceOrderMain());
+                        showForm(new PlaceOrderMain(user));
                     } catch (SQLException ex) {
                         Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
                     }

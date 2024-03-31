@@ -23,6 +23,7 @@ public class PlaceOrderMain extends javax.swing.JPanel {
     private PanelPricing pricingPanel;
     private PGMain pgMain;
     private PaymentGatewayUI paymentGateaway;
+    private final ModelUser user;
 
     // Variabel untuk menyimpan item-item pada masing-masing level
     private List<Model_Data> basicItems;
@@ -33,9 +34,12 @@ public class PlaceOrderMain extends javax.swing.JPanel {
     PanelPricing panelPricing = new PanelPricing();
     PanelDetail panelDetail = new PanelDetail(this);
 
-    public PlaceOrderMain() throws SQLException {
+    public PlaceOrderMain(ModelUser user) throws SQLException {
+
         initComponents();
         setOpaque(false);
+
+        this.user = user;
 
         // Inisialisasi objek ServicePricing
         servicePricing = new ServicePricing();
@@ -198,11 +202,7 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                 // Mendapatkan harga dalam bentuk numerik
                 double price = Double.parseDouble(lb1.substring(1)) + Double.parseDouble(lb2);
 
-                // Buat objek ModelUser dengan informasi username pengguna
-                // Anda dapat menggantikan "john_doe" dengan username pengguna yang sesuai
-                ModelUser user = new ModelUser("wee");
-
-                // Lakukan operasi insert ke dalam basis data dengan objek ModelUser yang sesuai
+                // Lakukan operasi insert ke dalam basis data
                 boolean success = servicePricing.insertOrder(selectedProduct, selectedDesigner, level, price, user);
 
                 if (success) {
@@ -318,13 +318,13 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addGap(248, 248, 248)
+                .addGap(108, 108, 108)
                 .addComponent(cmdBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(165, 165, 165)
+                .addGap(279, 279, 279)
                 .addComponent(cmdStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(cmdPro, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(183, 183, 183))
+                .addGap(174, 174, 174))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,10 +338,10 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                     .addComponent(basicPricing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmdStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cmdStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmdBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cmdPro, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cmdPro, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmdBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -480,7 +480,7 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         // Atur properti isSelected pada standardPricing dan proPricing menjadi false
         standardPricing.setIsSelected(true);
         proPricing.setIsSelected(false);
-        
+
         // Memanggil handleBuyAction dengan informasi "Standard"
         handleBuyAction("Standard");
 
