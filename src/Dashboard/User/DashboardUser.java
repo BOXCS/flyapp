@@ -6,6 +6,7 @@ import Dashboard.User.Form.FormHomeU;
 import LoginRegister.Model.ModelUser;
 import User.JobApply.Designer.DesignerApply;
 import User.PlaceOrder.Main.PlaceOrderMain;
+import User.SeeOrder.Main.SeeOrderMain;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -44,6 +45,8 @@ public class DashboardUser extends javax.swing.JFrame {
                         Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else if (index == 3) {
+                    showForm(new SeeOrderMain(user));
+                } else if (index == 4) {
                     showForm(new DesignerApply());
                 } else {
                     showForm(new Form(index + ""));

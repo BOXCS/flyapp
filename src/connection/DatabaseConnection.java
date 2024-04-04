@@ -17,15 +17,22 @@ public class DatabaseConnection {
     }
 
     private DatabaseConnection() {
-
+        try {
+            // Disini, Anda bisa melakukan inisialisasi koneksi, misalnya saat aplikasi dimulai
+            connectToDatabase();
+        } catch (SQLException e) {
+            // Tangani kesalahan koneksi jika diperlukan
+            e.printStackTrace();
+        }
     }
 
     public void connectToDatabase() throws SQLException {
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/fly_studio", "root", "");
         } catch (SQLException e) {
-            e.printStackTrace(); // Atau log pesan kesalahan
-            // Handle kesalahan koneksi
+            // Tangani kesalahan koneksi dengan memberikan pesan kesalahan yang bermakna atau logging
+            System.err.println("Failed to connect to database: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -33,7 +40,14 @@ public class DatabaseConnection {
         return connection;
     }
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // Tangani kesalahan penutupan koneksi
+                System.err.println("Error closing connection: " + e.getMessage());
+            }
+        }
     }
 }
