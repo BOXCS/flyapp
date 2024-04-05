@@ -78,6 +78,108 @@ public class ServiceMyOrder {
         }
     }
 
+    public static void fetchWaitingOrders(DefaultTableModel model, String loggedInUsername) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Waiting dan username pengguna yang login
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Waiting' AND username = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, loggedInUsername); // Set parameter username pengguna yang login
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void fetchFinishedOrders(DefaultTableModel model, String loggedInUsername) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Waiting dan username pengguna yang login
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Finished' AND username = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, loggedInUsername); // Set parameter username pengguna yang login
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void fetchCancelledOrders(DefaultTableModel model, String loggedInUsername) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Waiting dan username pengguna yang login
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Cancelled' AND username = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, loggedInUsername); // Set parameter username pengguna yang login
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void addRating(String transactionNumber, int starCount) {
         try {
             // Query untuk menambahkan data rating ke dalam tabel rating

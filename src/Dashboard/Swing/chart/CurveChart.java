@@ -58,7 +58,7 @@ public class CurveChart extends javax.swing.JPanel {
 
             @Override
             public void renderSeries(BlankPlotChart chart, Graphics2D g2, SeriesSize size, int index, List<Path2D.Double> gra) {
-                int legendCount = Math.min(legends.size(), 4);
+                int legendCount = Math.min(legends.size(), 5);
                 for (int i = 0; i < legendCount; i++) {
                     double ys;
                     double xs;

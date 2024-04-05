@@ -22,9 +22,10 @@ public class FormHome extends javax.swing.JPanel {
 
     private void init() {
         chart.addLegend("Finished", new Color(5, 125, 0), new Color(95, 209, 69));
-        chart.addLegend("Canceled", new Color(186, 37, 37), new Color(241, 100, 120));
+        chart.addLegend("Cancelled", new Color(186, 37, 37), new Color(241, 100, 120));
         chart.addLegend("Pending", new Color(12, 84, 175), new Color(0, 108, 247));
-        chart.addLegend("Active", new Color(204, 204, 204), new Color(255, 255, 255));
+        chart.addLegend("Active", new Color(30, 144, 255), new Color(173, 216, 230));
+        chart.addLegend("Waiting", new Color(255, 165, 0), new Color(255, 215, 0));
 
         try {
             List<ModelChart> datas = new ServiceReport().getData();

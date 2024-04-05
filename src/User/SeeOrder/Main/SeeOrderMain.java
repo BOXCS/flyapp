@@ -2,14 +2,30 @@ package User.SeeOrder.Main;
 
 import LoginRegister.Model.ModelUser;
 import Test.DisplayImage.Main.DisplayImageFromDatabase;
+import Test.InsertResult.ServiceResult;
 import User.SeeOrder.Service.ServiceMyOrder;
 import User.SeeOrder.Swing.Cell.CellActionRenderer;
 import User.SeeOrder.Swing.Cell.TableActionCellEditor;
 import User.SeeOrder.Swing.Cell.TableActionEvent;
+import User.SeeOrder.Swing.CellCancelled.CellCancelledRenderer;
+import User.SeeOrder.Swing.CellCancelled.TableActionCancelledEvent;
+import User.SeeOrder.Swing.CellCancelled.TableCancelledCellEditor;
+import User.SeeOrder.Swing.CellFinished.CellFinishedRenderer;
+import User.SeeOrder.Swing.CellFinished.TableActionFinishedEvent;
+import User.SeeOrder.Swing.CellFinished.TableFinishedCellEditor;
+import User.SeeOrder.Swing.CellWaiting.CellWaitingRenderer;
+import User.SeeOrder.Swing.CellWaiting.TableActionWaitingEvent;
+import User.SeeOrder.Swing.CellWaiting.TableWaitingCellEditor;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import video.MainVideoJ;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.sql.SQLException;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 public class SeeOrderMain extends javax.swing.JPanel {
 
@@ -26,9 +42,13 @@ public class SeeOrderMain extends javax.swing.JPanel {
         tablePending.addTableStyle(jScrollPane8);
         tableFinished.addTableStyle(jScrollPane9);
         tableCancelled.addTableStyle(jScrollPane10);
+        tableWaiting.addTableStyle(jScrollPane12);
 
         ServiceMyOrder.fetchActiveOrders((DefaultTableModel) tableActive.getModel(), user.getUserName());
         ServiceMyOrder.fetchPendingOrders((DefaultTableModel) tablePending.getModel(), user.getUserName());
+        ServiceMyOrder.fetchWaitingOrders((DefaultTableModel) tableWaiting.getModel(), user.getUserName());
+        ServiceMyOrder.fetchFinishedOrders((DefaultTableModel) tableFinished.getModel(), user.getUserName());
+        ServiceMyOrder.fetchCancelledOrders((DefaultTableModel) tableCancelled.getModel(), user.getUserName());
 
         TableActionEvent event = new TableActionEvent() {
             @Override
@@ -78,6 +98,112 @@ public class SeeOrderMain extends javax.swing.JPanel {
         };
         tablePending.getColumnModel().getColumn(8).setCellRenderer(new CellActionRenderer());
         tablePending.getColumnModel().getColumn(8).setCellEditor(new TableActionCellEditor(event));
+
+        TableActionWaitingEvent eventW = new TableActionWaitingEvent() {
+            @Override
+            public void onNote(int row) {
+                int selectedRow = tableWaiting.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableWaiting.getValueAt(selectedRow, 0);
+                    System.out.println("Give Note on transaction number: " + transactionNumber);
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
+                }
+            }
+        };
+        tableWaiting.getColumnModel().getColumn(8).setCellRenderer(new CellWaitingRenderer());
+        tableWaiting.getColumnModel().getColumn(8).setCellEditor(new TableWaitingCellEditor(eventW));
+
+        TableActionFinishedEvent eventF = new TableActionFinishedEvent() {
+            @Override
+            public void onPlay(int row) {
+                int selectedRow = tableFinished.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableFinished.getValueAt(selectedRow, 0);
+                    Object product = tableFinished.getValueAt(selectedRow, 2); // Mengambil nilai kolom "Product"
+
+                    if (product != null && product.toString().equalsIgnoreCase("Video Editing")) {
+                        // Memainkan video dengan MainVideoJ
+                        MainVideoJ videoPlayer = new MainVideoJ(transactionNumber.toString());
+                        videoPlayer.playVideoFromDatabase();
+                    } else if (product != null && (product.toString().equalsIgnoreCase("Design Graphic") || product.toString().equalsIgnoreCase("3D Modelling"))) {
+                        // Menampilkan gambar dengan DisplayImageFromDatabase
+                        DisplayImageFromDatabase imageViewer = new DisplayImageFromDatabase(transactionNumber.toString());
+                        imageViewer.displayImageFromDatabase();
+                    } else {
+                        JOptionPane.showMessageDialog(SeeOrderMain.this, "Unsupported product type.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
+                }
+            }
+
+            @Override
+            public void onDownload(int row) {
+                int selectedRow = tableFinished.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableFinished.getValueAt(selectedRow, 0);
+                    Object product = tableFinished.getValueAt(selectedRow, 2); // Mengambil nilai kolom "Product"
+
+                    if (product != null && product.toString().equalsIgnoreCase("Video Editing")) {
+                        // Mendownload video dari database
+                        try {
+                            byte[] videoData = ServiceResult.getVideoFromDatabase(transactionNumber.toString());
+                            if (videoData != null) {
+                                // Memungkinkan pengguna memilih direktori penyimpanan
+                                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                                fileChooser.setDialogTitle("Choose directory to save video");
+                                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                                int userSelection = fileChooser.showSaveDialog(SeeOrderMain.this);
+
+                                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                                    File directory = fileChooser.getSelectedFile();
+                                    String fileName = transactionNumber.toString() + ".mp4";
+                                    File file = new File(directory, fileName);
+
+                                    // Simpan data video ke file di sistem file lokal
+                                    FileOutputStream fos = new FileOutputStream(file);
+                                    fos.write(videoData);
+                                    fos.close();
+                                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Video downloaded successfully.");
+                                } else {
+                                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Download cancelled.");
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(SeeOrderMain.this, "Failed to download video.");
+                            }
+                        } catch (SQLException | IOException e) {
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog(SeeOrderMain.this, "Failed to download video.");
+                        }
+                    } else if (product != null && (product.toString().equalsIgnoreCase("Design Graphic") || product.toString().equalsIgnoreCase("3D Modelling"))) {
+                        // Mendownload gambar dari database (jika diperlukan)
+                        // Implementasi download gambar serupa dengan mendownload video
+                    } else {
+                        JOptionPane.showMessageDialog(SeeOrderMain.this, "Unsupported product type.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
+                }
+            }
+        };
+        tableFinished.getColumnModel().getColumn(8).setCellRenderer(new CellFinishedRenderer());
+        tableFinished.getColumnModel().getColumn(8).setCellEditor(new TableFinishedCellEditor(eventF));
+
+        TableActionCancelledEvent eventC = new TableActionCancelledEvent() {
+            @Override
+            public void onReason(int row) {
+                int selectedRow = tableWaiting.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableWaiting.getValueAt(selectedRow, 0);
+                    System.out.println("Reason Cancelled on transaction number: " + transactionNumber);
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
+                }
+            }
+        };
+        tableCancelled.getColumnModel().getColumn(8).setCellRenderer(new CellCancelledRenderer());
+        tableCancelled.getColumnModel().getColumn(8).setCellEditor(new TableCancelledCellEditor(eventC));
     }
 
     @SuppressWarnings("unchecked")
@@ -85,11 +211,16 @@ public class SeeOrderMain extends javax.swing.JPanel {
     private void initComponents() {
 
         roundPanel1 = new User.SeeOrder.Swing.RoundPanel();
+        buttonDash1 = new User.SeeOrder.Swing.ButtonDash();
         materialTabbed1 = new User.SeeOrder.Swing.MaterialTabbed();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
         tableActive = new User.SeeOrder.Swing.Table();
+        jScrollPane11 = new javax.swing.JScrollPane();
+        jPanel8 = new javax.swing.JPanel();
+        jScrollPane12 = new javax.swing.JScrollPane();
+        tableWaiting = new User.SeeOrder.Swing.Table();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane8 = new javax.swing.JScrollPane();
@@ -104,6 +235,8 @@ public class SeeOrderMain extends javax.swing.JPanel {
         tableCancelled = new User.SeeOrder.Swing.Table();
 
         roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
+
+        buttonDash1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/User/SeeOrder/icon/hint.png"))); // NOI18N
 
         materialTabbed1.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -161,6 +294,62 @@ public class SeeOrderMain extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jPanel1);
 
         materialTabbed1.addTab("Active", jScrollPane1);
+
+        jScrollPane11.setBorder(null);
+        jScrollPane11.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane11.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        jPanel8.setBackground(new java.awt.Color(0,0,0,0));
+
+        tableWaiting.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "No Transaction", "Username", "Product", "Level", "Designer", "Due On", "Amount", "Status", "Action"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane12.setViewportView(tableWaiting);
+        if (tableWaiting.getColumnModel().getColumnCount() > 0) {
+            tableWaiting.getColumnModel().getColumn(0).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(1).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(2).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(3).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(4).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(5).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(6).setResizable(false);
+            tableWaiting.getColumnModel().getColumn(6).setPreferredWidth(10);
+            tableWaiting.getColumnModel().getColumn(7).setResizable(false);
+        }
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 1129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(205, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 687, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        jScrollPane11.setViewportView(jPanel8);
+
+        materialTabbed1.addTab("Waiting", jScrollPane11);
 
         jScrollPane2.setBorder(null);
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -336,14 +525,19 @@ public class SeeOrderMain extends javax.swing.JPanel {
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(materialTabbed1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(materialTabbed1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(buttonDash1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(materialTabbed1, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
+                .addComponent(buttonDash1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(materialTabbed1, javax.swing.GroupLayout.PREFERRED_SIZE, 747, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -367,12 +561,16 @@ public class SeeOrderMain extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private User.SeeOrder.Swing.ButtonDash buttonDash1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
+    private javax.swing.JScrollPane jScrollPane11;
+    private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -385,5 +583,6 @@ public class SeeOrderMain extends javax.swing.JPanel {
     private User.SeeOrder.Swing.Table tableCancelled;
     private User.SeeOrder.Swing.Table tableFinished;
     private User.SeeOrder.Swing.Table tablePending;
+    private User.SeeOrder.Swing.Table tableWaiting;
     // End of variables declaration//GEN-END:variables
 }

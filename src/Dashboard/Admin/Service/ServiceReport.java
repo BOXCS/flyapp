@@ -14,9 +14,10 @@ public class ServiceReport {
         List<ModelChart> list = new ArrayList<>();
         String sql = "SELECT MONTH(created_at) AS Month, "
                 + "SUM(CASE WHEN status = 'Finished' THEN 1 ELSE 0 END) AS Finished, "
-                + "SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS Canceled, "
+                + "SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS Cancelled, "
                 + "SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS Pending, "
-                + "SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS Active "
+                + "SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS Active, "
+                + "SUM(CASE WHEN status = 'Waiting' THEN 1 ELSE 0 END) AS Waiting "
                 + "FROM transaction "
                 + "GROUP BY MONTH(created_at) "
                 + "ORDER BY MONTH(created_at)";
@@ -26,10 +27,11 @@ public class ServiceReport {
         while (r.next()) {
             int month = r.getInt("Month");
             int finishedCount = r.getInt("Finished");
-            int canceledCount = r.getInt("Canceled");
+            int canceledCount = r.getInt("Cancelled");
             int pendingCount = r.getInt("Pending");
-            int ActiveCount = r.getInt("Active");
-            list.add(new ModelChart(getMonthName(month), new double[]{finishedCount, canceledCount, pendingCount, ActiveCount}));
+            int activeCount = r.getInt("Active");
+            int waitingCount = r.getInt("Waiting");
+            list.add(new ModelChart(getMonthName(month), new double[]{finishedCount, canceledCount, pendingCount, activeCount, waitingCount}));
         }
         r.close();
         p.close();

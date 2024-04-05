@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import raven.popup.GlassPanePopup;
 
 public class DashboardUser extends javax.swing.JFrame {
 
@@ -23,6 +24,7 @@ public class DashboardUser extends javax.swing.JFrame {
     public DashboardUser(ModelUser user) {
         this.user = user;
         initComponents();
+//        init();
         getContentPane().setBackground(new Color(63, 109, 217));
 
         bg = new javax.swing.JPanel() {
@@ -57,6 +59,10 @@ public class DashboardUser extends javax.swing.JFrame {
         menu.setSelected(0);
         setExtendedState(MAXIMIZED_BOTH);
     }
+    
+//    private void init() {
+//        GlassPanePopup.install(this);
+//    }
 
     private void showForm(Component com) {
         body.removeAll();

@@ -7,6 +7,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import jnafilechooser.api.JnaFileChooser;
+import raven.alerts.MessageAlerts;
+import raven.popup.GlassPanePopup;
+import raven.popup.component.PopupCallbackAction;
+import raven.popup.component.PopupController;
 
 public class Result extends javax.swing.JFrame {
 
@@ -14,6 +19,11 @@ public class Result extends javax.swing.JFrame {
 
     public Result() {
         initComponents();
+        init();
+    }
+    
+    private void init() {
+        GlassPanePopup.install(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -82,17 +92,22 @@ public class Result extends javax.swing.JFrame {
             // Handling SEND button action here
             // Call insertResult method from ServiceResult to save data to the database
             ServiceResult.insertResult(transaction, selectedFile);
+            MessageAlerts.getInstance().showMessage("Send Success", "Data Successfully Send to Database", MessageAlerts.MessageType.SUCCESS, MessageAlerts.OK_OPTION, (PopupController pc, int i) -> {
+                if (i == MessageAlerts.OK_OPTION){
+                    System.out.println("Click OK");
+                }
+            });
         }
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void fileChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserButtonActionPerformed
         // Handle file chooser button action here
-        JFileChooser fileChooser = new JFileChooser();
-        // Filter untuk membatasi tipe file yang bisa dipilih
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Image & Video Files", "jpg", "jpeg", "png", "mp4");
-        fileChooser.setFileFilter(filter);
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
+        JnaFileChooser fileChooser = new JnaFileChooser();
+        Window Window = null;
+        boolean action = fileChooser.showOpenDialog(Window);
+        
+        if (action) {
+            System.out.println(fileChooser.getSelectedFile());
             selectedFile = fileChooser.getSelectedFile(); // Simpan file yang dipilih untuk digunakan saat mengirim
             JOptionPane.showMessageDialog(this, "You selected: " + selectedFile.getAbsolutePath());
         }

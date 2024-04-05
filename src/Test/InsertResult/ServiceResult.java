@@ -127,4 +127,60 @@ public class ServiceResult {
         return name.substring(lastIndexOfDot + 1);
     }
 
+    public static byte[] retrieveFileDataFromDatabase(String transactionNumber, String productType) {
+        byte[] fileData = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        ByteArrayOutputStream outputStream = null;
+
+        try {
+            String query = "";
+            if (productType.equalsIgnoreCase("Video Editing")) {
+                query = "SELECT result FROM result WHERE transaction_number = ?";
+            } else if (productType.equalsIgnoreCase("Design Graphic") || productType.equalsIgnoreCase("3D Modelling")) {
+                query = "SELECT result FROM resultImage WHERE transaction_number = ?";
+            } else {
+                System.out.println("Unsupported product type.");
+                return null;
+            }
+
+            preparedStatement = getConnection().prepareStatement(query);
+            preparedStatement.setString(1, transactionNumber);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Blob blob = resultSet.getBlob("result");
+                if (blob != null) {
+                    InputStream inputStream = blob.getBinaryStream();
+                    outputStream = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                    fileData = outputStream.toByteArray();
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                // Koneksi tidak ditutup di sini agar dapat digunakan kembali
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return fileData;
+    }
+
 }
