@@ -126,7 +126,7 @@ public class ServicePricing {
     // Metode untuk melakukan transaksi dan menyimpannya ke dalam tabel transaction
     public boolean placeOrder(String productName, String levelName, double price) {
         String transactionNumber = generateTransactionNumber();
-        String status = "Pending";
+        String status = "Waiting";
         Timestamp createdAt = getCurrentTimestamp();
 
         String query = "INSERT INTO transaction (transaction_number, amount, status, created_at) VALUES (?, ?, ?, ?)";
@@ -234,7 +234,7 @@ public class ServicePricing {
 
     public boolean insertOrder(String productName, String designer, String level, double price, ModelUser user) {
         String transactionNumber = generateTransactionNumber();
-        String status = "Pending";
+        String status = "Waiting";
         Timestamp createdAt = getCurrentTimestamp();
 
         String query = "INSERT INTO transaction (transaction_number, product_name, designer, level, amount, status, created_at, username) "
@@ -253,12 +253,202 @@ public class ServicePricing {
             // Execute the insert statement
             int rowsAffected = preparedStatement.executeUpdate();
 
+            // Update status designer
+            if (rowsAffected > 0) {
+                updateDesignerStatus(designer, "Unavailable");
+                // Insert revision based on product name and level
+                int revisionCount = getRevisionCount(productName, level);
+                String revisionText = "No Revision";
+                if (revisionCount > 0) { // Check if revisions are available
+                    insertNewRevision(transactionNumber, designer, productName, level, revisionText, revisionCount);
+                } else {
+                    System.out.println("Ran out of Revision");
+                }
+            }
+
             // Check if the insertion was successful
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private void updateDesignerStatus(String designer, String status) throws SQLException {
+        String updateQuery = "UPDATE designer SET Status = ? WHERE username = ?";
+        try (PreparedStatement updateStatement = con.prepareStatement(updateQuery)) {
+            updateStatement.setString(1, status);
+            updateStatement.setString(2, designer);
+            updateStatement.executeUpdate();
+        }
+    }
+
+    public boolean insertRevision(String transactionNumber, String designer, String productName, String level, String revision, int revisionCount) {
+        // Check if the transaction number already exists in the revision table
+        if (isTransactionNumberExists(transactionNumber)) {
+            // If transaction number exists, update the existing revision
+            return updateExistingRevision(transactionNumber, revision, revisionCount);
+        } else {
+            // If transaction number doesn't exist, insert a new revision
+            return insertNewRevision(transactionNumber, designer, productName, level, revision, revisionCount);
+        }
+    }
+
+    private boolean isTransactionNumberExists(String transactionNumber) {
+        String query = "SELECT COUNT(*) AS count FROM revision WHERE transaction_number = ?";
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, transactionNumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt("count");
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean updateExistingRevision(String transactionNumber, String revision, int revisionCount) {
+        String query = "UPDATE revision SET revision = ?, revision_count = ? WHERE transaction_number = ?";
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, revision);
+            preparedStatement.setInt(2, revisionCount); // Tidak mengurangi revisionCount di sini
+            preparedStatement.setString(3, transactionNumber);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Update remaining revision count
+            if (rowsAffected > 0) {
+                // Perbarui remaining revision count setelah basis data berhasil diperbarui
+                updateRemainingRevisionCount(transactionNumber, --revisionCount);
+            }
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean insertNewRevision(String transactionNumber, String designer, String productName, String level, String revision, int revisionCount) {
+        String query = "INSERT INTO revision (transaction_number, designer_name, product_name, level, revision, revision_count) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, transactionNumber);
+            preparedStatement.setString(2, designer);
+            preparedStatement.setString(3, productName);
+            preparedStatement.setString(4, level);
+            preparedStatement.setString(5, revision);
+            preparedStatement.setInt(6, revisionCount);
+
+            // Execute the insert statement
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Update remaining revision count
+            if (rowsAffected > 0) {
+                updateRemainingRevisionCount(transactionNumber, revisionCount);
+            }
+
+            // Check if the insertion was successful
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void updateRemainingRevisionCount(String transactionNumber, int remainingRevisions) {
+        String updateQuery = "UPDATE revision SET revision_count = ? WHERE transaction_number = ?";
+        try (PreparedStatement updateStatement = con.prepareStatement(updateQuery)) {
+            updateStatement.setInt(1, remainingRevisions);
+            updateStatement.setString(2, transactionNumber);
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getRevisionCount(String productName, String level) {
+        int revisionCount = 0;
+        // Set revision count based on product name and level
+        switch (productName) {
+            case "Video Editing":
+                switch (level) {
+                    case "Basic":
+                        revisionCount = 2;
+                        break;
+                    case "Standard":
+                        revisionCount = 4;
+                        break;
+                    case "Pro":
+                        revisionCount = Integer.MAX_VALUE; // Unlimited revisions
+                        break;
+                }
+                break;
+            case "Design Graphic":
+                switch (level) {
+                    case "Basic":
+                        revisionCount = 2;
+                        break;
+                    case "Standard":
+                        revisionCount = 5;
+                        break;
+                    case "Pro":
+                        revisionCount = Integer.MAX_VALUE; // Unlimited revisions
+                        break;
+                }
+                break;
+            case "3D Modelling":
+                switch (level) {
+                    case "Basic":
+                        revisionCount = 5;
+                        break;
+                    case "Standard":
+                        revisionCount = 10;
+                        break;
+                    case "Pro":
+                        revisionCount = Integer.MAX_VALUE; // Unlimited revisions
+                        break;
+                }
+                break;
+        }
+        return revisionCount;
+    }
+
+    public int getRemainingRevisionCount(String transactionNumber) {
+        int remainingRevisions = 0;
+        String query = "SELECT revision_count FROM revision WHERE transaction_number = ?";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, transactionNumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                remainingRevisions = resultSet.getInt("revision_count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return remainingRevisions;
+    }
+
+    private int getUsedRevisionCount(String transactionNumber) {
+        int usedRevisions = 0;
+        String query = "SELECT COUNT(*) AS used_revisions FROM revision WHERE transaction_number = ? AND revision != 'No Revision'";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, transactionNumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                usedRevisions = resultSet.getInt("used_revisions");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return usedRevisions;
     }
 
 }

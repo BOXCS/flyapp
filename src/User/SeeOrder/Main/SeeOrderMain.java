@@ -2,7 +2,11 @@ package User.SeeOrder.Main;
 
 import LoginRegister.Model.ModelUser;
 import Test.DisplayImage.Main.DisplayImageFromDatabase;
+import Test.DisplayImage.Main.DisplayImageFromDatabasePreview;
 import Test.InsertResult.ServiceResult;
+import User.Revision.Main.RevisionMain;
+import User.SeeOrder.Rating.Main.RatingMain;
+import User.SeeOrder.Rating.Service.ServiceRating;
 import User.SeeOrder.Service.ServiceMyOrder;
 import User.SeeOrder.Swing.Cell.CellActionRenderer;
 import User.SeeOrder.Swing.Cell.TableActionCellEditor;
@@ -16,6 +20,7 @@ import User.SeeOrder.Swing.CellFinished.TableFinishedCellEditor;
 import User.SeeOrder.Swing.CellWaiting.CellWaitingRenderer;
 import User.SeeOrder.Swing.CellWaiting.TableActionWaitingEvent;
 import User.SeeOrder.Swing.CellWaiting.TableWaitingCellEditor;
+import java.awt.Window;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -24,13 +29,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.SQLException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileSystemView;
+import jnafilechooser.api.JnaFileChooser;
+import raven.alerts.MessageAlerts;
 
 public class SeeOrderMain extends javax.swing.JPanel {
 
     private MainVideoJ videoPlayer;
     private final ModelUser user;
+    private ServiceRating serviceRating;
 
     public SeeOrderMain(ModelUser user) {
         initComponents();
@@ -64,8 +75,8 @@ public class SeeOrderMain extends javax.swing.JPanel {
                         videoPlayer.playVideoFromDatabase();
                     } else if (product != null && (product.toString().equalsIgnoreCase("Design Graphic") || product.toString().equalsIgnoreCase("3D Modelling"))) {
                         // Menampilkan gambar dengan DisplayImageFromDatabase
-                        DisplayImageFromDatabase imageViewer = new DisplayImageFromDatabase(transactionNumber.toString());
-                        imageViewer.displayImageFromDatabase();
+                        DisplayImageFromDatabasePreview imageViewerP = new DisplayImageFromDatabasePreview(transactionNumber.toString());
+                        imageViewerP.displayImageFromDatabase();
                     } else {
                         JOptionPane.showMessageDialog(SeeOrderMain.this, "Unsupported product type.");
                     }
@@ -79,7 +90,21 @@ public class SeeOrderMain extends javax.swing.JPanel {
                 int selectedRow = tablePending.getSelectedRow();
                 if (selectedRow != -1) {
                     Object transactionNumber = tablePending.getValueAt(selectedRow, 0);
-                    System.out.println("Revision on transaction number: " + transactionNumber);
+                    Object designerName = tablePending.getValueAt(selectedRow, 4);
+                    Object productName = tablePending.getValueAt(selectedRow, 2);
+                    Object level = tablePending.getValueAt(selectedRow, 3);
+                    try {
+                        RevisionMain revisionMain = new RevisionMain(); // Buat instance baru dari RevisionMain
+                        revisionMain.setTransactionNumber(transactionNumber.toString()); // Tetapkan nomor transaksi
+                        revisionMain.setDesignerName(designerName.toString()); // Tetapkan nama desainer
+                        revisionMain.setProductName(productName.toString()); // Tetapkan nama produk
+                        revisionMain.setLevel(level.toString()); // Tetapkan level
+                        revisionMain.setLocationRelativeTo(null);
+                        revisionMain.setVisible(true); // Tampilkan frame RevisionMain
+                        revisionMain.requestFocus();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(SeeOrderMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
                 }
@@ -90,7 +115,27 @@ public class SeeOrderMain extends javax.swing.JPanel {
                 int selectedRow = tablePending.getSelectedRow();
                 if (selectedRow != -1) {
                     Object transactionNumber = tablePending.getValueAt(selectedRow, 0);
-                    System.out.println("Rate on transaction number: " + transactionNumber);
+                    Object designerName = tablePending.getValueAt(selectedRow, 4);
+                    try {
+                        // Periksa apakah transactionNumber sudah dinilai sebelumnya
+                        if (serviceRating.isTransactionAlreadyRated(transactionNumber.toString())) {
+                            MessageAlerts.getInstance().showMessage("Caution", "Already Rate This", MessageAlerts.MessageType.DEFAULT);
+                        } else {
+                            System.out.println("Rate on designer: " + designerName + " with transaction number: " + transactionNumber);
+
+                            // Buat instansiasi RatingMain
+                            RatingMain ratingMain = new RatingMain();
+
+                            // Atur nilai transactionNumber dan designerName
+                            ratingMain.setTransactionNumber(transactionNumber.toString());
+                            ratingMain.setDesigner(designerName.toString());
+
+                            // Tampilkan frame RatingMain
+                            ratingMain.setVisible(true);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(SeeOrderMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
                 }
@@ -151,12 +196,13 @@ public class SeeOrderMain extends javax.swing.JPanel {
                             byte[] videoData = ServiceResult.getVideoFromDatabase(transactionNumber.toString());
                             if (videoData != null) {
                                 // Memungkinkan pengguna memilih direktori penyimpanan
-                                JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-                                fileChooser.setDialogTitle("Choose directory to save video");
-                                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                                int userSelection = fileChooser.showSaveDialog(SeeOrderMain.this);
+                                JnaFileChooser fileChooser = new JnaFileChooser();
+                                fileChooser.setTitle("Choose directory to save video");
+                                fileChooser.setMode(JnaFileChooser.Mode.Directories);
+                                Window window = SwingUtilities.getWindowAncestor(SeeOrderMain.this);
+                                boolean userSelection = fileChooser.showSaveDialog(window);
 
-                                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                                if (userSelection) {
                                     File directory = fileChooser.getSelectedFile();
                                     String fileName = transactionNumber.toString() + ".mp4";
                                     File file = new File(directory, fileName);
@@ -165,20 +211,49 @@ public class SeeOrderMain extends javax.swing.JPanel {
                                     FileOutputStream fos = new FileOutputStream(file);
                                     fos.write(videoData);
                                     fos.close();
-                                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Video downloaded successfully.");
+                                    MessageAlerts.getInstance().showMessage("Download Success", "Video downloaded successfully.", MessageAlerts.MessageType.SUCCESS);
                                 } else {
-                                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Download cancelled.");
+                                    MessageAlerts.getInstance().showMessage("Caution", "Download Cancelled", MessageAlerts.MessageType.DEFAULT);
                                 }
                             } else {
-                                JOptionPane.showMessageDialog(SeeOrderMain.this, "Failed to download video.");
+                                MessageAlerts.getInstance().showMessage("Caution", "Failed to download video.", MessageAlerts.MessageType.ERROR);
                             }
                         } catch (SQLException | IOException e) {
                             e.printStackTrace();
                             JOptionPane.showMessageDialog(SeeOrderMain.this, "Failed to download video.");
                         }
                     } else if (product != null && (product.toString().equalsIgnoreCase("Design Graphic") || product.toString().equalsIgnoreCase("3D Modelling"))) {
-                        // Mendownload gambar dari database (jika diperlukan)
-                        // Implementasi download gambar serupa dengan mendownload video
+                        // Mendownload gambar dari database
+                        try {
+                            byte[] imageData = ServiceResult.getImageFromDatabase(transactionNumber.toString());
+                            if (imageData != null) {
+                                // Memungkinkan pengguna memilih direktori penyimpanan
+                                JnaFileChooser fileChooser = new JnaFileChooser();
+                                fileChooser.setTitle("Choose directory to save image");
+                                fileChooser.setMode(JnaFileChooser.Mode.Directories);
+                                Window window = SwingUtilities.getWindowAncestor(SeeOrderMain.this);
+                                boolean userSelection = fileChooser.showSaveDialog(window);
+
+                                if (userSelection) {
+                                    File directory = fileChooser.getSelectedFile();
+                                    String fileName = transactionNumber.toString() + ".png"; // Atau ekstensi file yang sesuai
+                                    File file = new File(directory, fileName);
+
+                                    // Simpan data gambar ke file di sistem file lokal
+                                    FileOutputStream fos = new FileOutputStream(file);
+                                    fos.write(imageData);
+                                    fos.close();
+                                    MessageAlerts.getInstance().showMessage("Download Success", "Image downloaded successfully.", MessageAlerts.MessageType.SUCCESS);
+                                } else {
+                                    MessageAlerts.getInstance().showMessage("Caution", "Download Cancelled", MessageAlerts.MessageType.DEFAULT);
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(SeeOrderMain.this, "Failed to download image.");
+                            }
+                        } catch (SQLException | IOException e) {
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog(SeeOrderMain.this, "Failed to download image.");
+                        }
                     } else {
                         JOptionPane.showMessageDialog(SeeOrderMain.this, "Unsupported product type.");
                     }

@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import raven.alerts.MessageAlerts;
 
 public class AddDesignerMain extends javax.swing.JPanel {
 
@@ -246,13 +247,13 @@ public class AddDesignerMain extends javax.swing.JPanel {
             // Check for duplicate username before attempting to insert
             if (service.checkDuplicateDesigner(userName)) {
                 // Show an error message for duplicate username
-                JOptionPane.showMessageDialog(this, "Username already exists. Please just edit.", "Error", JOptionPane.ERROR_MESSAGE);
+                MessageAlerts.getInstance().showMessage("Error", "Username already exist", MessageAlerts.MessageType.ERROR);
             } else {
                 // Attempt to insert the designer into the database
                 service.insertDesigner(designerLogin);
 
                 // Show a success message
-                JOptionPane.showMessageDialog(this, "Designer added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                MessageAlerts.getInstance().showMessage("Success", "Designer add successfully", MessageAlerts.MessageType.SUCCESS);
 
                 // Optionally, you can reset the form or perform other actions upon success
                 resetForm();

@@ -1,11 +1,51 @@
 package User.SeeOrder.Rating.Main;
 
+import User.SeeOrder.Rating.Service.ServiceRating;
 import User.SeeOrder.Swing.rating.EventStarRating;
+import java.awt.Color;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import raven.alerts.MessageAlerts;
+import raven.popup.GlassPanePopup;
+import raven.popup.component.PopupController;
 
 public class RatingMain extends javax.swing.JFrame {
 
+    private ServiceRating serviceRating;
+    private String transactionNumber;
+    private String designerName;
+    
     public RatingMain() {
         initComponents();
+        init();
+        
+        // Set placeholder text
+        areaFeedback.setForeground(Color.GRAY);
+        areaFeedback.setText("Optional");
+        areaFeedback.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (areaFeedback.getText().equals("Optional")) {
+                    areaFeedback.setText("");
+                    areaFeedback.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (areaFeedback.getText().isEmpty()) {
+                    areaFeedback.setForeground(Color.GRAY);
+                    areaFeedback.setText("Optional");
+                }
+            }
+        });
+        
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         
         starRating.addEventStarRating(new EventStarRating() {
             @Override
@@ -13,6 +53,19 @@ public class RatingMain extends javax.swing.JFrame {
                 System.out.println("You selected :" + star);
             }
         });
+    }
+    
+    private void init() {
+        GlassPanePopup.install(this);
+    }
+    
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
+    
+    public void setDesigner(String designerName) {
+        this.designerName = designerName;
+        jLabel2.setText("Your feedback to " + designerName);
     }
 
     @SuppressWarnings("unchecked")
@@ -25,8 +78,12 @@ public class RatingMain extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         cmdOK = new User.SeeOrder.Swing.Button();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        areaFeedback = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        roundPanel1.setBackground(new java.awt.Color(0, 0, 51));
 
         starRating.setForeground(new java.awt.Color(255, 153, 51));
 
@@ -38,7 +95,7 @@ public class RatingMain extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Your feedback ");
+        jLabel2.setText("Your feedback to ");
 
         jLabel3.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -49,6 +106,15 @@ public class RatingMain extends javax.swing.JFrame {
         cmdOK.setForeground(new java.awt.Color(255, 255, 255));
         cmdOK.setText("OK");
         cmdOK.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        cmdOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdOKActionPerformed(evt);
+            }
+        });
+
+        areaFeedback.setColumns(20);
+        areaFeedback.setRows(5);
+        jScrollPane1.setViewportView(areaFeedback);
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
@@ -58,30 +124,36 @@ public class RatingMain extends javax.swing.JFrame {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addGap(128, 128, 128)
+                                .addComponent(starRating, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addGap(237, 237, 237)
+                                .addComponent(cmdOK, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 128, Short.MAX_VALUE))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(97, 97, 97)
-                        .addComponent(starRating, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 111, Short.MAX_VALUE)))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addGap(210, 210, 210)
-                .addComponent(cmdOK, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(146, 146, 146)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(41, 41, 41)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addGap(35, 35, 35)
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(starRating, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(cmdOK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -92,19 +164,35 @@ public class RatingMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmdOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdOKActionPerformed
+        int rating = starRating.getStar();
+        String feedback = areaFeedback.getText();
+        
+        MessageAlerts.getInstance().showMessage("Are you sure?", "Please be sure first", MessageAlerts.MessageType.DEFAULT, MessageAlerts.YES_NO_OPTION, (PopupController pc, int i) -> {
+                if (i == MessageAlerts.YES_OPTION){
+                    try {
+                        serviceRating.saveRatingToDatabase(transactionNumber, designerName, rating, feedback);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(RatingMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    MessageAlerts.getInstance().showMessage("Rate Success", "Wait for your HD order", MessageAlerts.MessageType.SUCCESS);
+                    dispose();
+                }
+                if (i == MessageAlerts.NO_OPTION) {
+                    MessageAlerts.getInstance().showMessage("Rate Cancelled", "please rate our services after you sure", MessageAlerts.MessageType.DEFAULT);
+                }
+            });
+    }//GEN-LAST:event_cmdOKActionPerformed
 
     /**
      * @param args the command line arguments
@@ -142,10 +230,12 @@ public class RatingMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea areaFeedback;
     private User.SeeOrder.Swing.Button cmdOK;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private User.SeeOrder.Swing.RoundPanel roundPanel1;
     private User.SeeOrder.Swing.rating.StarRating starRating;
     // End of variables declaration//GEN-END:variables

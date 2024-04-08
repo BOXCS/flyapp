@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 public class CellAction extends javax.swing.JPanel {
 
+    private boolean isRated = false;
+    
     public CellAction() {
         initComponents();
     }

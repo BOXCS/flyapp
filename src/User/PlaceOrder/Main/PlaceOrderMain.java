@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import raven.alerts.MessageAlerts;
+import raven.popup.component.PopupCallbackAction;
+import raven.popup.component.PopupController;
 
 public class PlaceOrderMain extends javax.swing.JPanel {
 
@@ -191,7 +194,45 @@ public class PlaceOrderMain extends javax.swing.JPanel {
     }
 
     // Create a method to handle the Buy action with the retrieved price
-    private void processBuyAction(String level, String lb1, String lb2) {
+//    private void processBuyAction(String level, String lb1, String lb2) {
+//        // Mendapatkan informasi yang diperlukan
+//        String selectedProduct = getSelectedProduct();
+//        String selectedDesigner = (String) designerCombobox.getSelectedItem();
+//
+//        // Memastikan produk dan desainer tidak null
+//        if (selectedProduct != null && selectedDesigner != null) {
+//            try {
+//                // Mendapatkan harga dalam bentuk numerik
+//                double price = Double.parseDouble(lb1.substring(1)) + Double.parseDouble(lb2);
+//
+//                // Lakukan operasi insert ke dalam basis data
+//                boolean success = servicePricing.insertOrder(selectedProduct, selectedDesigner, level, price, user);
+//
+//                if (success) {
+//                    // Jika operasi insert berhasil, tampilkan pesan keberhasilan
+//                    MessageAlerts.getInstance().showMessage("Success", "Order Placed Successfully", MessageAlerts.MessageType.SUCCESS, MessageAlerts.CLOSED_OPTION, new PopupCallbackAction() {
+//                        @Override
+//                        public void action(PopupController pc, int i) {
+//                            if (i == MessageAlerts.OK_OPTION) {
+//                                System.out.println("Click ok");
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    // Jika operasi insert gagal, tampilkan pesan kegagalan
+//                    JOptionPane.showMessageDialog(this, "Failed to place order. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+//                }
+//            } catch (NumberFormatException ex) {
+//                // Tangani jika terjadi kesalahan saat mengkonversi harga ke bentuk numerik
+//                ex.printStackTrace();
+//                JOptionPane.showMessageDialog(this, "Error occurred while processing the order. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        } else {
+//            // Jika produk atau desainer null, tampilkan pesan kesalahan
+//            JOptionPane.showMessageDialog(this, "Please select a product and a designer before placing the order.", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//    }
+    private void handleBuyAction(String level) {
         // Mendapatkan informasi yang diperlukan
         String selectedProduct = getSelectedProduct();
         String selectedDesigner = (String) designerCombobox.getSelectedItem();
@@ -199,15 +240,31 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         // Memastikan produk dan desainer tidak null
         if (selectedProduct != null && selectedDesigner != null) {
             try {
-                // Mendapatkan harga dalam bentuk numerik
-                double price = Double.parseDouble(lb1.substring(1)) + Double.parseDouble(lb2);
+                // Mendapatkan harga berdasarkan level
+                double price = 0.0;
+                if (level.equals("Basic")) {
+                    price = basicPricing.getPrice();
+                } else if (level.equals("Standard")) {
+                    price = standardPricing.getPrice();
+                } else if (level.equals("Pro")) {
+                    price = proPricing.getPrice();
+                }
 
                 // Lakukan operasi insert ke dalam basis data
                 boolean success = servicePricing.insertOrder(selectedProduct, selectedDesigner, level, price, user);
 
                 if (success) {
                     // Jika operasi insert berhasil, tampilkan pesan keberhasilan
-                    JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    MessageAlerts.getInstance().showMessage("Success", "Order Success", MessageAlerts.MessageType.SUCCESS, MessageAlerts.CLOSED_OPTION, new PopupCallbackAction() {
+                        @Override
+                        public void action(PopupController pc, int i) {
+                            if (i == MessageAlerts.OK_OPTION) {
+                                // Buat dan tampilkan PaymentGatewayUI
+                            PaymentGatewayUI paymentGatewayUI = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
+                            paymentGatewayUI.setVisible(true);
+                            }
+                        }
+                    });
                 } else {
                     // Jika operasi insert gagal, tampilkan pesan kegagalan
                     JOptionPane.showMessageDialog(this, "Failed to place order. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -220,25 +277,6 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         } else {
             // Jika produk atau desainer null, tampilkan pesan kesalahan
             JOptionPane.showMessageDialog(this, "Please select a product and a designer before placing the order.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void handleBuyAction(String level) {
-        // Dapatkan harga dari pricing masing-masing level
-        PanelPricing selectedPanel = getSelectedPanelPricing(level);
-
-        if (selectedPanel != null) {
-            String lb1 = selectedPanel.getLb1(); // Menggunakan metode getLb1
-            String lb2 = selectedPanel.getLb2(); // Menggunakan metode getLb2
-
-            // Lakukan tindakan yang sesuai dengan pembelian
-            processBuyAction(level, lb1, lb2);
-
-            // Setelah selesai pembelian, buat instance JFrame CetakNota dan tampilkan
-//            CetakNota cetakNotaFrame = new CetakNota();
-//            cetakNotaFrame.setVisible(true);
-        } else {
-            System.out.println("Error: Selected PanelPricing is null.");
         }
     }
 
@@ -377,13 +415,12 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                         .addGap(54, 54, 54)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(productComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(productComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(designerCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(143, 143, 143)
-                .addComponent(designerCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -391,12 +428,12 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                 .addGap(36, 36, 36)
                 .addComponent(jLabel1)
                 .addGap(20, 20, 20)
-                .addComponent(productComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
-                .addComponent(designerCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(productComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(designerCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -459,19 +496,6 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
         // Memanggil handleBuyAction dengan informasi "Basic"
         handleBuyAction("Basic");
-
-        // Initialize the paymentGateway instance
-        paymentGateaway = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
-
-        // Panggil getTotalAmount untuk mendapatkan total amount yang diperlukan
-        String totalAmount = paymentGateaway.getTotalAmount();
-
-        // Membuat instance PaymentGatewayUI
-        PaymentGatewayUI paymentGatewayUI = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
-        // Memanggil metode di PaymentGatewayUI dengan informasi "Basic"
-        paymentGatewayUI.handleBuy("Basic");
-        // Menampilkan frame PaymentGatewayUI
-        paymentGatewayUI.setVisible(true);
     }//GEN-LAST:event_cmdBasicActionPerformed
 
     private void cmdStandardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStandardActionPerformed
@@ -483,19 +507,6 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
         // Memanggil handleBuyAction dengan informasi "Standard"
         handleBuyAction("Standard");
-
-        // Initialize the paymentGateway instance
-        paymentGateaway = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
-
-        // Panggil getTotalAmount untuk mendapatkan total amount yang diperlukan
-        String totalAmount = paymentGateaway.getTotalAmount();
-
-        // Membuat instance PaymentGatewayUI
-        PaymentGatewayUI paymentGatewayUI = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
-        // Memanggil metode di PaymentGatewayUI dengan informasi "Standard"
-        paymentGatewayUI.handleBuy("Standard");
-        // Menampilkan frame PaymentGatewayUI
-        paymentGatewayUI.setVisible(true);
     }//GEN-LAST:event_cmdStandardActionPerformed
 
     private void cmdProActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdProActionPerformed
@@ -507,19 +518,6 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
         // Memanggil handleBuyAction dengan informasi "Pro"
         handleBuyAction("Pro");
-
-        // Initialize the paymentGateway instance
-        paymentGateaway = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
-
-        // Panggil getTotalAmount untuk mendapatkan total amount yang diperlukan
-        String totalAmount = paymentGateaway.getTotalAmount();
-
-        // Membuat instance PaymentGatewayUI
-        PaymentGatewayUI paymentGatewayUI = new PaymentGatewayUI(basicPricing, standardPricing, proPricing);
-        // Memanggil metode di PaymentGatewayUI dengan informasi "Pro"
-        paymentGatewayUI.handleBuy("Pro");
-        // Menampilkan frame PaymentGatewayUI
-        paymentGatewayUI.setVisible(true);
     }//GEN-LAST:event_cmdProActionPerformed
 
     private void designerComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_designerComboboxActionPerformed

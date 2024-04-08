@@ -24,7 +24,7 @@ public class DashboardUser extends javax.swing.JFrame {
     public DashboardUser(ModelUser user) {
         this.user = user;
         initComponents();
-//        init();
+        init();
         getContentPane().setBackground(new Color(63, 109, 217));
 
         bg = new javax.swing.JPanel() {
@@ -60,9 +60,9 @@ public class DashboardUser extends javax.swing.JFrame {
         setExtendedState(MAXIMIZED_BOTH);
     }
     
-//    private void init() {
-//        GlassPanePopup.install(this);
-//    }
+    private void init() {
+        GlassPanePopup.install(this);
+    }
 
     private void showForm(Component com) {
         body.removeAll();
@@ -87,7 +87,7 @@ public class DashboardUser extends javax.swing.JFrame {
 
         body.setOpaque(false);
         body.setLayout(new java.awt.BorderLayout());
-        bg.add(body, new org.netbeans.lib.awtextra.AbsoluteConstraints(191, 6, 1173, 720));
+        bg.add(body, new org.netbeans.lib.awtextra.AbsoluteConstraints(191, 46, 1173, 680));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/png/Group 17.png"))); // NOI18N
         bg.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, 770));

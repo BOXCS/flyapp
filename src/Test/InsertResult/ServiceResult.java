@@ -71,6 +71,53 @@ public class ServiceResult {
         }
     }
 
+    public static byte[] getImageFromDatabase(String transactionNumber) throws SQLException, IOException {
+        byte[] imageData = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        ByteArrayOutputStream outputStream = null;
+
+        try {
+            String query = "SELECT result FROM resultImage WHERE transaction_number = ?";
+            preparedStatement = getConnection().prepareStatement(query);
+            preparedStatement.setString(1, transactionNumber);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Blob blob = resultSet.getBlob("result");
+                if (blob != null) {
+                    InputStream inputStream = blob.getBinaryStream();
+                    outputStream = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                    imageData = outputStream.toByteArray();
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                // Koneksi tidak ditutup di sini agar dapat digunakan kembali
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return imageData;
+    }
+
     public static byte[] getVideoFromDatabase(String transactionNumber) throws SQLException, IOException {
         byte[] videoData = null;
         PreparedStatement preparedStatement = null;
