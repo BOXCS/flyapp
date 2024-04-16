@@ -115,8 +115,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jScrollPane7" min="-2" pref="1252" max="-2" attributes="0"/>
-                              <EmptySpace pref="82" max="32767" attributes="0"/>
+                              <Component id="jScrollPane7" min="-2" pref="1130" max="-2" attributes="0"/>
+                              <EmptySpace pref="204" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -141,7 +141,7 @@
                         <Component class="User.SeeOrder.Swing.Table" name="tableActive">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="8" rowCount="0">
+                              <Table columnCount="9" rowCount="0">
                                 <Column editable="true" title="No Transaction" type="java.lang.Object"/>
                                 <Column editable="false" title="Username" type="java.lang.Object"/>
                                 <Column editable="false" title="Product" type="java.lang.Object"/>
@@ -150,6 +150,7 @@
                                 <Column editable="false" title="Due On" type="java.lang.Object"/>
                                 <Column editable="false" title="Amount" type="java.lang.Object"/>
                                 <Column editable="false" title="Status" type="java.lang.Object"/>
+                                <Column editable="true" title="Action" type="java.lang.Object"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -190,6 +191,11 @@
                                   <Renderer/>
                                 </Column>
                                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                                   <Title/>
                                   <Editor/>
                                   <Renderer/>

@@ -71,9 +71,9 @@ public class Result extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addComponent(transactionNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
                 .addComponent(fileChooserButton)
-                .addGap(66, 66, 66)
+                .addGap(38, 38, 38)
                 .addComponent(sendButton)
                 .addGap(71, 71, 71))
         );
@@ -91,7 +91,12 @@ public class Result extends javax.swing.JFrame {
         } else {
             // Handling SEND button action here
             // Call insertResult method from ServiceResult to save data to the database
-            ServiceResult.insertResult(transaction, selectedFile);
+            
+            String username = ServiceResult.getUsernameFromTransaction(transaction);
+            
+            String recipientEmail = ServiceResult.getEmailFromUsername(username);
+            
+            ServiceResult.insertResult(transaction, selectedFile, recipientEmail);
             MessageAlerts.getInstance().showMessage("Send Success", "Data Successfully Send to Database", MessageAlerts.MessageType.SUCCESS, MessageAlerts.OK_OPTION, (PopupController pc, int i) -> {
                 if (i == MessageAlerts.OK_OPTION){
                     System.out.println("Click OK");

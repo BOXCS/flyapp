@@ -2,6 +2,7 @@ package LoginRegister;
 
 import Dashboard.Admin.DashboardAdmin;
 import Dashboard.User.DashboardUser;
+import Dashboard.Designer.DashboardDesigner;
 import LoginRegister.Component.Message;
 import LoginRegister.Component.PanelLoading;
 import LoginRegister.Component.PanelLoginRegister;
@@ -15,6 +16,7 @@ import User.PlaceOrder.Main.PlaceOrderMain;
 import User.PlaceOrder.component.PanelPricing;
 import connection.DatabaseConnection;
 import java.awt.Dimension;
+//import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +31,7 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import swing.ComponentResizer;
+import java.net.URL;
 
 public class Main extends javax.swing.JFrame {
 
@@ -49,6 +52,7 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         init();
         setExtendedState(MAXIMIZED_BOTH);
+
     }
 
     private void init() {
@@ -201,7 +205,7 @@ public class Main extends javax.swing.JFrame {
                 if ("admin".equalsIgnoreCase(user.getRole())) {
                     DashboardAdmin.Adminmain(user); // Jika username adalah "vinsce", akan di arahkan ke dashboard admin
                 } else if ("designer".equalsIgnoreCase(user.getRole())) {
-                    Designer.Main.DashboardDesigner.Designermain(user); // Jika username adalah yang lain, akan di arahkan ke dashboard user
+                    DashboardDesigner.Designermain(user); // Jika username adalah yang lain, akan di arahkan ke dashboard user
                 } else {
                     DashboardUser.Usermain(user);
                 }

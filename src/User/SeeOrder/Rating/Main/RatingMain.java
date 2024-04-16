@@ -18,11 +18,11 @@ public class RatingMain extends javax.swing.JFrame {
     private ServiceRating serviceRating;
     private String transactionNumber;
     private String designerName;
-    
+
     public RatingMain() {
         initComponents();
         init();
-        
+
         // Set placeholder text
         areaFeedback.setForeground(Color.GRAY);
         areaFeedback.setText("Optional");
@@ -43,10 +43,10 @@ public class RatingMain extends javax.swing.JFrame {
                 }
             }
         });
-        
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         starRating.addEventStarRating(new EventStarRating() {
             @Override
             public void selected(int star) {
@@ -54,15 +54,15 @@ public class RatingMain extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void init() {
         GlassPanePopup.install(this);
     }
-    
+
     public void setTransactionNumber(String transactionNumber) {
         this.transactionNumber = transactionNumber;
     }
-    
+
     public void setDesigner(String designerName) {
         this.designerName = designerName;
         jLabel2.setText("Your feedback to " + designerName);
@@ -177,21 +177,36 @@ public class RatingMain extends javax.swing.JFrame {
     private void cmdOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdOKActionPerformed
         int rating = starRating.getStar();
         String feedback = areaFeedback.getText();
-        
+
         MessageAlerts.getInstance().showMessage("Are you sure?", "Please be sure first", MessageAlerts.MessageType.DEFAULT, MessageAlerts.YES_NO_OPTION, (PopupController pc, int i) -> {
-                if (i == MessageAlerts.YES_OPTION){
-                    try {
+            if (i == MessageAlerts.YES_OPTION) {
+                try {
+                    // Periksa apakah transactionNumber sudah dinilai sebelumnya
+                    boolean alreadyRated = serviceRating.isTransactionAlreadyRated(transactionNumber);
+
+                    if (alreadyRated) {
+                        // Jika sudah dinilai, beri tahu pengguna
+                        MessageAlerts.getInstance().showMessage("Already Rated", "This transaction has already been rated.", MessageAlerts.MessageType.DEFAULT);
+                    } else {
+                        // Jika belum dinilai, simpan peringkat ke database
                         serviceRating.saveRatingToDatabase(transactionNumber, designerName, rating, feedback);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(RatingMain.class.getName()).log(Level.SEVERE, null, ex);
+
+                        // Tampilkan pesan sukses
+                        MessageAlerts.getInstance().showMessage("Rate Success", "Thank you for your feedback!", MessageAlerts.MessageType.SUCCESS);
+
+                        // Tutup dialog atau jendela
+                        dispose();
                     }
-                    MessageAlerts.getInstance().showMessage("Rate Success", "Wait for your HD order", MessageAlerts.MessageType.SUCCESS);
-                    dispose();
+                } catch (SQLException ex) {
+                    // Tangani kesalahan SQL
+                    Logger.getLogger(RatingMain.class.getName()).log(Level.SEVERE, null, ex);
+                    MessageAlerts.getInstance().showMessage("Error", "An error occurred while saving the rating.", MessageAlerts.MessageType.ERROR);
                 }
-                if (i == MessageAlerts.NO_OPTION) {
-                    MessageAlerts.getInstance().showMessage("Rate Cancelled", "please rate our services after you sure", MessageAlerts.MessageType.DEFAULT);
-                }
-            });
+            } else if (i == MessageAlerts.NO_OPTION) {
+                // Tampilkan pesan pembatalan
+                MessageAlerts.getInstance().showMessage("Rate Cancelled", "Please rate our services when you are ready.", MessageAlerts.MessageType.DEFAULT);
+            }
+        });
     }//GEN-LAST:event_cmdOKActionPerformed
 
     /**

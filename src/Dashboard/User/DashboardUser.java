@@ -2,8 +2,8 @@ package Dashboard.User;
 
 import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
-import Dashboard.User.Form.FormHomeU;
 import LoginRegister.Model.ModelUser;
+import notif.Panel.Notification;
 import User.JobApply.Designer.DesignerApply;
 import User.PlaceOrder.Main.PlaceOrderMain;
 import User.SeeOrder.Main.SeeOrderMain;
@@ -15,6 +15,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLayeredPane;
+import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
+import org.jdesktop.animation.timing.interpolation.SplineInterpolator;
 import raven.popup.GlassPanePopup;
 
 public class DashboardUser extends javax.swing.JFrame {
@@ -35,31 +39,26 @@ public class DashboardUser extends javax.swing.JFrame {
                 g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
             }
         };
-        MenuEvent event = new MenuEvent() {
-            @Override
-            public void menuSelected(int index) {
-                if (index == 0) {
-                    showForm(new Form(index + "User"));
-                } else if (index == 1) {
+        MenuEvent event = (int index) -> {
+            switch (index) {
+                case 0 -> showForm(new Form(index + "User"));
+                case 1 -> {
                     try {
                         showForm(new PlaceOrderMain(user));
                     } catch (SQLException ex) {
                         Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else if (index == 3) {
-                    showForm(new SeeOrderMain(user));
-                } else if (index == 4) {
-                    showForm(new DesignerApply());
-                } else {
-                    showForm(new Form(index + ""));
                 }
+                case 3 -> showForm(new SeeOrderMain(user));
+                case 4 -> showForm(new DesignerApply());
+                default -> showForm(new Form(index + ""));
             }
         };
         menu.initMenu(event);
         menu.setSelected(0);
         setExtendedState(MAXIMIZED_BOTH);
     }
-    
+
     private void init() {
         GlassPanePopup.install(this);
     }
@@ -87,7 +86,7 @@ public class DashboardUser extends javax.swing.JFrame {
 
         body.setOpaque(false);
         body.setLayout(new java.awt.BorderLayout());
-        bg.add(body, new org.netbeans.lib.awtextra.AbsoluteConstraints(191, 46, 1173, 680));
+        bg.add(body, new org.netbeans.lib.awtextra.AbsoluteConstraints(191, 16, 1173, 710));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/png/Group 17.png"))); // NOI18N
         bg.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, 770));
@@ -107,7 +106,7 @@ public class DashboardUser extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * @param args the command line arguments
+     * @param user
      */
     public static void Usermain(ModelUser user) {
         /* Set the Nimbus look and feel */
@@ -122,22 +121,16 @@ public class DashboardUser extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DashboardUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DashboardUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DashboardUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(DashboardUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DashboardUser(user).setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new DashboardUser(user).setVisible(true);
         });
     }
 

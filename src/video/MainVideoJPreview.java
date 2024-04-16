@@ -1,27 +1,18 @@
 package video;
 
-import Test.InsertResult.ServiceResult;
-import connection.DatabaseConnection;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 public class MainVideoJPreview extends JFrame {
 
@@ -29,17 +20,15 @@ public class MainVideoJPreview extends JFrame {
     private final JButton pauseButton;
     private final JButton skipForwardButton;
     private final JButton skipBackwardButton;
-    private final String transactionNumber;
 
-    public MainVideoJPreview(String transactionNumber) {
-        this.transactionNumber = transactionNumber;
+    public MainVideoJPreview(String videoFilePath) {
         setTitle("Video Player");
         setSize(1280, 720);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Hanya menutup frame ini, tidak semua frame
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Mencari lokasi instalasi VLC
-        new uk.co.caprica.vlcj.factory.discovery.NativeDiscovery().discover();
+        // Menemukan lokasi instalasi VLC
+        new NativeDiscovery().discover();
 
         mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
         getContentPane().add(mediaPlayerComponent, BorderLayout.CENTER);
@@ -89,50 +78,20 @@ public class MainVideoJPreview extends JFrame {
 
         setVisible(true);
 
-        // Mulai memainkan video dari database ketika frame dibuat
-        playVideoFromDatabase();
+        // Mulai memainkan video dari file ketika frame dibuat
+        playVideoFromFile(videoFilePath);
     }
 
-    // Method untuk mendapatkan dan memainkan video dari database berdasarkan transactionNumber
-    public void playVideoFromDatabase() {
-        // Mendapatkan file video dari database
-        byte[] videoData = null;
-        try {
-            videoData = ServiceResult.getVideoFromDatabase(transactionNumber);
-        } catch (SQLException ex) {
-            Logger.getLogger(MainVideoJPreview.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MainVideoJPreview.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // Memainkan video dari data byte array
-        if (videoData != null) {
-            playVideo(videoData);
-        } else {
-            System.err.println("Video data not found in the database.");
-        }
-    }
-
-    private void playVideo(byte[] videoData) {
-        try {
-            // Create a temporary file
-            File tempFile = File.createTempFile("temp_video", ".mp4");
-
-            // Write the byte array data to the temporary file
-            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                fos.write(videoData);
-            }
-
-            // Play the video from the temporary file
-            mediaPlayerComponent.mediaPlayer().media().start(tempFile.getAbsolutePath());
-            mediaPlayerComponent.mediaPlayer().controls().play();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // Method untuk memainkan video dari file
+    public void playVideoFromFile(String videoFilePath) {
+        // Mainkan video dari file
+        mediaPlayerComponent.mediaPlayer().media().start(videoFilePath);
+        mediaPlayerComponent.mediaPlayer().controls().play();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainVideoJPreview("TRS-1303").playVideoFromDatabase());
+        // Ganti "path/to/video.mp4" dengan path ke file video yang ingin Anda putar
+        String videoFilePath = "video";
+        SwingUtilities.invokeLater(() -> new MainVideoJPreview(videoFilePath));
     }
 }

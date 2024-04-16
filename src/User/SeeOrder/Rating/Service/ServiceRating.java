@@ -20,21 +20,63 @@ public class ServiceRating {
 
     public static void saveRatingToDatabase(String transactionNumber, String designerName, int rating, String feedback) throws SQLException {
         PreparedStatement p = null;
+        ResultSet rs = null;
+        String username = null;
+
         try {
-            String sql = "INSERT INTO rating (transaction_number, designer_name, star_count, feedback) VALUES (?, ?, ?, ?)";
-
-            p = getConnection().prepareStatement(sql);
+            // Kueri untuk mendapatkan username berdasarkan transactionNumber
+            String queryGetUsername = "SELECT username FROM transaction WHERE transaction_number = ?";
+            p = getConnection().prepareStatement(queryGetUsername);
             p.setString(1, transactionNumber);
-            p.setString(2, designerName);
-            p.setInt(3, rating);
-            p.setString(4, feedback);
+            rs = p.executeQuery();
 
-            p.executeUpdate();
+            if (rs.next()) {
+                // Dapatkan username dari hasil kueri
+                username = rs.getString("username");
+            }
 
-            System.out.println("Rating saved to database: " + rating);
+            // Tutup statement dan result set setelah mendapatkan username
+            rs.close();
+            p.close();
+
+            // Jika username ditemukan, simpan rating ke database
+            if (username != null) {
+                // Kueri untuk menyimpan rating ke database
+                String sql = "INSERT INTO rating (transaction_number, designer_name, star_count, feedback, username) VALUES (?, ?, ?, ?, ?)";
+
+                p = getConnection().prepareStatement(sql);
+                p.setString(1, transactionNumber);
+                p.setString(2, designerName);
+                p.setInt(3, rating);
+                p.setString(4, feedback);
+                p.setString(5, username);
+
+                int rowsAffected = p.executeUpdate();
+
+                // Jika peringkat berhasil disimpan, perbarui status transaksi menjadi "Finished"
+                if (rowsAffected > 0) {
+                    // Perbarui status dalam tabel transactions
+                    String updateStatusSql = "UPDATE transaction SET status = 'Finished' WHERE transaction_number = ?";
+                    try (PreparedStatement updateP = getConnection().prepareStatement(updateStatusSql)) {
+                        updateP.setString(1, transactionNumber);
+                        updateP.executeUpdate();
+                    }
+
+                    // Perbarui status desainer ke "Available"
+                    updateDesignerStatus(designerName, "Available");
+
+                    System.out.println("Rating saved to database: " + rating);
+                }
+            } else {
+                System.err.println("Username not found for transactionNumber: " + transactionNumber);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (p != null) {
                 p.close();
             }
@@ -68,5 +110,14 @@ public class ServiceRating {
             }
         }
         return alreadyRated;
+    }
+
+    private static void updateDesignerStatus(String designer, String status) throws SQLException {
+        String updateQuery = "UPDATE designer SET Status = ? WHERE username = ?";
+        try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+            updateStatement.setString(1, status);
+            updateStatement.setString(2, designer);
+            updateStatement.executeUpdate();
+        }
     }
 }

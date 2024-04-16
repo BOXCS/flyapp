@@ -11,6 +11,9 @@ import User.SeeOrder.Service.ServiceMyOrder;
 import User.SeeOrder.Swing.Cell.CellActionRenderer;
 import User.SeeOrder.Swing.Cell.TableActionCellEditor;
 import User.SeeOrder.Swing.Cell.TableActionEvent;
+import User.SeeOrder.Swing.CellActive.CellActiveRenderer;
+import User.SeeOrder.Swing.CellActive.TableActionActiveEvent;
+import User.SeeOrder.Swing.CellActive.TableActiveCellEditor;
 import User.SeeOrder.Swing.CellCancelled.CellCancelledRenderer;
 import User.SeeOrder.Swing.CellCancelled.TableActionCancelledEvent;
 import User.SeeOrder.Swing.CellCancelled.TableCancelledCellEditor;
@@ -20,10 +23,10 @@ import User.SeeOrder.Swing.CellFinished.TableFinishedCellEditor;
 import User.SeeOrder.Swing.CellWaiting.CellWaitingRenderer;
 import User.SeeOrder.Swing.CellWaiting.TableActionWaitingEvent;
 import User.SeeOrder.Swing.CellWaiting.TableWaitingCellEditor;
+import User.SendFootage.Main.FootageMain;
 import java.awt.Window;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import video.MainVideoJ;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,11 +34,13 @@ import java.sql.SQLException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileSystemView;
 import jnafilechooser.api.JnaFileChooser;
 import raven.alerts.MessageAlerts;
+import connection.DatabaseConnection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SeeOrderMain extends javax.swing.JPanel {
 
@@ -150,7 +155,48 @@ public class SeeOrderMain extends javax.swing.JPanel {
                 int selectedRow = tableWaiting.getSelectedRow();
                 if (selectedRow != -1) {
                     Object transactionNumber = tableWaiting.getValueAt(selectedRow, 0);
-                    System.out.println("Give Note on transaction number: " + transactionNumber);
+                    Object designerName = tableWaiting.getValueAt(selectedRow, 4);
+                    Object productName = tableWaiting.getValueAt(selectedRow, 2);
+                    Object level = tableWaiting.getValueAt(selectedRow, 3);
+                    Object username = tableWaiting.getValueAt(selectedRow, 1);
+
+                    try {
+                        // Query untuk mendapatkan email pengguna dari tabel user berdasarkan username
+                        String queryUser = "SELECT email FROM user WHERE username = ?";
+                        PreparedStatement statementUser = DatabaseConnection.getInstance().getConnection().prepareStatement(queryUser);
+                        statementUser.setString(1, username.toString());
+                        ResultSet resultSetUser = statementUser.executeQuery();
+
+                        if (resultSetUser.next()) {
+                            // Ambil email pengguna dari hasil kueri
+                            String email = resultSetUser.getString("email");
+
+                            // Buat instansiasi FootageMain
+                            FootageMain footageMain = new FootageMain();
+
+                            // Atur nilai transactionNumber, designerName, productName, level, dan email
+                            footageMain.setTransactionNumber(transactionNumber.toString());
+                            footageMain.setDesigner(designerName.toString());
+                            footageMain.setProductName(productName.toString());
+                            footageMain.setLevel(level.toString());
+                            footageMain.setEmail(email);
+
+                            // Tampilkan frame FootageMain
+                            footageMain.setVisible(true);
+
+                            System.out.println("Give Note on transaction number: " + transactionNumber);
+                        } else {
+                            System.out.println("User email not found for username: " + username);
+                        }
+
+                        // Tutup resources
+                        resultSetUser.close();
+                        statementUser.close();
+
+                    } catch (SQLException ex) {
+                        Logger.getLogger(SeeOrderMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
                 }
@@ -268,9 +314,9 @@ public class SeeOrderMain extends javax.swing.JPanel {
         TableActionCancelledEvent eventC = new TableActionCancelledEvent() {
             @Override
             public void onReason(int row) {
-                int selectedRow = tableWaiting.getSelectedRow();
+                int selectedRow = tableCancelled.getSelectedRow();
                 if (selectedRow != -1) {
-                    Object transactionNumber = tableWaiting.getValueAt(selectedRow, 0);
+                    Object transactionNumber = tableCancelled.getValueAt(selectedRow, 0);
                     System.out.println("Reason Cancelled on transaction number: " + transactionNumber);
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
@@ -279,6 +325,21 @@ public class SeeOrderMain extends javax.swing.JPanel {
         };
         tableCancelled.getColumnModel().getColumn(8).setCellRenderer(new CellCancelledRenderer());
         tableCancelled.getColumnModel().getColumn(8).setCellEditor(new TableCancelledCellEditor(eventC));
+
+        TableActionActiveEvent eventA = new TableActionActiveEvent() {
+            @Override
+            public void onReceipt(int row) {
+                int selectedRow = tableActive.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableActive.getValueAt(selectedRow, 0);
+                    ServiceMyOrder.printReceipt(transactionNumber.toString());
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
+                }
+            }
+        };
+        tableActive.getColumnModel().getColumn(8).setCellRenderer(new CellActiveRenderer());
+        tableActive.getColumnModel().getColumn(8).setCellEditor(new TableActiveCellEditor(eventA));
     }
 
     @SuppressWarnings("unchecked")
@@ -326,11 +387,11 @@ public class SeeOrderMain extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Transaction", "Username", "Product", "Level", "Designer", "Due On", "Amount", "Status"
+                "No Transaction", "Username", "Product", "Level", "Designer", "Due On", "Amount", "Status", "Action"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false, false, false
+                true, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -355,8 +416,8 @@ public class SeeOrderMain extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 1252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 1130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(204, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

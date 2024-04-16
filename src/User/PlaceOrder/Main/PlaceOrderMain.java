@@ -59,6 +59,8 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         displayPackageItems("Basic", servicePricing.getPackageItems("Video Editing", "Basic"));
         displayPackageItems("Standard", servicePricing.getPackageItems("Design Graphic", "Standard"));
         displayPackageItems("Pro", servicePricing.getPackageItems("3D Modelling", "Pro"));
+        
+        productComboBox.setSelectedIndex(0);
     }
 
     // Metode untuk menampilkan harga dan item-item terkait pada antarmuka pengguna

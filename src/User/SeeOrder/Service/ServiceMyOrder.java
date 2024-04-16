@@ -1,12 +1,28 @@
 package User.SeeOrder.Service;
 
 import connection.DatabaseConnection;
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
+
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
+import java.util.HashMap;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRException;
+import java.util.Map;
+import javax.swing.JFileChooser;
+import jnafilechooser.api.JnaFileChooser;
+import net.sf.jasperreports.engine.JasperExportManager;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServiceMyOrder {
 
@@ -190,6 +206,133 @@ public class ServiceMyOrder {
             p.executeUpdate(); // Eksekusi query
 
             p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Fungsi untuk mencetak nota berdasarkan nomor transaksi
+    public static void printReceipt(String transactionNumber) {
+        try {
+            // Query untuk mendapatkan data transaksi berdasarkan nomor transaksi
+            String sql = "SELECT * FROM transaction WHERE transaction_number = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, transactionNumber); // Set parameter nomor transaksi
+            ResultSet r = p.executeQuery();
+
+            // Jika data transaksi ditemukan
+            if (r.next()) {
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Format tanggal
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menyiapkan parameter untuk laporan nota
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("transaction_number", transactionNumber);
+                parameters.put("username", username);
+                parameters.put("product_name", product);
+                parameters.put("level", level);
+                parameters.put("designer", designer);
+                parameters.put("created_at", formattedDate);
+                parameters.put("amount", amount);
+                parameters.put("status", status);
+
+                // Mengisi laporan nota
+                JasperPrint jasperPrint = JasperFillManager.fillReport(
+                        "D:\\Zaky\\NeatBeans Project\\flyapp\\src\\nota\\Main\\report1.jasper",
+                        parameters,
+                        DatabaseConnection.getInstance().getConnection()
+                );
+
+                // Menampilkan laporan nota ke pengguna
+                JasperViewer.viewReport(jasperPrint, false);
+
+                // Simpan laporan nota ke file PDF
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Save PDF File");
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setSelectedFile(new File(transactionNumber + ".pdf"));
+
+                int option = fileChooser.showSaveDialog(null);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    // Ekspor laporan ke PDF menggunakan JasperExportManager
+                    JasperExportManager.exportReportToPdfFile(jasperPrint, file.getAbsolutePath());
+                    JOptionPane.showMessageDialog(null, "Receipt successfully exported to PDF.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operation canceled by the user.", "Cancel", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                // Jika nomor transaksi tidak ditemukan, tampilkan pesan kesalahan
+                JOptionPane.showMessageDialog(null, "Transaction number not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException | JRException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void insertFootage(String transactionNumber, String footageLink, String information, String designerName, String productOrder, String levelOrder, String emailUser) {
+        try {
+            // Query untuk mendapatkan data designer, product_name, level, dan username berdasarkan transaction_number
+            String queryTransaction = "SELECT designer, product_name, level, username FROM transaction WHERE transaction_number = ?";
+            PreparedStatement statementTransaction = DatabaseConnection.getInstance().getConnection().prepareStatement(queryTransaction);
+            statementTransaction.setString(1, transactionNumber);
+            ResultSet resultSetTransaction = statementTransaction.executeQuery();
+
+            if (resultSetTransaction.next()) {
+                // Ambil nilai designer, product_name, level, dan username dari hasil kueri
+                String designer = resultSetTransaction.getString("designer");
+                String productName = resultSetTransaction.getString("product_name");
+                String level = resultSetTransaction.getString("level");
+                String username = resultSetTransaction.getString("username");
+
+                // Query untuk mendapatkan email pengguna dari tabel user berdasarkan username
+                String queryUser = "SELECT email FROM user WHERE username = ?";
+                PreparedStatement statementUser = DatabaseConnection.getInstance().getConnection().prepareStatement(queryUser);
+                statementUser.setString(1, username);
+                ResultSet resultSetUser = statementUser.executeQuery();
+
+                if (resultSetUser.next()) {
+                    // Ambil email pengguna dari hasil kueri
+                    String email = resultSetUser.getString("email");
+
+                    // Query untuk menambahkan data footage ke dalam tabel footage
+                    String sql = "INSERT INTO footage (transaction_number, footage_link, information, designer, product_name, level, user_email) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+                    p.setString(1, transactionNumber);
+                    p.setString(2, footageLink);
+                    p.setString(3, information);
+                    p.setString(4, designer);
+                    p.setString(5, productName);
+                    p.setString(6, level);
+                    p.setString(7, email);
+                    p.executeUpdate(); // Eksekusi query
+
+                    p.close();
+                } else {
+                    System.out.println("User email not found.");
+                }
+
+                resultSetUser.close();
+                statementUser.close();
+            } else {
+                System.out.println("Transaction number not found.");
+            }
+
+            resultSetTransaction.close();
+            statementTransaction.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

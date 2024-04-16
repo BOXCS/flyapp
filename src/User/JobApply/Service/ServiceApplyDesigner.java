@@ -23,7 +23,7 @@ public class ServiceApplyDesigner {
         con = DatabaseConnection.getInstance().getConnection();
     }
 
-    public void sendJobApply(String name, String senderEmail, String instagram, String content, String aboutUs, String aboutYourself) {
+    public void sendJobApply(String name, String senderEmail, String instagram, String content, String portfolio, String aboutUs, String aboutYourself) {
         // Konfigurasi properti untuk mengirim email
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -50,6 +50,7 @@ public class ServiceApplyDesigner {
                     + "I have an active email for you to send me the update " + senderEmail + "\n\n"
                     + "My Instagram is " + instagram + "\n\n"
                     + "I have speciality on " + content + "\n\n"
+                    + "Here you can see my work on " + portfolio + "\n\n"
                     + "I know this studio from " + aboutUs + "\n\n"
                     + aboutYourself + "\n\n"
                     + "Thank you from " + name;

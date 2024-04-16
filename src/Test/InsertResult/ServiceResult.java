@@ -14,6 +14,7 @@ import java.sql.Blob;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import notif.Mail.MailNotification;
 
 public class ServiceResult {
 
@@ -27,7 +28,7 @@ public class ServiceResult {
         return connection;
     }
 
-    public static void insertResult(String transactionNumber, File selectedFile) {
+    public static void insertResult(String transactionNumber, File selectedFile, String recipientEmail) {
         FileInputStream fis = null;
         try {
             // Mendapatkan ekstensi file
@@ -55,6 +56,10 @@ public class ServiceResult {
 
             // Menampilkan pesan sukses
             System.out.println("Data berhasil disimpan ke dalam tabel.");
+
+            // Kirim email notifikasi setelah menyimpan data
+            MailNotification mailnotif = new MailNotification();
+            mailnotif.sendNotification(recipientEmail, "Notification", "Your order with number " + transactionNumber + " has been sent by the designer.");
 
             p.close();
         } catch (SQLException | FileNotFoundException e) {
@@ -228,6 +233,70 @@ public class ServiceResult {
         }
 
         return fileData;
+    }
+
+    public static String getUsernameFromTransaction(String transactionNumber) {
+        String username = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            String query = "SELECT username FROM transaction WHERE transaction_number = ?";
+            preparedStatement = getConnection().prepareStatement(query);
+            preparedStatement.setString(1, transactionNumber);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                username = resultSet.getString("username");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return username;
+    }
+
+    public static String getEmailFromUsername(String username) {
+        String email = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            String query = "SELECT email FROM user WHERE username = ?";
+            preparedStatement = getConnection().prepareStatement(query);
+            preparedStatement.setString(1, username);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return email;
     }
 
 }
