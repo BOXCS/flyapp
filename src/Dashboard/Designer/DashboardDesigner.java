@@ -6,6 +6,7 @@ import Dashboard.Designer.Event.MenuEvent;
 import Dashboard.Designer.Form.Form;
 import Dashboard.Designer.Form.FormDesigner;
 import Dashboard.Designer.Profile.Main.ProfileMain;
+import Dashboard.Designer.SendOrder.Main.SendOrderMain;
 //import Dashboard.Admin.form.FormHome;
 import LoginRegister.Model.ModelUser;
 import java.awt.Color;
@@ -42,6 +43,8 @@ public class DashboardDesigner extends javax.swing.JFrame {
                     showForm(new AnalythicsMain(user));
                 } else if (index == 3) {
                     showForm(new ProfileMain(user));
+                } else if (index == 4) {
+                    showForm(new SendOrderMain());
                 } else {
                     showForm(new Form(index + ""));
                 }

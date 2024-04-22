@@ -9,6 +9,14 @@ public class Profile extends javax.swing.JPanel {
     private final ModelUser user;
     private final ServiceDesigner serviceDesigner;
 
+    public Profile() {
+        this.user = null;
+        this.serviceDesigner = null;
+        initComponents();
+    }
+
+    
+    
     public Profile(ModelUser user) {
         this.user = user;
         this.serviceDesigner = new ServiceDesigner();
@@ -28,7 +36,8 @@ public class Profile extends javax.swing.JPanel {
 
             double averageRating = serviceDesigner.getAverageRating(user.getUserName());
             String icon = "⭐"; // Anda dapat mengganti ini dengan ikon yang diinginkan
-            lbRating.setText(String.format("%s%d", icon, (int) averageRating));
+            int averageStar = (int) Math.round(averageRating);
+            lbRating.setText(String.valueOf(averageStar));
 
             double averageSuccessRate = serviceDesigner.getAverageSuccessRate(user.getUserName());
             lbScore.setText(String.format("%.2f%%", averageSuccessRate));

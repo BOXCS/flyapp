@@ -26,6 +26,7 @@ public class FormHome extends javax.swing.JPanel {
         chart.addLegend("Pending", new Color(12, 84, 175), new Color(0, 108, 247));
         chart.addLegend("Active", new Color(30, 144, 255), new Color(173, 216, 230));
         chart.addLegend("Waiting", new Color(255, 165, 0), new Color(255, 215, 0));
+        chart.addLegend("late", new Color(128, 0, 128), new Color(186, 85, 211));
 
         try {
             List<ModelChart> datas = new ServiceReport().getData();

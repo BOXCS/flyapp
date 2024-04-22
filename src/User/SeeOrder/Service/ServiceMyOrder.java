@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import notif.Mail.MailNotification;
 
 public class ServiceMyOrder {
 
@@ -314,9 +315,9 @@ public class ServiceMyOrder {
                     p.setString(1, transactionNumber);
                     p.setString(2, footageLink);
                     p.setString(3, information);
-                    p.setString(4, designer);
-                    p.setString(5, productName);
-                    p.setString(6, level);
+                    p.setString(4, designerName);
+                    p.setString(5, productOrder);
+                    p.setString(6, levelOrder);
                     p.setString(7, email);
                     p.executeUpdate(); // Eksekusi query
 
@@ -331,11 +332,39 @@ public class ServiceMyOrder {
                 System.out.println("Transaction number not found.");
             }
 
+            String designerEmail = getDesignerEmail(designerName);
+
+            // Send email notification
+            if (designerEmail != null) {
+                MailNotification mailNotif = new MailNotification();
+                String notificationSubject = "Notification";
+                String notificationMessage = "Hello, I want to send my footage for transaction number: " + transactionNumber + "\n\n"
+                        + "I ordered " + productOrder + " with level " + levelOrder + " for designer " + designerName + "\n\n"
+                        + "This is the link for you to get my footage: " + footageLink + "\n\n"
+                        + "And this is the information related to my order: " + information;
+                mailNotif.sendNotification(designerEmail, notificationSubject, notificationMessage);
+            }
+
             resultSetTransaction.close();
             statementTransaction.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String getDesignerEmail(String designerUsername) {
+        // Query to get the designer's email based on the designer's username
+        String query = "SELECT email FROM designer WHERE username = ?";
+        try (PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(query)) {
+            preparedStatement.setString(1, designerUsername);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if no email is found or an error occurs
     }
 
 }

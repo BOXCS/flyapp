@@ -14,6 +14,7 @@ import java.util.List;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import notif.Mail.MailNotification;
 
 public class ServicePricing {
 
@@ -256,6 +257,7 @@ public class ServicePricing {
             // Update status designer
             if (rowsAffected > 0) {
                 updateDesignerStatus(designer, "Unavailable");
+
                 // Insert revision based on product name and level
                 int revisionCount = getRevisionCount(productName, level);
                 String revisionText = "No Revision";
@@ -264,14 +266,41 @@ public class ServicePricing {
                 } else {
                     System.out.println("Ran out of Revision");
                 }
+
+                // Retrieve designer's email
+                String designerEmail = getDesignerEmail(designer);
+
+                // Send email notification
+                if (designerEmail != null) {
+                    MailNotification mailNotif = new MailNotification();
+                    String notificationSubject = "Notification";
+                    String notificationMessage = user.getUserName() + " has placed an order with transaction number: " + transactionNumber;
+                    mailNotif.sendNotification(designerEmail, notificationSubject, notificationMessage);
+                }
             }
 
             // Check if the insertion was successful
             return rowsAffected > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private String getDesignerEmail(String designerUsername) {
+        // Query to get the designer's email based on the designer's username
+        String query = "SELECT email FROM designer WHERE username = ?";
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, designerUsername);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if no email is found or an error occurs
     }
 
     private void updateDesignerStatus(String designer, String status) throws SQLException {

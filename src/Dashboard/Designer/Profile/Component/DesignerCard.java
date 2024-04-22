@@ -9,34 +9,43 @@ import java.time.format.DateTimeFormatter;
 public class DesignerCard extends javax.swing.JPanel {
 
     private final ModelUser user;
-    private final ServiceDesigner serviceDesigner;
-    
+    private ServiceDesigner serviceDesigner;
+
+    public DesignerCard() {
+        this.user = null;
+        initComponents();
+        setOpaque(false);
+        loadDesigner();
+    }
+
     public DesignerCard(ModelUser user) {
         this.user = user;
         this.serviceDesigner = new ServiceDesigner();
         initComponents();
-        
         setOpaque(false);
-        
+        loadDesigner();
+    }
+
+    private void loadDesigner() {
         lbName.setText(user.getUserName());
         lbEmail.setText(user.getEmail());
-        
+
         try {
             ModelDesigner model = serviceDesigner.getDesignerInfo(user.getUserName());
             if (model != null) {
                 lbInstagram.setText("@" + model.getInstagram());
             }
-            
+
             String memberSince = serviceDesigner.getMemberSince(user.getUserName());
             lbMember.setText(memberSince);
-            
+
             LocalDateTime lastDelivery = serviceDesigner.getLastDesignDate(user.getUserName());
             if (lastDelivery != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
                 String formattedLastDelivery = lastDelivery.format(formatter);
                 lbDelivery.setText(formattedLastDelivery);
             }
-            
+
         } catch (Exception e) {
         }
     }

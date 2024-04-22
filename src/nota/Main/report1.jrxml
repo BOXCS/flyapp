@@ -2,10 +2,10 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="226" pageHeight="839" columnWidth="201" leftMargin="14" rightMargin="11" topMargin="0" bottomMargin="0" uuid="0cec3fa2-f496-4ed6-afb0-442009896a49">
 	<property name="ireport.zoom" value="2.657341500000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="305"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="transaction_number" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select * from transaction where transaction_number like '%$P!{transaction_number}%']]>
+		<![CDATA[select *, sum(amount) as total_amount from transaction where transaction_number like '%$P!{transaction_number}%' group by transaction_number, product_name, designer, level, created_at]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -34,6 +34,10 @@
 	<field name="username" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="total_amount" class="java.lang.Double"/>
+	<variable name="total_amount_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_amount}]]></variableExpression>
+	</variable>
 	<group name="transaction_number">
 		<groupExpression><![CDATA[$F{transaction_number}]]></groupExpression>
 	</group>
@@ -57,7 +61,7 @@
 				<text><![CDATA[Thank you for using our services, please visit again.]]></text>
 			</staticText>
 			<line>
-				<reportElement x="1" y="66" width="200" height="1" uuid="d5b6ff78-ce29-438e-b552-64affdb04442"/>
+				<reportElement x="1" y="67" width="200" height="1" uuid="d5b6ff78-ce29-438e-b552-64affdb04442"/>
 			</line>
 		</band>
 	</title>
@@ -65,7 +69,7 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="62" splitType="Stretch">
+		<band height="47" splitType="Stretch">
 			<staticText>
 				<reportElement x="1" y="0" width="86" height="14" uuid="bfa283f8-7c7d-4ea0-853a-f53a93ccc0bc"/>
 				<text><![CDATA[Email :]]></text>
@@ -77,10 +81,6 @@
 				</textElement>
 				<text><![CDATA[flystudio79@gmail.com]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="1" y="15" width="86" height="14" uuid="2d3fc153-2a41-4155-9ec6-77298555dab3"/>
-				<text><![CDATA[No. Transaction :]]></text>
-			</staticText>
 			<textField>
 				<reportElement x="87" y="29" width="114" height="15" uuid="ab7a85ed-7e41-49ba-948a-3eb0f26f0c1f"/>
 				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
@@ -90,53 +90,57 @@
 				<text><![CDATA[Buyer :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="87" y="44" width="114" height="14" uuid="0e1681b0-59f4-4eb3-b983-a7a33d0b10fd"/>
-				<textFieldExpression><![CDATA[$F{designer}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="44" width="87" height="14" uuid="ef4df595-2d54-48da-a96f-27e775e4ea3f"/>
-				<text><![CDATA[Designer :]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="87" y="15" width="113" height="14" uuid="b862cd99-a29e-44aa-ae42-164a565c490e"/>
+				<reportElement x="86" y="14" width="113" height="14" uuid="b862cd99-a29e-44aa-ae42-164a565c490e"/>
 				<textFieldExpression><![CDATA[$P{transaction_number}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="14" width="86" height="14" uuid="2d3fc153-2a41-4155-9ec6-77298555dab3"/>
+				<text><![CDATA[No. Transaction :]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="67" splitType="Stretch">
+		<band height="79" splitType="Stretch">
 			<line>
 				<reportElement x="1" y="0" width="200" height="1" uuid="5f6af3d2-b3b3-4655-8f55-5b5fe1fdf8ae"/>
 			</line>
 			<textField>
-				<reportElement x="100" y="4" width="100" height="20" uuid="b952dc63-4d90-4c3c-aba6-e0f94c55f6f3"/>
+				<reportElement x="100" y="19" width="100" height="20" uuid="b952dc63-4d90-4c3c-aba6-e0f94c55f6f3"/>
 				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="4" width="100" height="20" uuid="7bd166e4-1915-4b1f-a8f4-de901be132a7"/>
+				<reportElement x="0" y="19" width="100" height="20" uuid="7bd166e4-1915-4b1f-a8f4-de901be132a7"/>
 				<text><![CDATA[Product Name :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="101" y="24" width="100" height="20" uuid="ea0b4fac-d9bd-4cb4-9a9a-a215f683a6bb"/>
+				<reportElement x="100" y="39" width="101" height="20" uuid="ea0b4fac-d9bd-4cb4-9a9a-a215f683a6bb"/>
 				<textFieldExpression><![CDATA[$F{level}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="24" width="100" height="20" uuid="08bb6136-a11a-4385-b7b9-86d559d1ace6"/>
+				<reportElement x="1" y="39" width="99" height="20" uuid="08bb6136-a11a-4385-b7b9-86d559d1ace6"/>
 				<text><![CDATA[Package :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="112" y="44" width="89" height="20" uuid="f36115e3-90b2-4387-94d2-00d8197b5f11"/>
+				<reportElement x="112" y="59" width="89" height="20" uuid="f36115e3-90b2-4387-94d2-00d8197b5f11"/>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="44" width="99" height="20" uuid="2431e349-0d48-49a7-880c-abd48ad97d91"/>
+				<reportElement x="1" y="59" width="99" height="20" uuid="2431e349-0d48-49a7-880c-abd48ad97d91"/>
 				<text><![CDATA[Price :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="44" width="12" height="20" uuid="56b5ccab-8d5c-4000-ba54-2aa7fa64f29e"/>
+				<reportElement x="100" y="59" width="12" height="20" uuid="56b5ccab-8d5c-4000-ba54-2aa7fa64f29e"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[$]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="1" y="5" width="99" height="14" uuid="ef4df595-2d54-48da-a96f-27e775e4ea3f"/>
+				<text><![CDATA[Designer :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="5" width="100" height="14" uuid="0e1681b0-59f4-4eb3-b983-a7a33d0b10fd"/>
+				<textFieldExpression><![CDATA[$F{designer}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
@@ -174,13 +178,6 @@
 				</textElement>
 				<text><![CDATA[Subtotal :]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="153" y="2" width="47" height="12" uuid="3db1e3ca-94fa-4ec7-ada0-90aec5a60426"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="100" y="14" width="36" height="12" uuid="8e74c92b-69d5-426b-bfa9-930d460bd402"/>
 				<textElement>
@@ -188,17 +185,10 @@
 				</textElement>
 				<text><![CDATA[Total :]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="153" y="14" width="47" height="12" uuid="8e1adf81-f350-45b8-89bf-efec0fd68fda"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
-			</textField>
 			<componentElement>
 				<reportElement x="0" y="63" width="200" height="50" uuid="6fbcd5ab-3e09-4973-9c13-fed57a66d521"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false">
-					<jr:codeExpression><![CDATA["1234"]]></jr:codeExpression>
+					<jr:codeExpression><![CDATA[$P{transaction_number}]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
 			<staticText>
@@ -215,6 +205,20 @@
 				</textElement>
 				<text><![CDATA[$]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="153" y="2" width="47" height="12" uuid="70f9b218-dcd1-49d3-8300-d0635fbcbe0a"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_amount_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="153" y="14" width="47" height="12" uuid="2a026fd0-0966-4c63-af31-cf2ca14eb4b2"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_amount_1}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

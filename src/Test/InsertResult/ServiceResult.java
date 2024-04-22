@@ -10,10 +10,13 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Blob;
+import java.sql.Timestamp;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
 import notif.Mail.MailNotification;
 
 public class ServiceResult {
@@ -297,6 +300,114 @@ public class ServiceResult {
         }
 
         return email;
+    }
+
+    public void checkIfLateAndUpdateStatus(String transactionNumber) {
+        // Dapatkan tanggal sekarang
+        Date now = new Date();
+
+        try {
+            // Query untuk mendapatkan created_at, status, product_name, dan level berdasarkan transactionNumber
+            String sql = "SELECT created_at, status, product_name, level FROM transaction WHERE transaction_number = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, transactionNumber);
+
+            // Eksekusi query
+            ResultSet r = p.executeQuery();
+
+            // Jika hasil query tersedia
+            if (r.next()) {
+                Timestamp createdAt = r.getTimestamp("created_at");
+                String status = r.getString("status");
+                String productName = r.getString("product_name");
+                String level = r.getString("level");
+
+                // Hitung batas keterlambatan berdasarkan product_name dan level
+                int lateDays = calculateLateDays(productName, level);
+
+                // Hitung batas waktu terakhir berdasarkan created_at dan batas keterlambatan
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(createdAt);
+                cal.add(Calendar.DAY_OF_MONTH, lateDays);
+                Date deadline = cal.getTime();
+
+                // Periksa apakah sekarang melewati batas waktu terakhir dan status belum Late
+                if (now.after(deadline) && !status.equals("Late")) {
+                    // Ubah status transaksi menjadi Late
+                    updateTransactionStatusToLate(transactionNumber);
+                }
+            }
+
+            // Tutup resources
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+// Metode untuk menghitung batas keterlambatan berdasarkan product_name dan level
+    private int calculateLateDays(String productName, String level) {
+        int lateDays = 0;
+
+        // Aturan keterlambatan berdasarkan product_name dan level
+        if (productName.equals("Video Editing")) {
+            switch (level) {
+                case "Basic":
+                    lateDays = 1;
+                    break;
+                case "Standard":
+                    lateDays = 2;
+                    break;
+                case "Pro":
+                    lateDays = 3;
+                    break;
+            }
+        } else if (productName.equals("Design Graphic")) {
+            switch (level) {
+                case "Basic":
+                    lateDays = 1;
+                    break;
+                case "Standard":
+                    lateDays = 2;
+                    break;
+                case "Pro":
+                    lateDays = 3;
+                    break;
+            }
+        } else if (productName.equals("3D Modelling")) {
+            switch (level) {
+                case "Basic":
+                    lateDays = 2;
+                    break;
+                case "Standard":
+                    lateDays = 3;
+                    break;
+                case "Pro":
+                    lateDays = 4;
+                    break;
+            }
+        }
+
+        return lateDays;
+    }
+
+// Metode existing untuk mengubah status transaksi menjadi Late
+    public static void updateTransactionStatusToLate(String transactionNumber) {
+        try {
+            // Query untuk memperbarui status transaksi menjadi 'Late'
+            String sql = "UPDATE transaction SET status = 'Late' WHERE transaction_number = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, transactionNumber);
+
+            // Eksekusi query
+            p.executeUpdate();
+
+            // Tutup PreparedStatement
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

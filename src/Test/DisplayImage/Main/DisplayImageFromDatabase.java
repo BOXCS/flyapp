@@ -56,8 +56,8 @@ public class DisplayImageFromDatabase {
         }
     }
 
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> new DisplayImageFromDatabase("TRS-5035").displayImageFromDatabase());
-//    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new DisplayImageFromDatabase("TRS-2437").displayImageFromDatabase());
+    }
 
 }

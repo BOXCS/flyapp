@@ -18,6 +18,7 @@ public class RatingMain extends javax.swing.JFrame {
     private ServiceRating serviceRating;
     private String transactionNumber;
     private String designerName;
+    private String productName;
 
     public RatingMain() {
         initComponents();
@@ -66,6 +67,10 @@ public class RatingMain extends javax.swing.JFrame {
     public void setDesigner(String designerName) {
         this.designerName = designerName;
         jLabel2.setText("Your feedback to " + designerName);
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     @SuppressWarnings("unchecked")
@@ -181,30 +186,30 @@ public class RatingMain extends javax.swing.JFrame {
         MessageAlerts.getInstance().showMessage("Are you sure?", "Please be sure first", MessageAlerts.MessageType.DEFAULT, MessageAlerts.YES_NO_OPTION, (PopupController pc, int i) -> {
             if (i == MessageAlerts.YES_OPTION) {
                 try {
-                    // Periksa apakah transactionNumber sudah dinilai sebelumnya
+                    // Check if the transaction has already been rated
                     boolean alreadyRated = serviceRating.isTransactionAlreadyRated(transactionNumber);
 
                     if (alreadyRated) {
-                        // Jika sudah dinilai, beri tahu pengguna
+                        // If the transaction has already been rated, inform the user
                         MessageAlerts.getInstance().showMessage("Already Rated", "This transaction has already been rated.", MessageAlerts.MessageType.DEFAULT);
                     } else {
-                        // Jika belum dinilai, simpan peringkat ke database
-                        serviceRating.saveRatingToDatabase(transactionNumber, designerName, rating, feedback);
+                        // Save rating to the database using the updated method
+                        serviceRating.saveRatingToDatabase(transactionNumber, designerName, rating, feedback, productName);
 
-                        // Tampilkan pesan sukses
-                        MessageAlerts.getInstance().showMessage("Rate Success", "Thank you for your feedback!", MessageAlerts.MessageType.SUCCESS);
+                        // Display success message
+                        MessageAlerts.getInstance().showMessage("Rating Success", "Thank you for your feedback!", MessageAlerts.MessageType.SUCCESS);
 
-                        // Tutup dialog atau jendela
+                        // Close the dialog or window
                         dispose();
                     }
                 } catch (SQLException ex) {
-                    // Tangani kesalahan SQL
+                    // Handle SQL errors
                     Logger.getLogger(RatingMain.class.getName()).log(Level.SEVERE, null, ex);
                     MessageAlerts.getInstance().showMessage("Error", "An error occurred while saving the rating.", MessageAlerts.MessageType.ERROR);
                 }
             } else if (i == MessageAlerts.NO_OPTION) {
-                // Tampilkan pesan pembatalan
-                MessageAlerts.getInstance().showMessage("Rate Cancelled", "Please rate our services when you are ready.", MessageAlerts.MessageType.DEFAULT);
+                // Display cancellation message
+                MessageAlerts.getInstance().showMessage("Rating Cancelled", "Please rate our services when you are ready.", MessageAlerts.MessageType.DEFAULT);
             }
         });
     }//GEN-LAST:event_cmdOKActionPerformed

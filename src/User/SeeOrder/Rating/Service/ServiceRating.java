@@ -18,31 +18,33 @@ public class ServiceRating {
         return connection;
     }
 
-    public static void saveRatingToDatabase(String transactionNumber, String designerName, int rating, String feedback) throws SQLException {
+    public static void saveRatingToDatabase(String transactionNumber, String designerName, int rating, String feedback, String productName) throws SQLException {
         PreparedStatement p = null;
         ResultSet rs = null;
         String username = null;
 
         try {
-            // Kueri untuk mendapatkan username berdasarkan transactionNumber
-            String queryGetUsername = "SELECT username FROM transaction WHERE transaction_number = ?";
-            p = getConnection().prepareStatement(queryGetUsername);
+            // Kueri untuk mendapatkan username dan product_name berdasarkan transaction_number
+            String queryGetUserData = "SELECT username, product_name FROM transaction WHERE transaction_number = ?";
+            p = getConnection().prepareStatement(queryGetUserData);
             p.setString(1, transactionNumber);
             rs = p.executeQuery();
 
             if (rs.next()) {
-                // Dapatkan username dari hasil kueri
+                // Dapatkan username dan product_name dari hasil kueri
                 username = rs.getString("username");
+                productName = rs.getString("product_name");
             }
 
-            // Tutup statement dan result set setelah mendapatkan username
+            // Tutup statement dan result set setelah mendapatkan username dan product_name
             rs.close();
             p.close();
 
             // Jika username ditemukan, simpan rating ke database
             if (username != null) {
                 // Kueri untuk menyimpan rating ke database
-                String sql = "INSERT INTO rating (transaction_number, designer_name, star_count, feedback, username) VALUES (?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO rating (transaction_number, designer_name, star_count, feedback, username, product_name) "
+                        + "VALUES (?, ?, ?, ?, ?, ?)";
 
                 p = getConnection().prepareStatement(sql);
                 p.setString(1, transactionNumber);
@@ -50,12 +52,13 @@ public class ServiceRating {
                 p.setInt(3, rating);
                 p.setString(4, feedback);
                 p.setString(5, username);
+                p.setString(6, productName); // Tambahkan product_name ke kueri
 
                 int rowsAffected = p.executeUpdate();
 
                 // Jika peringkat berhasil disimpan, perbarui status transaksi menjadi "Finished"
                 if (rowsAffected > 0) {
-                    // Perbarui status dalam tabel transactions
+                    // Perbarui status dalam tabel transaction
                     String updateStatusSql = "UPDATE transaction SET status = 'Finished' WHERE transaction_number = ?";
                     try (PreparedStatement updateP = getConnection().prepareStatement(updateStatusSql)) {
                         updateP.setString(1, transactionNumber);
@@ -65,7 +68,7 @@ public class ServiceRating {
                     // Perbarui status desainer ke "Available"
                     updateDesignerStatus(designerName, "Available");
 
-                    System.out.println("Rating saved to database: " + rating);
+                    System.out.println("Rating saved to database with rating: " + rating + " and product name: " + productName);
                 }
             } else {
                 System.err.println("Username not found for transactionNumber: " + transactionNumber);
@@ -88,6 +91,7 @@ public class ServiceRating {
         PreparedStatement p = null;
         ResultSet rs = null;
         boolean alreadyRated = false;
+
         try {
             String sql = "SELECT COUNT(*) AS count FROM rating WHERE transaction_number = ?";
 
@@ -109,11 +113,13 @@ public class ServiceRating {
                 p.close();
             }
         }
+
         return alreadyRated;
     }
 
+    // Method untuk memperbarui status desainer
     private static void updateDesignerStatus(String designer, String status) throws SQLException {
-        String updateQuery = "UPDATE designer SET Status = ? WHERE username = ?";
+        String updateQuery = "UPDATE designer SET status = ? WHERE username = ?";
         try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
             updateStatement.setString(1, status);
             updateStatement.setString(2, designer);

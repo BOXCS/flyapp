@@ -12,6 +12,11 @@ public class Earning extends javax.swing.JPanel {
     private final ModelUser user;
     private ServiceDesigner serviceDesigner;
 
+    public Earning() {
+        this.user = null;
+        initComponents();  // Panggil metode initComponents() untuk menginisialisasi GUI
+    }
+    
     public Earning(ModelUser user) {
         this.user = user;
         this.serviceDesigner = new ServiceDesigner();

@@ -17,7 +17,8 @@ public class ServiceReport {
                 + "SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS Cancelled, "
                 + "SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS Pending, "
                 + "SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS Active, "
-                + "SUM(CASE WHEN status = 'Waiting' THEN 1 ELSE 0 END) AS Waiting "
+                + "SUM(CASE WHEN status = 'Waiting' THEN 1 ELSE 0 END) AS Waiting, "
+                + "SUM(CASE WHEN status = 'Late' THEN 1 ELSE 0 END) AS Late "
                 + "FROM transaction "
                 + "GROUP BY MONTH(created_at) "
                 + "ORDER BY MONTH(created_at)";
@@ -31,7 +32,8 @@ public class ServiceReport {
             int pendingCount = r.getInt("Pending");
             int activeCount = r.getInt("Active");
             int waitingCount = r.getInt("Waiting");
-            list.add(new ModelChart(getMonthName(month), new double[]{finishedCount, canceledCount, pendingCount, activeCount, waitingCount}));
+            int lateCount = r.getInt("Late");
+            list.add(new ModelChart(getMonthName(month), new double[]{finishedCount, canceledCount, pendingCount, activeCount, waitingCount, lateCount}));
         }
         r.close();
         p.close();

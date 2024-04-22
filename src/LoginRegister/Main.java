@@ -12,6 +12,7 @@ import LoginRegister.Model.ModelMessage;
 import LoginRegister.Model.ModelUser;
 import LoginRegister.Service.ServiceLogin;
 import LoginRegister.Service.ServiceMail;
+import LoginRegister.Service.TransactionMonitor;
 import User.PlaceOrder.Main.PlaceOrderMain;
 import User.PlaceOrder.component.PanelPricing;
 import connection.DatabaseConnection;
@@ -32,6 +33,7 @@ import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import swing.ComponentResizer;
 import java.net.URL;
+import java.sql.Connection;
 
 public class Main extends javax.swing.JFrame {
 
@@ -47,12 +49,17 @@ public class Main extends javax.swing.JFrame {
     private final double loginSize = 60;
     private final DecimalFormat df = new DecimalFormat("##0.###");
     private ServiceLogin service;
+    private TransactionMonitor monitor;
+    private Connection conn;
 
     public Main() {
         initComponents();
         init();
         setExtendedState(MAXIMIZED_BOTH);
 
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        monitor = new TransactionMonitor(conn);
+        monitor.startMonitoring();
     }
 
     private void init() {
@@ -201,6 +208,7 @@ public class Main extends javax.swing.JFrame {
         try {
             ModelUser user = service.login(data);
             if (user != null) {
+//                monitor.stopMonitoring();
                 this.dispose();
                 if ("admin".equalsIgnoreCase(user.getRole())) {
                     DashboardAdmin.Adminmain(user); // Jika username adalah "vinsce", akan di arahkan ke dashboard admin

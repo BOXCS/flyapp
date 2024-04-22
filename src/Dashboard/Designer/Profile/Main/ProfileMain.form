@@ -17,26 +17,48 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-              <Component id="designerCard2" min="-2" pref="604" max="-2" attributes="0"/>
-              <EmptySpace pref="738" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="designerCard1" max="32767" attributes="0"/>
+                  <Component id="portfolioCard1" pref="647" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace pref="267" max="32767" attributes="0"/>
+              <Component id="ratingCard1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-              <Component id="designerCard2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="371" max="32767" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="ratingCard1" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="designerCard1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="36" max="32767" attributes="0"/>
+                      <Component id="portfolioCard1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="Dashboard.Designer.Profile.Component.DesignerCard" name="designerCard2">
+    <Component class="Dashboard.Designer.Profile.Component.PortfolioCard" name="portfolioCard1">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new Dashboard.Designer.Profile.Component.PortfolioCard(user)"/>
+      </AuxValues>
+    </Component>
+    <Component class="Dashboard.Designer.Profile.Component.DesignerCard" name="designerCard1">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new Dashboard.Designer.Profile.Component.DesignerCard(user)"/>
+      </AuxValues>
+    </Component>
+    <Component class="Dashboard.Designer.Profile.Component.RatingCard" name="ratingCard1">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new Dashboard.Designer.Profile.Component.RatingCard(user)"/>
       </AuxValues>
     </Component>
   </SubComponents>

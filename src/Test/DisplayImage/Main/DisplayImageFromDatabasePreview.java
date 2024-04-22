@@ -1,135 +1,179 @@
 package Test.DisplayImage.Main;
 
 import Test.DisplayImage.Service.ServiceImage;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DisplayImageFromDatabasePreview {
 
     private JFrame frame;
     private JLabel imageLabel;
     private final String transactionNumber;
+    private List<ImageIcon> images; // List to hold multiple ImageIcons
+    private int currentIndex = 0; // Current index of the displayed image
+    private boolean imagesLoaded = false;
     private final String watermarkPath = "D:\\Zaky\\NeatBeans Project\\flyapp\\src\\Test\\DisplayImage\\Main\\WatermarkImage.png";
+    private final int frameWidth = 1280;
+    private final int frameHeight = 720;
 
     public DisplayImageFromDatabasePreview(String transactionNumber) {
         this.transactionNumber = transactionNumber;
+        images = new ArrayList<>();
         initializeFrame();
     }
 
-    // Method untuk inisialisasi frame
+    // Method to initialize the frame
     private void initializeFrame() {
-        // Membuat frame undecorated
         frame = new JFrame();
         frame.setUndecorated(true); // Set frame undecorated
-        frame.setSize(1280, 720); // Mengatur ukuran frame menjadi 1280x720
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Hanya menutup frame ini, tidak semua frame
+        frame.setSize(frameWidth, frameHeight); // Set frame size
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Membuat panel untuk mengatur tata letak gambar dan watermark
+        // Create a panel for layout
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Inisialisasi imageLabel dengan ukuran yang sesuai
+        // Initialize imageLabel
         imageLabel = new JLabel();
-        imageLabel.setPreferredSize(new Dimension(1280, 720)); // Mengatur ukuran JLabel
-
-        // Menambahkan label gambar ke panel
+        imageLabel.setPreferredSize(new Dimension(frameWidth, frameHeight));
         panel.add(imageLabel, BorderLayout.CENTER);
 
-        // Menambahkan tombol close di kanan atas frame
+        // Add close button
         JButton closeButton = new JButton("X");
         closeButton.setForeground(Color.RED);
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Menutup frame saat tombol ditutup
+                frame.dispose(); // Close the frame
             }
         });
         JPanel closePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         closePanel.add(closeButton);
         panel.add(closePanel, BorderLayout.NORTH);
 
-        // Menambahkan panel ke frame
-        frame.getContentPane().add(panel);
+        // Create navigation buttons
+        JButton leftButton = new JButton("<");
+        leftButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                navigateImages(-1); // Navigate left
+            }
+        });
+        JButton rightButton = new JButton(">");
+        rightButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                navigateImages(1); // Navigate right
+            }
+        });
+        JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        navPanel.add(leftButton);
+        navPanel.add(rightButton);
+        panel.add(navPanel, BorderLayout.SOUTH);
 
-        // Menampilkan frame
+        // Add panel to frame
+        frame.getContentPane().add(panel);
+        // Display the frame after everything is set up
         frame.setVisible(true);
+
+        // Load images after the frame is shown
+        SwingUtilities.invokeLater(this::loadImagesFromDatabase);
     }
 
-    // Metode untuk menampilkan gambar dari database berdasarkan transactionNumber
-    public void displayImageFromDatabase() {
-        // Mendapatkan gambar dari database menggunakan ServiceImage
-        byte[] imageData = ServiceImage.getImageFromDatabase(transactionNumber);
+    // Method to load images from database
+    private void loadImagesFromDatabase() {
+        // Retrieve the list of byte[] images from the database
+        List<byte[]> imageBytesList = ServiceImage.getImagesFromDatabase(transactionNumber);
 
-        if (imageData != null) {
-            // Membuat ImageIcon dari byte array
-            ImageIcon imageIcon = new ImageIcon(imageData);
+        // Initialize the list to hold ImageIcon objects
+        images = new ArrayList<>();
 
-            // Mendapatkan ukuran frame JFrame
-            int frameWidth = frame.getContentPane().getWidth();
-            int frameHeight = frame.getContentPane().getHeight();
-
-            // Mengubah ukuran gambar utama agar sesuai dengan ukuran frame JFrame
-            Image mainImage = imageIcon.getImage().getScaledInstance(frameWidth, frameHeight, Image.SCALE_SMOOTH);
-            imageIcon = new ImageIcon(mainImage);
-
-            // Set ImageIcon ke imageLabel
-            imageLabel.setIcon(imageIcon);
-
-            try {
-                // Memuat gambar watermark
-                Image watermarkImage = ImageIO.read(new File(watermarkPath));
-                // Mengatur ulang ukuran watermark agar sesuai dengan gambar utama
-                watermarkImage = scaleWatermark(mainImage, watermarkImage);
-                // Menggambar watermark di atas gambar utama
-                Image combinedImage = drawWatermark(mainImage, watermarkImage);
-                // Membuat ImageIcon dari gabungan gambar dan watermark
-                ImageIcon combinedIcon = new ImageIcon(combinedImage);
-                // Set ImageIcon ke imageLabel
-                imageLabel.setIcon(combinedIcon);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // Check if the list of images is empty
+        if (imageBytesList.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No images found in the database.");
         } else {
-            // Jika data gambar tidak ditemukan
-            JOptionPane.showMessageDialog(null, "Image data not found in the database.");
+            // Convert each byte[] array to an ImageIcon and add it to the list
+            for (byte[] imageBytes : imageBytesList) {
+                ImageIcon imageIcon = new ImageIcon(imageBytes);
+                addWatermark(imageIcon); // Add watermark
+                images.add(imageIcon);
+            }
+
+            // Display the current image after the images are loaded
+            imagesLoaded = true;
+            displayCurrentImage();
+            // Display the number of loaded images
+            System.out.println("Number of images loaded: " + images.size());
         }
     }
 
-    // Method untuk menyesuaikan ukuran watermark dengan gambar utama
-    private Image scaleWatermark(Image mainImage, Image watermarkImage) {
-        // Mendapatkan ukuran gambar utama
-        int mainImageWidth = mainImage.getWidth(null);
-        int mainImageHeight = mainImage.getHeight(null);
+    // Method to add watermark to the image
+    private void addWatermark(ImageIcon imageIcon) {
+        try {
+            Image image = imageIcon.getImage();
+            BufferedImage bufferedImage = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics2D = bufferedImage.createGraphics();
+            graphics2D.drawImage(image, 0, 0, frameWidth, frameHeight, null);
 
-        // Mendapatkan ukuran yang diinginkan untuk watermark
-        int watermarkWidth = (int) (mainImageWidth * 1.2); // Ubah nilai 0.2 sesuai dengan proporsi yang diinginkan
-        int watermarkHeight = (int) (watermarkWidth * ((double) watermarkImage.getHeight(null) / watermarkImage.getWidth(null)));
+            // Load watermark image
+            Image watermark = ImageIO.read(new File(watermarkPath));
+            graphics2D.drawImage(watermark, bufferedImage.getWidth() - watermark.getWidth(null), 0, null);
 
-        // Mengatur ulang ukuran watermark agar sesuai dengan ukuran yang diinginkan
-        return watermarkImage.getScaledInstance(watermarkWidth, watermarkHeight, Image.SCALE_SMOOTH);
+            // Save the image with watermark
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpg", baos);
+            byte[] imageInByte = baos.toByteArray();
+            imageIcon.setImage(Toolkit.getDefaultToolkit().createImage(imageInByte));
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    // Method untuk menggabungkan gambar utama dan watermark
-    private Image drawWatermark(Image mainImage, Image watermarkImage) {
-        BufferedImage combinedImage = new BufferedImage(mainImage.getWidth(null), mainImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = combinedImage.createGraphics();
-        // Gambar gambar utama
-        g2d.drawImage(mainImage, 0, 0, null);
-        // Mengatur posisi watermark agar lebih ke kiri
-        int watermarkX = -130; // Ubah nilai sesuai preferensi Anda
-        int watermarkY = -110;
-        g2d.drawImage(watermarkImage, watermarkX, watermarkY, null);
-        g2d.dispose();
-        return combinedImage;
+    // Method to display the current image
+    public void displayCurrentImage() {
+        if (!imagesLoaded) {
+            return;
+        }
+
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+
+        // Get the current ImageIcon
+        ImageIcon currentIcon = images.get(currentIndex);
+
+        // Resize the image to fit the frame
+        Image mainImage = currentIcon.getImage().getScaledInstance(frameWidth, frameHeight, Image.SCALE_SMOOTH);
+
+        // Set the scaled image as the icon for the imageLabel
+        imageLabel.setIcon(new ImageIcon(mainImage));
+    }
+
+    // Navigate through images based on the direction provided
+    private void navigateImages(int direction) {
+        if (!imagesLoaded) {
+            return;
+        }
+
+        if (images != null && !images.isEmpty()) {
+            // Update the current index based on the direction (-1 for left, 1 for right)
+            currentIndex = (currentIndex + direction + images.size()) % images.size();
+
+            // Display the current image
+            displayCurrentImage();
+        }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new DisplayImageFromDatabasePreview("TRS-5840").displayImageFromDatabase());
+        // Initialize the display with the transaction number
+        SwingUtilities.invokeLater(() -> new DisplayImageFromDatabasePreview("TRS-2437"));
     }
 }

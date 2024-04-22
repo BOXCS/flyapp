@@ -16,12 +16,13 @@ import raven.popup.component.PopupController;
 public class Result extends javax.swing.JFrame {
 
     private File selectedFile;
+    private ServiceResult serviceResult;
 
     public Result() {
         initComponents();
         init();
     }
-    
+
     private void init() {
         GlassPanePopup.install(this);
     }
@@ -85,20 +86,23 @@ public class Result extends javax.swing.JFrame {
         // Getting the transaction number entered by user
         String transaction = transactionNumber.getText();
 
+        // Periksa apakah nomor transaksi terlambat dan perbarui status jika perlu
+        serviceResult.checkIfLateAndUpdateStatus(transaction);
+
         // Check if a file has been selected
         if (selectedFile == null) {
             JOptionPane.showMessageDialog(this, "Please select a file first.");
         } else {
             // Handling SEND button action here
             // Call insertResult method from ServiceResult to save data to the database
-            
+
             String username = ServiceResult.getUsernameFromTransaction(transaction);
-            
+
             String recipientEmail = ServiceResult.getEmailFromUsername(username);
-            
+
             ServiceResult.insertResult(transaction, selectedFile, recipientEmail);
             MessageAlerts.getInstance().showMessage("Send Success", "Data Successfully Send to Database", MessageAlerts.MessageType.SUCCESS, MessageAlerts.OK_OPTION, (PopupController pc, int i) -> {
-                if (i == MessageAlerts.OK_OPTION){
+                if (i == MessageAlerts.OK_OPTION) {
                     System.out.println("Click OK");
                 }
             });
@@ -110,7 +114,7 @@ public class Result extends javax.swing.JFrame {
         JnaFileChooser fileChooser = new JnaFileChooser();
         Window Window = null;
         boolean action = fileChooser.showOpenDialog(Window);
-        
+
         if (action) {
             System.out.println(fileChooser.getSelectedFile());
             selectedFile = fileChooser.getSelectedFile(); // Simpan file yang dipilih untuk digunakan saat mengirim
