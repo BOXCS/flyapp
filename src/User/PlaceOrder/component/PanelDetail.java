@@ -39,6 +39,11 @@ public class PanelDetail extends javax.swing.JPanel {
     private String selectedProduct;
     private String selectedLevel;
 
+    public PanelDetail() {
+        initComponents();
+        setOpaque(false);
+    }
+
     public PanelDetail(PlaceOrderMain POMain) {
         this.POMain = POMain;
         initComponents();

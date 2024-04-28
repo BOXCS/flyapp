@@ -51,12 +51,14 @@ public class Menu extends javax.swing.JPanel {
         addMenu("1", "Dashboard", 0);
         addMenu("order", "View Order", 1);
 //        addMenu("chat", "Chat", 3);
-        split("Report");
+        split("Add");
         addMenu("2", "Add Designer", 2);
         addMenu("2", "Add Admin", 3);
+        split("Report");
         addMenu("4", "Report Income", 4);
+        addMenu("4", "Report Revision", 5);
         space();
-        addMenu("key", "Logout", 5);
+        addMenu("key", "Logout", 6);
     }
     
     private void addMenu(String icon, String text, int index) {

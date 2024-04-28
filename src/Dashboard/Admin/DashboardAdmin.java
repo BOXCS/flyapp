@@ -2,6 +2,7 @@
 package Dashboard.Admin;
 
 import Admin.AddDesigner.Main.AddDesignerMain;
+import Admin.Report.Revision.Main.ReportRevision;
 import Dashboard.Admin.Event.MenuEvent;
 import Dashboard.Admin.form.Form;
 import Dashboard.Admin.form.FormHome;
@@ -38,6 +39,8 @@ public class DashboardAdmin extends javax.swing.JFrame {
                     showForm(new FormHome());
                 } else if (index == 2) {
                     showForm(new AddDesignerMain());
+                } else if (index == 5) {
+                    showForm(new ReportRevision());
                 } else {
                     showForm(new Form(index + ""));
                     

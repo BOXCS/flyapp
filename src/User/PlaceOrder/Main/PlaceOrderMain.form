@@ -103,11 +103,17 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
                       <Component id="cmdBasic" min="-2" pref="104" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="279" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="cartBasic" min="-2" pref="43" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="218" max="-2" attributes="0"/>
                       <Component id="cmdStandard" min="-2" pref="104" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="cartStandard" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="cmdPro" min="-2" pref="104" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="174" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="cartPro" min="-2" pref="43" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="113" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -129,6 +135,9 @@
                               <Component id="cmdPro" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                               <Component id="cmdBasic" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="cartBasic" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="cartStandard" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="cartPro" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -208,6 +217,36 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdProActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="User.PlaceOrder.swing.ButtonDash" name="cartBasic">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/User/PlaceOrder/icon/cart.png"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cartBasicActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="User.PlaceOrder.swing.ButtonDash" name="cartStandard">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/User/PlaceOrder/icon/cart.png"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cartStandardActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="User.PlaceOrder.swing.ButtonDash" name="cartPro">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/User/PlaceOrder/icon/cart.png"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cartProActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

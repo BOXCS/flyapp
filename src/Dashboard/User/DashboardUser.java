@@ -3,6 +3,7 @@ package Dashboard.User;
 import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
 import LoginRegister.Model.ModelUser;
+import User.Cart.Main.CartMain;
 import notif.Panel.Notification;
 import User.JobApply.Designer.DesignerApply;
 import User.PlaceOrder.Main.PlaceOrderMain;
@@ -49,6 +50,7 @@ public class DashboardUser extends javax.swing.JFrame {
                         Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                case 2 -> showForm(new CartMain(user));
                 case 3 -> showForm(new SeeOrderMain(user));
                 case 4 -> showForm(new DesignerApply());
                 default -> showForm(new Form(index + ""));

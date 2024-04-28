@@ -1,12 +1,18 @@
 package Dashboard.Designer.SendOrder.Component;
 
 import Dashboard.Designer.SendOrder.Main.SendOrderMain;
+import LoginRegister.Model.ModelUser;
 
 public class InsertTransaction extends javax.swing.JPanel {
 
     private SendOrderMain sendOrderMain;
     private SendOrderPanel sendOrderPanel;
     private String transactionNumber;
+
+    public InsertTransaction() {
+        initComponents();
+        setOpaque(false);
+    }
 
     public InsertTransaction(SendOrderMain sendOrderMain, SendOrderPanel sendOrderPanel) {
         this.sendOrderMain = sendOrderMain;
@@ -19,11 +25,6 @@ public class InsertTransaction extends javax.swing.JPanel {
             if (!transactionNumber.isEmpty()) {
                 sendOrderMain.updateReceipt(transactionNumber);
                 sendOrderMain.updateDeliver(transactionNumber);
-                if (sendOrderPanel != null) {
-                    sendOrderPanel.processSendFiles(transactionNumber);
-                } else {
-                    System.out.println("Error: sendOrderPanel is null");
-                }
             }
             System.out.println("you insert transactionNumber:" + transactionNumber); // Debug
         });
@@ -54,6 +55,11 @@ public class InsertTransaction extends javax.swing.JPanel {
         cmdOK.setForeground(new java.awt.Color(255, 255, 255));
         cmdOK.setText("OK");
         cmdOK.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        cmdOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdOKActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
@@ -97,6 +103,10 @@ public class InsertTransaction extends javax.swing.JPanel {
                 .addGap(0, 18, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmdOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdOKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmdOKActionPerformed
 
     public void setSendOrderPanel(SendOrderPanel sendOrderPanel) {
         this.sendOrderPanel = sendOrderPanel;

@@ -18,9 +18,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="insertTransaction1" min="-2" max="-2" attributes="0"/>
-                  <Component id="sendOrderPanel1" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="insertTransaction1" max="32767" attributes="0"/>
+                  <Component id="sendOrderPanel1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace pref="172" max="32767" attributes="0"/>
               <Component id="receipt1" min="-2" max="-2" attributes="0"/>
@@ -60,6 +60,9 @@
       </AuxValues>
     </Component>
     <Component class="Dashboard.Designer.SendOrder.Component.Receipt" name="receipt1">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new Dashboard.Designer.SendOrder.Component.Receipt(transactionNumber)"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

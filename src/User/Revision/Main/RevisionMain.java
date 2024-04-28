@@ -170,7 +170,7 @@ public class RevisionMain extends javax.swing.JFrame {
             // Cek apakah masih ada revisi yang tersisa
             if (remainingRevisions > 0) {
                 // Lakukan penambahan revisi
-                servicePricing.insertRevision(transactionNumber, designerName, productName, level, revisionArea, remainingRevisions);
+                servicePricing.insertNewRevision(transactionNumber, designerName, productName, level, revisionArea, remainingRevisions);
 
                 // Tampilkan pesan berhasil
                 MessageAlerts.getInstance().showMessage("Revision Success", "Wait for Update", MessageAlerts.MessageType.SUCCESS);

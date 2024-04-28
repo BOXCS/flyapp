@@ -60,12 +60,14 @@ public class SeeOrderMain extends javax.swing.JPanel {
         tableFinished.addTableStyle(jScrollPane9);
         tableCancelled.addTableStyle(jScrollPane10);
         tableWaiting.addTableStyle(jScrollPane12);
+        tableLate.addTableStyle(jScrollPane14);
 
         ServiceMyOrder.fetchActiveOrders((DefaultTableModel) tableActive.getModel(), user.getUserName());
         ServiceMyOrder.fetchPendingOrders((DefaultTableModel) tablePending.getModel(), user.getUserName());
         ServiceMyOrder.fetchWaitingOrders((DefaultTableModel) tableWaiting.getModel(), user.getUserName());
         ServiceMyOrder.fetchFinishedOrders((DefaultTableModel) tableFinished.getModel(), user.getUserName());
         ServiceMyOrder.fetchCancelledOrders((DefaultTableModel) tableCancelled.getModel(), user.getUserName());
+        ServiceMyOrder.fetchLateOrders((DefaultTableModel) tableLate.getModel(), user.getUserName());
 
         TableActionEvent event = new TableActionEvent() {
             @Override
@@ -200,6 +202,15 @@ public class SeeOrderMain extends javax.swing.JPanel {
 
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
+                }
+            }
+
+            @Override
+            public void onCancel(int row) {
+                int selectedRow = tableWaiting.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableWaiting.getValueAt(selectedRow, 0);
+                    
                 }
             }
         };

@@ -22,7 +22,7 @@ import java.sql.ResultSet;
 public class SendOrderPanel extends javax.swing.JPanel {
 
     private List<File> selectedFiles = new ArrayList<>();
-    private SendOrderMain sendOrderMain;
+    private SendOrderMain parent;
 
 //    private final ModelUser user;
     private ServiceSendOrder serviceSendOrder;
@@ -31,8 +31,12 @@ public class SendOrderPanel extends javax.swing.JPanel {
     private InsertTransaction insertTransaction;
     private String transactionNumber;
 
-    public SendOrderPanel(SendOrderMain sendOrderMain) {
-        this.sendOrderMain = sendOrderMain;
+    public SendOrderPanel() {
+        initComponents();
+    }
+//
+    public SendOrderPanel(SendOrderMain parent) {
+        this.parent = parent;
         initComponents();
         setOpaque(false);
         configureScrollPane();
@@ -164,7 +168,7 @@ public class SendOrderPanel extends javax.swing.JPanel {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGap(297, 297, 297)
                 .addComponent(cmdSend, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(314, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,7 +181,7 @@ public class SendOrderPanel extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(cmdSend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -235,5 +239,4 @@ public class SendOrderPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lbTransactionNumber;
     private Dashboard.Swing.RoundPanel roundPanel1;
     // End of variables declaration//GEN-END:variables
-
 }

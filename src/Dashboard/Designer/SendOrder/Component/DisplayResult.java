@@ -1,5 +1,7 @@
 package Dashboard.Designer.SendOrder.Component;
 
+import video.VideoJava;
+
 public class DisplayResult extends javax.swing.JPanel {
 
     private String fileName;
@@ -39,6 +41,12 @@ public class DisplayResult extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void playVIdeo() {
+        VideoJava videoResult = new VideoJava(fileName);
+        
+        videoResult.setVisible(true);
+    }
+    
     private void displayFileName() {
         jLabel1.setText(fileName);
     }

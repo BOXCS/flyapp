@@ -281,6 +281,40 @@ public class PlaceOrderMain extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please select a product and a designer before placing the order.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void handleCartAction(String level) {
+        // Mendapatkan informasi
+        String selectedProduct = getSelectedProduct();
+        String selectedDesigner = (String) designerCombobox.getSelectedItem();
+        
+        //Memastikan produk dan desainer tidak null
+        if (selectedProduct != null && selectedDesigner != null) {
+            try {
+                // Mendapatkan harga
+                double price = 0.0;
+                if (level.equals("Basic")) {
+                    price = basicPricing.getPrice();
+                }else if (level.equals("Standard")) {
+                    price = standardPricing.getPrice();
+                } else if (level.equals("Pro")) {
+                    price = proPricing.getPrice();
+                }
+                
+                // Lakukan operasi insert ke cart
+                boolean success = servicePricing.insertCart(selectedProduct, selectedDesigner, level, price, user);
+                
+                if (success) {
+                    // Jika operasi insert berhasil
+                    MessageAlerts.getInstance().showMessage("Success", "Added to Cart", MessageAlerts.MessageType.SUCCESS);
+                } else {
+                    MessageAlerts.getInstance().showMessage("Failed", "Failed to Cart", MessageAlerts.MessageType.ERROR);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error occurred while processing the cart. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -295,6 +329,9 @@ public class PlaceOrderMain extends javax.swing.JPanel {
         cmdBasic = new User.PlaceOrder.swing.Button();
         cmdStandard = new User.PlaceOrder.swing.Button();
         cmdPro = new User.PlaceOrder.swing.Button();
+        cartBasic = new User.PlaceOrder.swing.ButtonDash();
+        cartStandard = new User.PlaceOrder.swing.ButtonDash();
+        cartPro = new User.PlaceOrder.swing.ButtonDash();
         jLabel1 = new javax.swing.JLabel();
         productComboBox = new javax.swing.JComboBox<>();
         designerCombobox = new javax.swing.JComboBox<>();
@@ -341,6 +378,27 @@ public class PlaceOrderMain extends javax.swing.JPanel {
             }
         });
 
+        cartBasic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/User/PlaceOrder/icon/cart.png"))); // NOI18N
+        cartBasic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartBasicActionPerformed(evt);
+            }
+        });
+
+        cartStandard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/User/PlaceOrder/icon/cart.png"))); // NOI18N
+        cartStandard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartStandardActionPerformed(evt);
+            }
+        });
+
+        cartPro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/User/PlaceOrder/icon/cart.png"))); // NOI18N
+        cartPro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartProActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
@@ -360,11 +418,17 @@ public class PlaceOrderMain extends javax.swing.JPanel {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGap(108, 108, 108)
                 .addComponent(cmdBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(279, 279, 279)
+                .addGap(18, 18, 18)
+                .addComponent(cartBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(218, 218, 218)
                 .addComponent(cmdStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(cartStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(cmdPro, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(174, 174, 174))
+                .addGap(18, 18, 18)
+                .addComponent(cartPro, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(113, 113, 113))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -381,7 +445,10 @@ public class PlaceOrderMain extends javax.swing.JPanel {
                     .addComponent(cmdStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cmdPro, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmdBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cmdBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cartBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cartStandard, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cartPro, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -534,6 +601,36 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 //        }
     }//GEN-LAST:event_designerComboboxActionPerformed
 
+    private void cartBasicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartBasicActionPerformed
+        // Atur properti isSelected pada basicPricing menjadi true
+        basicPricing.setIsSelected(true);
+        // Atur properti isSelected pada standardPricing dan proPricing menjadi false
+        standardPricing.setIsSelected(false);
+        proPricing.setIsSelected(false);
+        
+        handleCartAction("Basic");
+    }//GEN-LAST:event_cartBasicActionPerformed
+
+    private void cartStandardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartStandardActionPerformed
+        // Atur properti isSelected pada basicPricing menjadi true
+        basicPricing.setIsSelected(false);
+        // Atur properti isSelected pada standardPricing dan proPricing menjadi false
+        standardPricing.setIsSelected(true);
+        proPricing.setIsSelected(false);
+        
+        handleCartAction("Standard");
+    }//GEN-LAST:event_cartStandardActionPerformed
+
+    private void cartProActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartProActionPerformed
+        // Atur properti isSelected pada proPricing menjadi true
+        proPricing.setIsSelected(true);
+        // Atur properti isSelected pada basicPricing dan standardPricing menjadi false
+        basicPricing.setIsSelected(false);
+        standardPricing.setIsSelected(false);
+        
+        handleCartAction("Pro");
+    }//GEN-LAST:event_cartProActionPerformed
+
     // Metode untuk menampilkan PGMain
     private void showPGMain() {
         // Pastikan objek pgMain sudah diinisialisasi sebelumnya
@@ -563,6 +660,9 @@ public class PlaceOrderMain extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private User.PlaceOrder.component.PanelPricing basicPricing;
+    private User.PlaceOrder.swing.ButtonDash cartBasic;
+    private User.PlaceOrder.swing.ButtonDash cartPro;
+    private User.PlaceOrder.swing.ButtonDash cartStandard;
     private User.PlaceOrder.swing.Button cmdBasic;
     private User.PlaceOrder.swing.Button cmdPro;
     private User.PlaceOrder.swing.Button cmdStandard;

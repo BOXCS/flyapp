@@ -51,9 +51,9 @@ public class MailNotification {
 
             JOptionPane.showMessageDialog(null, "Notification sent successfully to " + recipientEmail);
         } catch (MessagingException e) {
+            JOptionPane.showMessageDialog(null, "Failed to send notification to " + recipientEmail + ". Error: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
-    
     
 }

@@ -127,16 +127,18 @@ public class ServicePricing {
     // Metode untuk melakukan transaksi dan menyimpannya ke dalam tabel transaction
     public boolean placeOrder(String productName, String levelName, double price) {
         String transactionNumber = generateTransactionNumber();
+        String transactionType = generateTransactionType();
         String status = "Waiting";
         Timestamp createdAt = getCurrentTimestamp();
 
-        String query = "INSERT INTO transaction (transaction_number, amount, status, created_at) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO transaction (transaction_number, amount, status, created_at, type) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, transactionNumber);
             preparedStatement.setDouble(2, price);
             preparedStatement.setString(3, status);
             preparedStatement.setTimestamp(4, createdAt);
+            preparedStatement.setString(5, transactionType);
 
             // Execute the insert statement
             int rowsAffected = preparedStatement.executeUpdate();
@@ -158,6 +160,17 @@ public class ServicePricing {
         String transactionNumber = String.format("%04d", randomNumber);
 
         return prefix + transactionNumber;
+    }
+
+    // Generate a transaction number (e.g., TSR-1234)
+    private String generateTransactionType() {
+        String prefix = "CRT-";
+        int randomNumber = (int) (Math.random() * 10000); // Menghasilkan nomor acak antara 0 dan 9999
+
+        // Menambahkan angka nol di depan jika nomor acaknya memiliki tiga digit atau kurang
+        String transactionType = String.format("%04d", randomNumber);
+
+        return prefix + transactionType;
     }
 
     private String[] getColumnList(String columnName, String tableName, String condition) {
@@ -235,11 +248,12 @@ public class ServicePricing {
 
     public boolean insertOrder(String productName, String designer, String level, double price, ModelUser user) {
         String transactionNumber = generateTransactionNumber();
+        String transactionType = generateTransactionType();
         String status = "Waiting";
         Timestamp createdAt = getCurrentTimestamp();
 
-        String query = "INSERT INTO transaction (transaction_number, product_name, designer, level, amount, status, created_at, username) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO transaction (transaction_number, product_name, designer, level, amount, status, created_at, username, type) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, transactionNumber);
@@ -250,6 +264,7 @@ public class ServicePricing {
             preparedStatement.setString(6, status);
             preparedStatement.setTimestamp(7, createdAt);
             preparedStatement.setString(8, user.getUserName()); // Mengambil username dari objek ModelUser
+            preparedStatement.setString(9, transactionType);
 
             // Execute the insert statement
             int rowsAffected = preparedStatement.executeUpdate();
@@ -288,6 +303,69 @@ public class ServicePricing {
         }
     }
 
+    public boolean insertCart(String productName, String designer, String level, double price, ModelUser user) {
+        String transactionNumber = generateTransactionNumber();
+        Timestamp createdAt = getCurrentTimestamp();
+
+        String queryTransaction = "INSERT INTO transaction (transaction_number, product_name, designer, level, amount, status, created_at, username, type) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String queryCart = "INSERT INTO cart (transaction_number, username, product_name, designer, level, amount, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            // Memulai transaksi
+            con.setAutoCommit(false);
+
+            // Insert ke dalam tabel transactions
+            try (PreparedStatement pTransaction = con.prepareStatement(queryTransaction)) {
+                pTransaction.setString(1, transactionNumber);
+                pTransaction.setString(2, productName);
+                pTransaction.setString(3, designer);
+                pTransaction.setString(4, level);
+                pTransaction.setDouble(5, price);
+                pTransaction.setString(6, "Carted");
+                pTransaction.setTimestamp(7, createdAt);
+                pTransaction.setString(8, user.getUserName());  // Perbaikan parameter
+                pTransaction.setString(9, "Carted");  // Perbaikan parameter
+                pTransaction.executeUpdate();
+            }
+
+            // Insert ke dalam tabel cart
+            try (PreparedStatement pCart = con.prepareStatement(queryCart)) {
+                pCart.setString(1, transactionNumber);
+                pCart.setString(2, user.getUserName());
+                pCart.setString(3, productName);
+                pCart.setString(4, designer);
+                pCart.setString(5, level);
+                pCart.setDouble(6, price);
+                pCart.setBoolean(7, false);
+                pCart.executeUpdate();
+            }
+
+            // Commit transaksi
+            con.commit();
+
+            return true;
+        } catch (Exception e) {
+            // Rollback transaksi jika terjadi kesalahan
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            // Set auto-commit ke nilai default setelah transaksi selesai
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
     private String getDesignerEmail(String designerUsername) {
         // Query to get the designer's email based on the designer's username
         String query = "SELECT email FROM designer WHERE username = ?";
@@ -312,17 +390,16 @@ public class ServicePricing {
         }
     }
 
-    public boolean insertRevision(String transactionNumber, String designer, String productName, String level, String revision, int revisionCount) {
-        // Check if the transaction number already exists in the revision table
-        if (isTransactionNumberExists(transactionNumber)) {
-            // If transaction number exists, update the existing revision
-            return updateExistingRevision(transactionNumber, revision, revisionCount);
-        } else {
-            // If transaction number doesn't exist, insert a new revision
-            return insertNewRevision(transactionNumber, designer, productName, level, revision, revisionCount);
-        }
-    }
-
+//    public boolean insertRevision(String transactionNumber, String designer, String productName, String level, String revision, int revisionCount) {
+//        // Check if the transaction number already exists in the revision table
+//        if (isTransactionNumberExists(transactionNumber)) {
+//            // If transaction number exists, update the existing revision
+//            return updateExistingRevision(transactionNumber, revision, revisionCount);
+//        } else {
+//            // If transaction number doesn't exist, insert a new revision
+//            return insertNewRevision(transactionNumber, designer, productName, level, revision, revisionCount);
+//        }
+//    }
     private boolean isTransactionNumberExists(String transactionNumber) {
         String query = "SELECT COUNT(*) AS count FROM revision WHERE transaction_number = ?";
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
@@ -338,31 +415,30 @@ public class ServicePricing {
         return false;
     }
 
-    private boolean updateExistingRevision(String transactionNumber, String revision, int revisionCount) {
-        String query = "UPDATE revision SET revision = ?, revision_count = ? WHERE transaction_number = ?";
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setString(1, revision);
-            preparedStatement.setInt(2, revisionCount); // Tidak mengurangi revisionCount di sini
-            preparedStatement.setString(3, transactionNumber);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            // Update remaining revision count
-            if (rowsAffected > 0) {
-                // Perbarui remaining revision count setelah basis data berhasil diperbarui
-                updateRemainingRevisionCount(transactionNumber, --revisionCount);
-            }
-
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private boolean insertNewRevision(String transactionNumber, String designer, String productName, String level, String revision, int revisionCount) {
-        String query = "INSERT INTO revision (transaction_number, designer_name, product_name, level, revision, revision_count) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+//    private boolean updateExistingRevision(String transactionNumber, String revision, int revisionCount) {
+//        String query = "UPDATE revision SET revision = ?, revision_count = ? WHERE transaction_number = ?";
+//        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+//            preparedStatement.setString(1, revision);
+//            preparedStatement.setInt(2, revisionCount); // Tidak mengurangi revisionCount di sini
+//            preparedStatement.setString(3, transactionNumber);
+//
+//            int rowsAffected = preparedStatement.executeUpdate();
+//
+//            // Update remaining revision count
+//            if (rowsAffected > 0) {
+//                // Perbarui remaining revision count setelah basis data berhasil diperbarui
+//                updateRemainingRevisionCount(transactionNumber, --revisionCount);
+//            }
+//
+//            return rowsAffected > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+    public boolean insertNewRevision(String transactionNumber, String designer, String productName, String level, String revision, int revisionCount) {
+        String query = "INSERT INTO revision (transaction_number, designer_name, product_name, level, revision, revision_count, revision_date) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, transactionNumber);
@@ -371,6 +447,7 @@ public class ServicePricing {
             preparedStatement.setString(4, level);
             preparedStatement.setString(5, revision);
             preparedStatement.setInt(6, revisionCount);
+            preparedStatement.setTimestamp(7, getCurrentTimeRevision()); // Set revision_date
 
             // Execute the insert statement
             int rowsAffected = preparedStatement.executeUpdate();
@@ -386,6 +463,11 @@ public class ServicePricing {
             e.printStackTrace();
             return false;
         }
+    }
+
+// Method to get current timestamp
+    private Timestamp getCurrentTimeRevision() {
+        return new Timestamp(System.currentTimeMillis());
     }
 
     private void updateRemainingRevisionCount(String transactionNumber, int remainingRevisions) {
