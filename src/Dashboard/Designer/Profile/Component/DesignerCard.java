@@ -15,7 +15,7 @@ public class DesignerCard extends javax.swing.JPanel {
         this.user = null;
         initComponents();
         setOpaque(false);
-        loadDesigner();
+//        loadDesigner();
     }
 
     public DesignerCard(ModelUser user) {

@@ -2,6 +2,7 @@ package Dashboard.User;
 
 import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
+import Dashboard.User.ViewPortfolio.Main.ViewPortMain;
 import LoginRegister.Model.ModelUser;
 import User.Cart.Main.CartMain;
 import notif.Panel.Notification;
@@ -42,7 +43,7 @@ public class DashboardUser extends javax.swing.JFrame {
         };
         MenuEvent event = (int index) -> {
             switch (index) {
-                case 0 -> showForm(new Form(index + "User"));
+                case 0 -> showForm(new ViewPortMain());
                 case 1 -> {
                     try {
                         showForm(new PlaceOrderMain(user));

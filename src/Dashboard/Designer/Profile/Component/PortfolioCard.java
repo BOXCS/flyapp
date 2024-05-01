@@ -24,9 +24,9 @@ public class PortfolioCard extends javax.swing.JPanel {
     public PortfolioCard() {
         initComponents();
         setOpaque(false);
-        configureScrollPane();
+//        configureScrollPane();
         this.user = null;
-        loadPortfolios();
+//        loadPortfolios();
     }
     
     private final ModelUser user;

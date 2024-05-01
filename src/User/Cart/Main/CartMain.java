@@ -5,6 +5,7 @@ import User.Cart.Service.ServiceCart;
 import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
+import raven.alerts.MessageAlerts;
 
 public class CartMain extends javax.swing.JPanel {
 
@@ -205,8 +206,10 @@ public class CartMain extends javax.swing.JPanel {
                 String productName = (String) model.getValueAt(i, 0);
                 if (serviceCart.updateTransactionStatus(productName, transactionSig)) {
                     System.out.println("Product '" + productName + "' checked out successfully.");
+                    MessageAlerts.getInstance().showMessage("Success", "Checkout Success", MessageAlerts.MessageType.SUCCESS);
                 } else {
                     System.out.println("Failed to check out product '" + productName + "'.");
+                    MessageAlerts.getInstance().showMessage("Failed", "Checkout Failed", MessageAlerts.MessageType.ERROR);
                 }
             }
         }

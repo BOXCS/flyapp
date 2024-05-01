@@ -17,12 +17,7 @@ import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRException;
 import java.util.Map;
 import javax.swing.JFileChooser;
-import jnafilechooser.api.JnaFileChooser;
 import net.sf.jasperreports.engine.JasperExportManager;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import notif.Mail.MailNotification;
 
 public class ServiceMyOrder {

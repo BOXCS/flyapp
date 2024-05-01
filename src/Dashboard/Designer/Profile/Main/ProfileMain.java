@@ -5,14 +5,22 @@ import LoginRegister.Model.ModelUser;
 public class ProfileMain extends javax.swing.JPanel {
 
     private final ModelUser user;
-    
 
     public ProfileMain(ModelUser user) {
         this.user = user;
         initComponents();
 
         setOpaque(false);
-        
+        this.setLayout(null);
+
+        setCustomLayout();
+    }
+
+    private void setCustomLayout() {
+        // Mengatur tata letak komponen menggunakan setBounds
+        designerCard1.setBounds(38, 33, 647, designerCard1.getPreferredSize().height); // atur posisi (x, y, width, height)
+        portfolioCard1.setBounds(38, designerCard1.getY() + 430, 647, 250); // atur posisi (x, y, width, height)
+        ratingCard1.setBounds(750, 33, ratingCard1.getPreferredSize().width, 650); // atur posisi (x, y, width, height)
     }
 
     @SuppressWarnings("unchecked")
@@ -30,8 +38,8 @@ public class ProfileMain extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(designerCard1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(portfolioCard1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE))
+                    .addComponent(portfolioCard1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+                    .addComponent(designerCard1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 267, Short.MAX_VALUE)
                 .addComponent(ratingCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(60, 60, 60))
@@ -41,10 +49,10 @@ public class ProfileMain extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ratingCard1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ratingCard1, javax.swing.GroupLayout.DEFAULT_SIZE, 708, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(designerCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(portfolioCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(27, 27, 27))
         );

@@ -16,6 +16,12 @@ public class RatingCard extends javax.swing.JPanel {
 
     private final ModelUser user;
 
+    public RatingCard() {
+        this.user = null;
+        initComponents();
+        setOpaque(false);
+    }
+
     public RatingCard(ModelUser user) {
         this.user = user;
         initComponents();

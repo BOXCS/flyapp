@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="226" pageHeight="839" columnWidth="201" leftMargin="14" rightMargin="11" topMargin="0" bottomMargin="0" uuid="0cec3fa2-f496-4ed6-afb0-442009896a49">
 	<property name="ireport.zoom" value="2.657341500000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="73"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="type" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select *, sum(amount) as total_amount from transaction where type = $P{type} group by transaction_number, product_name, designer, level, created_at, type]]>
@@ -177,7 +177,7 @@
 				<reportElement x="1" y="0" width="199" height="1" uuid="e77bf42b-33d6-4737-baff-5ac076c02149"/>
 			</line>
 			<textField>
-				<reportElement x="26" y="2" width="62" height="12" uuid="d9f2e7f0-6514-4dad-98e9-9ca3a0ede806"/>
+				<reportElement x="26" y="2" width="73" height="12" uuid="d9f2e7f0-6514-4dad-98e9-9ca3a0ede806"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
