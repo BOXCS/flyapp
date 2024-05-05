@@ -21,6 +21,7 @@ import javax.swing.JLayeredPane;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.interpolation.SplineInterpolator;
+import java.util.Arrays;
 import raven.popup.GlassPanePopup;
 
 public class DashboardUser extends javax.swing.JFrame {
@@ -43,7 +44,7 @@ public class DashboardUser extends javax.swing.JFrame {
         };
         MenuEvent event = (int index) -> {
             switch (index) {
-                case 0 -> showForm(new ViewPortMain());
+                case 0 -> showForm(new ViewPortMain(Arrays.asList(11, 12, 13)));
                 case 1 -> {
                     try {
                         showForm(new PlaceOrderMain(user));

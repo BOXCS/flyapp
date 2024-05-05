@@ -211,9 +211,9 @@ public class Main extends javax.swing.JFrame {
 //                monitor.stopMonitoring();
                 this.dispose();
                 if ("admin".equalsIgnoreCase(user.getRole())) {
-                    DashboardAdmin.Adminmain(user); // Jika username adalah "vinsce", akan di arahkan ke dashboard admin
+                    DashboardAdmin.Adminmain(user); 
                 } else if ("designer".equalsIgnoreCase(user.getRole())) {
-                    DashboardDesigner.Designermain(user); // Jika username adalah yang lain, akan di arahkan ke dashboard user
+                    DashboardDesigner.Designermain(user); 
                 } else {
                     DashboardUser.Usermain(user);
                 }
@@ -223,6 +223,7 @@ public class Main extends javax.swing.JFrame {
 
         } catch (SQLException e) {
             showMessage(Message.MessageType.ERROR, "Error Login");
+            e.printStackTrace();
         }
     }
 
