@@ -14,6 +14,7 @@ import javax.swing.text.DateFormatter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 public class ServiceDesigner {
 
@@ -174,6 +175,7 @@ public class ServiceDesigner {
             String query = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(amount) AS total_amount "
                     + "FROM transaction "
                     + "WHERE designer = ? AND status = 'Finished' "
+                    + "AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') " // Hanya bulan saat ini
                     + "GROUP BY month";
             stmt = conn.prepareStatement(query);
             stmt.setString(1, username);
@@ -181,8 +183,8 @@ public class ServiceDesigner {
 
             while (rs.next()) {
                 // Ubah format bulan agar sesuai dengan format 'MMMM yyyy' (nama bulan dalam bahasa Inggris dan tahun)
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
-                String monthName = LocalDate.parse(rs.getString("month") + "-01").format(dateFormatter);
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH);
+                String monthName = LocalDate.parse(rs.getString("month") + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(dateFormatter);
                 double totalAmount = rs.getDouble("total_amount");
 
                 // Simpan total amount berdasarkan bulan dalam Map
@@ -391,6 +393,46 @@ public class ServiceDesigner {
         }
 
         return formattedMemberSince;
+    }
+
+    public Map<String, Double> getTotalAmountByMonth(String username) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Map<String, Double> totalAmountByMonth = new HashMap<>();
+
+        try {
+            // Query untuk mengambil total amount berdasarkan designer dan mengelompokkan data berdasarkan bulan
+            // Menggunakan format '%Y-%m' pada kolom 'created_at' untuk mengelompokkan data per bulan
+            String query = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(amount) AS total_amount "
+                    + "FROM transaction "
+                    + "WHERE designer = ? AND status = 'Finished' "
+                    + "GROUP BY month";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, username);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                // Ubah format bulan agar sesuai dengan format 'MMMM yyyy' (nama bulan dalam bahasa Inggris dan tahun)
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH);
+                String monthName = LocalDate.parse(rs.getString("month") + "-01", DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(dateFormatter);
+                double totalAmount = rs.getDouble("total_amount");
+
+                // Simpan total amount berdasarkan bulan dalam Map
+                totalAmountByMonth.put(monthName, totalAmount);
+            }
+
+        } finally {
+            // Tutup sumber daya database setelah digunakan
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return totalAmountByMonth;
     }
 
     public static LocalDateTime getLastDesignDate(String username) throws SQLException {

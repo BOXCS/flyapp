@@ -91,6 +91,7 @@ public class PortfolioCard extends javax.swing.JPanel {
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setOpaque(false);
 
+        body.setBackground(new java.awt.Color(0, 0, 0, 0));
         body.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING));
         jScrollPane1.setViewportView(body);
 
