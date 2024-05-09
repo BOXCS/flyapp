@@ -80,16 +80,16 @@ public class ServiceLogin {
     private ModelUser loginDesigner(ModelLogin login) throws SQLException {
         ModelUser data = null;
 
-        try (PreparedStatement p = con.prepareStatement("SELECT designerID, username, email FROM `designer` WHERE BINARY email=? AND BINARY `password`=? LIMIT 1")) {
+        try (PreparedStatement p = con.prepareStatement("SELECT designer_id, username, email FROM `designer` WHERE BINARY email=? AND BINARY `password`=? LIMIT 1")) {
             p.setString(1, login.getEmail());
             p.setString(2, login.getPassword());
 
             try (ResultSet r = p.executeQuery()) {
                 if (r.next()) {
-                    int designerID = r.getInt("designerID");
+                    int designer_id = r.getInt("designer_id");
                     String username = r.getString("username");
                     String email = r.getString("email");
-                    data = new ModelUser(designerID, username, email, "designer");
+                    data = new ModelUser(designer_id, username, email, "designer");
                 }
             }
         }
@@ -163,10 +163,10 @@ public class ServiceLogin {
         p.execute();
         ResultSet r = p.getGeneratedKeys();
         r.next();
-        int designerID = r.getInt(1);
+        int designer_id = r.getInt(1);
         r.close();
         p.close();
-        designer.setDesignerID(designerID);
+        designer.setDesignerID(designer_id);
     }
 
     private String generateVerifyCode() throws SQLException {
@@ -207,7 +207,7 @@ public class ServiceLogin {
     
     public boolean checkDuplicateDesigner(String designer) throws SQLException {
         boolean duplicate = false;
-        try (PreparedStatement p = con.prepareStatement("select designerID from `designer` where username=? limit 1")) {
+        try (PreparedStatement p = con.prepareStatement("select designer_id from `designer` where username=? limit 1")) {
             p.setString(1, designer);
             try (ResultSet r = p.executeQuery()) {
                 if (r.next()) {

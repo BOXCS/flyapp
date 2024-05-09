@@ -1,21 +1,27 @@
-
 package Dashboard.User.ViewPortfolio.Main;
 
 import Dashboard.User.ViewPortfolio.Component.PortfolioCard;
 import java.awt.Dimension;
+import java.util.List;
 
 public class ViewPortMain extends javax.swing.JPanel {
 
-    public ViewPortMain() {
+    private int designerId;
+    private List<Integer> designerIds;
+
+    public ViewPortMain(List<Integer> designerIds) {
         initComponents();
         setOpaque(false);
-        addPortfolioCardToBody();
+        this.designerIds = designerIds;
+        addPortfolioCardsToBody();
     }
-    
-    private void addPortfolioCardToBody() {
-        PortfolioCard portfolioCard = new PortfolioCard();
-        portfolioCard.setPreferredSize(new Dimension(portfolioCard.getPreferredSize().width, portfolioCard.getPreferredSize().height));
-        body.add(portfolioCard);
+
+    private void addPortfolioCardsToBody() {
+        for (int designerId : designerIds) {
+            PortfolioCard portfolioCard = new PortfolioCard(designerId);
+            portfolioCard.setPreferredSize(new Dimension(portfolioCard.getPreferredSize().width, portfolioCard.getPreferredSize().height));
+            body.add(portfolioCard);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -35,7 +41,7 @@ public class ViewPortMain extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 1354, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(

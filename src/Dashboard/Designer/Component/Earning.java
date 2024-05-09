@@ -5,6 +5,7 @@ import LoginRegister.Model.ModelUser;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 
 public class Earning extends javax.swing.JPanel {
@@ -36,8 +37,14 @@ public class Earning extends javax.swing.JPanel {
 
             // Periksa apakah peta totalEarningMap kosong
             if (totalEarningMap.isEmpty()) {
-                lbEarning.setText("N/A");
-                lbMonth.setText("N/A");
+                lbEarning.setText("$ 0");
+                
+                // Format nama bulan saat ini menjadi title case
+                DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH);
+                String formattedMonthName = LocalDate.now().format(monthFormatter);
+
+                lbMonth.setText("Earned in " + formattedMonthName);
+                
                 return;
             }
 

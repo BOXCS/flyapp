@@ -41,49 +41,6 @@ public class FormHome extends javax.swing.JPanel {
         } catch (Exception e) {
             System.err.println(e);
         }
-
-        // Inisialisasi item untuk JComboBox cbYear
-        for (int year = 2020; year <= 2030; year++) {
-            cbYear.addItem(String.valueOf(year));
-        }
-
-        // Inisialisasi item untuk JComboBox cbMonth
-        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        for (String month : monthNames) {
-            cbMonth.addItem(month);
-        }
-
-        // Melakukan update pada pie chart untuk menampilkan data berdasarkan tahun dan bulan yang dipilih
-        try {
-            updatePieChart();
-        } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
-        }
-    }
-
-    private void updatePieChart() throws SQLException {
-        // Ambil tahun dan bulan yang dipilih
-        int selectedYear = Integer.parseInt((String) cbYear.getSelectedItem());
-        int selectedMonth = cbMonth.getSelectedIndex() + 1; // Indeks bulan dimulai dari 0, sementara data bulan dimulai dari 1
-
-        // Ambil data untuk pie chart berdasarkan tahun dan bulan yang dipilih
-        List<ModelChart> pieChartData = new ServiceReport().getPieChartData(selectedYear, selectedMonth);
-
-        // Bersihkan data lama dari pie chart
-        pieChart1.clearData();
-
-        // Tambahkan data baru ke dalam pie chart
-        for (ModelChart data : pieChartData) {
-            // Konversi nama label dan nilai dari ModelChart ke ModelPieChart
-            String label = data.getLabel();
-            double value = data.getValues()[0]; // Ambil nilai pertama saja karena pie chart Anda hanya memiliki satu nilai
-            Color color = getColorForLabel(label); // Tentukan warna berdasarkan label
-            ModelPieChart pieChartModel = new ModelPieChart(label, value, color);
-            pieChart1.addData(pieChartModel);
-        }
-
-        // Refresh tampilan pie chart
-        pieChart1.repaint(); // Secara langsung memanggil repaint() untuk memperbarui tampilan
     }
 
     // Method untuk menentukan warna berdasarkan label
@@ -106,12 +63,8 @@ public class FormHome extends javax.swing.JPanel {
 
         roundPanel1 = new Dashboard.Swing.RoundPanel();
         chart = new Dashboard.Swing.chart.CurveChart();
-        roundPanel2 = new Dashboard.Swing.RoundPanel();
-        cbMonth = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        cbYear = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
-        pieChart1 = new Dashboard.Swing.pieChart.PieChart();
+        mainRatingView1 = new Dashboard.Admin.RatingView.Main.MainRatingView();
+        addMessageMain1 = new Dashboard.Admin.AddMessage.Main.AddMessageMain();
 
         roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
         roundPanel1.setPreferredSize(new java.awt.Dimension(940, 290));
@@ -133,73 +86,35 @@ public class FormHome extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        roundPanel2.setBackground(new java.awt.Color(0, 0, 0, 50));
-
-        jLabel2.setText("Month :");
-
-        jLabel1.setText("Year :");
-
-        javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
-        roundPanel2.setLayout(roundPanel2Layout);
-        roundPanel2Layout.setHorizontalGroup(
-            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pieChart1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cbYear, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cbMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(88, 88, 88))
-        );
-        roundPanel2Layout.setVerticalGroup(
-            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel2Layout.createSequentialGroup()
-                .addGap(3, 3, 3)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(cbMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(cbYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pieChart1, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1370, Short.MAX_VALUE)
-            .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(addMessageMain1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(mainRatingView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(mainRatingView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addMessageMain1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> cbMonth;
-    private javax.swing.JComboBox<String> cbYear;
+    private Dashboard.Admin.AddMessage.Main.AddMessageMain addMessageMain1;
     private Dashboard.Swing.chart.CurveChart chart;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private Dashboard.Swing.pieChart.PieChart pieChart1;
+    private Dashboard.Admin.RatingView.Main.MainRatingView mainRatingView1;
     private Dashboard.Swing.RoundPanel roundPanel1;
-    private Dashboard.Swing.RoundPanel roundPanel2;
     // End of variables declaration//GEN-END:variables
 }

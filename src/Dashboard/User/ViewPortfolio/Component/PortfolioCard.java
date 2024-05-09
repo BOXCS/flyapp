@@ -1,7 +1,7 @@
-
 package Dashboard.User.ViewPortfolio.Component;
 
 import Dashboard.Designer.Component.Imageportfolio;
+import Dashboard.Designer.Component.ModernScrollBarUI;
 import Dashboard.Designer.Component.VideoPortfolio;
 import Dashboard.User.ViewPortfolio.Model.ModelViewPortfolio;
 import Dashboard.User.ViewPortfolio.Service.ServiceViewPortfolio;
@@ -12,26 +12,39 @@ import javax.swing.JOptionPane;
 
 public class PortfolioCard extends javax.swing.JPanel {
 
-    public PortfolioCard() {
+    private int designerId;
+
+    public PortfolioCard(int designerId) {
         initComponents();
         setOpaque(false);
+        this.designerId = designerId;
+        configureScrollPane();
         displayPortfoliosFromDatabase();
     }
     
+    private void configureScrollPane() {
+        jScrollPane1.setOpaque(false);
+        jScrollPane1.setBackground(null);
+        jScrollPane1.getViewport().setOpaque(false);
+        jScrollPane1.getViewport().setBackground(null);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        jScrollPane1.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+    }
+
     private void displayPortfoliosFromDatabase() {
         ServiceViewPortfolio service = new ServiceViewPortfolio();
-        List<ModelViewPortfolio> portfolios = service.fetchDataPortfolio();
+        List<ModelViewPortfolio> portfolios = service.fetchDataPortfolioByDesignerId(designerId);
 
         for (ModelViewPortfolio portfolio : portfolios) {
             PlayPortfolio playPortfolio = new PlayPortfolio(portfolio.toString());
-            
+
             playPortfolio.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     playPortfolioMedia(portfolio);
                 }
             });
-            
+
             body.add(playPortfolio);
 
             lbDesigner.setText(portfolio.getUsername());
@@ -41,7 +54,7 @@ public class PortfolioCard extends javax.swing.JPanel {
         body.revalidate();
         body.repaint();
     }
-    
+
     private void playPortfolioMedia(ModelViewPortfolio portfolio) {
         if (portfolio.getMediaType().equalsIgnoreCase("video")) {
             // Buat instance VideoPortfolio dan tampilkan video
@@ -73,12 +86,12 @@ public class PortfolioCard extends javax.swing.JPanel {
         lbDesigner.setForeground(new java.awt.Color(255, 255, 255));
         lbDesigner.setText("designer");
 
-        jScrollPane1.setBackground(new java.awt.Color(0,0,0,0));
+        jScrollPane1.setBackground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setBorder(null);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setOpaque(false);
 
-        body.setBackground(new java.awt.Color(0,0,0,0));
+        body.setBackground(new java.awt.Color(0, 0, 0, 0));
         body.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING));
         jScrollPane1.setViewportView(body);
 

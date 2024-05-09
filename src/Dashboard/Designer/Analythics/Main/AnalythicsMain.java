@@ -4,8 +4,10 @@ import Dashboard.Designer.Analythics.Model.modelChart;
 import Dashboard.Designer.Service.ServiceDesigner;
 import LoginRegister.Model.ModelUser;
 import java.awt.Color;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 
 public class AnalythicsMain extends javax.swing.JPanel {
@@ -72,8 +74,9 @@ public class AnalythicsMain extends javax.swing.JPanel {
             // Mendapatkan total penghasilan untuk bulan saat ini dan nama bulan dari serviceDesigner
             Map<String, Double> totalEarningsByMonth = serviceDesigner.getTotalAmountForCurrentMonth(username);
 
-            // Ambil total penghasilan dan nama bulan pertama dari Map
+            // Cek apakah Map berisi data untuk bulan saat ini
             if (!totalEarningsByMonth.isEmpty()) {
+                // Ambil total penghasilan dan nama bulan pertama dari Map
                 String monthName = totalEarningsByMonth.keySet().iterator().next();
                 double totalEarningInMonth = totalEarningsByMonth.get(monthName);
 
@@ -84,11 +87,16 @@ public class AnalythicsMain extends javax.swing.JPanel {
                 lbEarnMonth.setText(formattedEarning);
                 lbMonth.setText("Earned in " + monthName);
             } else {
-                // Jika tidak ada data, setel label ke "N/A"
-                lbEarnMonth.setText("N/A");
-                lbMonth.setText("N/A");
+                // Jika tidak ada data, setel label ke "N/A" dan bulan saat ini
+                lbEarnMonth.setText("$ 0");
+
+                // Format nama bulan saat ini menjadi title case
+                DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH);
+                String formattedMonthName = LocalDate.now().format(monthFormatter);
+
+                lbMonth.setText("Earned in " + formattedMonthName);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
             lbEarnMonth.setText("N/A");
             lbMonth.setText("N/A");
@@ -126,7 +134,7 @@ public class AnalythicsMain extends javax.swing.JPanel {
 
         try {
             // Mendapatkan data total amount per bulan saat ini
-            Map<String, Double> totalAmountByMonth = serviceDesigner.getTotalAmountForCurrentMonth(username);
+            Map<String, Double> totalAmountByMonth = serviceDesigner.getTotalAmountByMonth(username);
 
             // Mendapatkan jumlah transaksi dengan status "Cancelled"
             Map<String, Integer> cancelledCountByMonth = serviceDesigner.getCountOfCancelledStatus(username);
