@@ -55,6 +55,176 @@ public class ServiceOrderD {
             e.printStackTrace();
         }
     }
+    
+    public static void fetchWaitingOrdersByDesigner(DefaultTableModel model, String designerName) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Active dan designer tertentu
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Waiting' AND designer = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, designerName); // Set parameter designer
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void fetchPendingOrdersByDesigner(DefaultTableModel model, String designerName) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Active dan designer tertentu
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Pending' AND designer = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, designerName); // Set parameter designer
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void fetchFinishedOrdersByDesigner(DefaultTableModel model, String designerName) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Active dan designer tertentu
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Finished' AND designer = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, designerName); // Set parameter designer
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void fetchCancelledOrdersByDesigner(DefaultTableModel model, String designerName) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Active dan designer tertentu
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Cancelled' AND designer = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, designerName); // Set parameter designer
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void fetchLateOrdersByDesigner(DefaultTableModel model, String designerName) {
+        model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
+
+        try {
+            // Query untuk mendapatkan data dari tabel transaction dengan status Active dan designer tertentu
+            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Late' AND designer = ?";
+            PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            p.setString(1, designerName); // Set parameter designer
+            ResultSet r = p.executeQuery();
+
+            while (r.next()) {
+                String number = r.getString("transaction_number");
+                String username = r.getString("username");
+                String product = r.getString("product_name");
+                String level = r.getString("level");
+                String designer = r.getString("designer");
+                Timestamp created_at = r.getTimestamp("created_at");
+                double amount = r.getDouble("amount");
+                String status = r.getString("status");
+
+                // Mengubah format tanggal menjadi "Feb 11, 2024"
+                String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
+
+                // Menambahkan data ke dalam tabel
+                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+            }
+
+            r.close();
+            p.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Fungsi untuk mencetak nota berdasarkan nomor transaksi
     public static void printReceipt(String transactionNumber) {

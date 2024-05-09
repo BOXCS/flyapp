@@ -6,11 +6,11 @@ import Dashboard.Designer.SeeOrder.Swing.CellActive.TableActionActiveEvent;
 import Dashboard.Designer.SeeOrder.Swing.CellActive.TableActiveCellEditor;
 import Dashboard.Designer.SeeOrder.Swing.CellPending.TablePendingCellEditor;
 import Dashboard.Designer.SeeOrder.Swing.CellPending.TablePendingCellRenderer;
+import Dashboard.Designer.SeeOrder.Swing.CellWaiting.CellWaitingRenderer;
 import Dashboard.Designer.SeeOrder.Swing.CellWaiting.TableActionWaitingEvent;
 import Dashboard.Designer.SeeOrder.Swing.CellWaiting.TableWaitingCellEditor;
 import LoginRegister.Component.Message;
 import LoginRegister.Model.ModelUser;
-import User.SeeOrder.Swing.CellWaiting.CellWaitingRenderer;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import raven.alerts.MessageAlerts;
@@ -33,6 +33,11 @@ public class SeeOrderDMain extends javax.swing.JPanel {
         tableLate.addTableStyle(jScrollPane17);
 
         ServiceOrderD.fetchActiveOrdersByDesigner((DefaultTableModel) tableActive.getModel(), user.getUserName());
+        ServiceOrderD.fetchWaitingOrdersByDesigner((DefaultTableModel) tableWaiting.getModel(), user.getUserName());
+        ServiceOrderD.fetchPendingOrdersByDesigner((DefaultTableModel) tablePending.getModel(), user.getUserName());
+        ServiceOrderD.fetchFinishedOrdersByDesigner((DefaultTableModel) tableFinished.getModel(), user.getUserName());
+        ServiceOrderD.fetchCancelledOrdersByDesigner((DefaultTableModel) tableCancelled.getModel(), user.getUserName());
+        ServiceOrderD.fetchLateOrdersByDesigner((DefaultTableModel) tableLate.getModel(), user.getUserName());
 
         TableActionActiveEvent eventA = new TableActionActiveEvent() {
             @Override
@@ -52,11 +57,10 @@ public class SeeOrderDMain extends javax.swing.JPanel {
         TableActionWaitingEvent eventW = new TableActionWaitingEvent() {
             @Override
             public void onApprove(int row) {
-                int selectedRow = tableWaiting.getSelectedRow();
-                if (selectedRow != 1) {
-                    Object transactionNumber = tableWaiting.getValueAt(selectedRow, 0);
-                    Object userName = tableActive.getValueAt(selectedRow, 1);
-                    MessageAlerts.getInstance().showMessage("Approve Order", "Pls check footage first", MessageAlerts.MessageType.DEFAULT, MessageAlerts.YES_NO_OPTION, ((pc, i) -> {
+                if (row >= 0) {
+                    Object transactionNumber = tableWaiting.getValueAt(row, 0);
+                    Object userName = tableWaiting.getValueAt(row, 1);
+                    MessageAlerts.getInstance().showMessage("Approve Order", "Please check footage first", MessageAlerts.MessageType.DEFAULT, MessageAlerts.YES_NO_OPTION, ((pc, i) -> {
                         if (i == MessageAlerts.YES_OPTION) {
                             ServiceOrderD.approveOrder(transactionNumber.toString(), userName.toString(), user);
                         } else {

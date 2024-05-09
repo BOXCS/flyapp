@@ -21,24 +21,24 @@ public class ServiceViewPortfolio {
         return connection;
     }
 
-    // Method untuk mengambil data dari tabel portfolio
-    public List<ModelViewPortfolio> fetchDataPortfolio() {
+    // Method untuk mengambil data dari tabel portfolio berdasarkan designerId
+    public List<ModelViewPortfolio> fetchDataPortfolioByDesignerId(int designerId) {
         List<ModelViewPortfolio> portfolios = new ArrayList<>();
 
         PreparedStatement p = null;
         ResultSet r = null;
 
         try {
-            // Ubah query SQL untuk bergabung dengan tabel designer dan mengambil username
             String sql = "SELECT p.portfolio_id, p.designer_id, d.username AS designer_username, p.media_content, p.media_type "
                     + "FROM portfolio p "
-                    + "JOIN designer d ON p.designer_id = d.designer_id";
+                    + "JOIN designer d ON p.designer_id = d.designer_id "
+                    + "WHERE p.designer_id = ?";
             p = getConnection().prepareStatement(sql);
+            p.setInt(1, designerId);
 
             r = p.executeQuery();
             while (r.next()) {
                 int portfolio_id = r.getInt("portfolio_id");
-                int designerId = r.getInt("designer_id");
                 String username = r.getString("designer_username");
                 byte[] mediaContent = r.getBytes("media_content");
                 String mediaType = r.getString("media_type");
