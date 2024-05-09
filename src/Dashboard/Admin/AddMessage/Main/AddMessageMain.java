@@ -1,6 +1,7 @@
 package Dashboard.Admin.AddMessage.Main;
 
 import Dashboard.Admin.AddMessage.Component.Designer.MessageFill;
+import Dashboard.Swing.ModernScrollBarUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,6 +10,8 @@ public class AddMessageMain extends javax.swing.JPanel {
     public AddMessageMain() {
         initComponents();
         setOpaque(false);
+        
+        configureScrollPane();
 
         cmdAddMessage.addActionListener(new ActionListener() {
             @Override
@@ -18,6 +21,18 @@ public class AddMessageMain extends javax.swing.JPanel {
             }
         });
 
+    }
+    
+    private void configureScrollPane() {
+        jScrollPane1.setOpaque(false);
+        jScrollPane1.setBackground(null);
+        jScrollPane1.getViewport().setOpaque(false);
+        jScrollPane1.getViewport().setBackground(null);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        jScrollPane1.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+
+        body.setOpaque(false);
+        body.setBackground(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -33,6 +48,8 @@ public class AddMessageMain extends javax.swing.JPanel {
 
         setOpaque(false);
 
+        roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
+
         cmdAddMessage.setText("+ Add Message");
         cmdAddMessage.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 
@@ -43,6 +60,7 @@ public class AddMessageMain extends javax.swing.JPanel {
         buttonDash3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 
         jScrollPane1.setBorder(null);
+        jScrollPane1.setOpaque(false);
 
         body.setOpaque(false);
         body.setLayout(new javax.swing.BoxLayout(body, javax.swing.BoxLayout.Y_AXIS));

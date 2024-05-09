@@ -20,7 +20,6 @@ public class MessageFill extends javax.swing.JFrame {
 
         try {
             List<ModelName> designers = new ServiceMessage().loadDesigner();
-            cbDesigner.addItem("All"); // Tambahkan item pertama "All" untuk mengirim ke semua desainer
             for (ModelName designer : designers) {
                 cbDesigner.addItem(designer.getUserName());
             }
