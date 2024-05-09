@@ -39,9 +39,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jScrollPane1" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
-                          <Component id="buttonDash1" min="-2" max="-2" attributes="0"/>
+                          <Component id="cmdAddMessage" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="buttonDash2" min="-2" max="-2" attributes="0"/>
+                          <Component id="cmdAddTips" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="370" max="32767" attributes="0"/>
                           <Component id="buttonDash3" min="-2" pref="35" max="-2" attributes="0"/>
                       </Group>
@@ -55,9 +55,9 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="buttonDash1" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="cmdAddMessage" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="buttonDash2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cmdAddTips" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="buttonDash3" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -69,7 +69,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="swing.ButtonDash" name="buttonDash1">
+        <Component class="swing.ButtonDash" name="cmdAddMessage">
           <Properties>
             <Property name="text" type="java.lang.String" value="+ Add Message"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -77,7 +77,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="swing.ButtonDash" name="buttonDash2">
+        <Component class="swing.ButtonDash" name="cmdAddTips">
           <Properties>
             <Property name="text" type="java.lang.String" value="+ Add Tips"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
