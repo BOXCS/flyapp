@@ -1,9 +1,23 @@
 package Dashboard.Admin.AddMessage.Main;
 
+import Dashboard.Admin.AddMessage.Component.Designer.MessageFill;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class AddMessageMain extends javax.swing.JPanel {
 
     public AddMessageMain() {
         initComponents();
+        setOpaque(false);
+
+        cmdAddMessage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MessageFill messageFill = new MessageFill();
+                messageFill.setVisible(true);
+            }
+        });
+
     }
 
     @SuppressWarnings("unchecked")
