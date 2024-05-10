@@ -1,6 +1,7 @@
 package Dashboard.User.ViewPortfolio.Service;
 
 import Dashboard.User.ViewPortfolio.Model.ModelViewPortfolio;
+import LoginRegister.Model.ModelUser;
 import connection.DatabaseConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,6 +63,42 @@ public class ServiceViewPortfolio {
         }
 
         return portfolios;
+    }
+
+    public List<ModelUser> getUsersFromDatabase() {
+        List<ModelUser> users = new ArrayList<>();
+
+        PreparedStatement p = null;
+        ResultSet r = null;
+
+        try {
+            String sql = "SELECT * FROM designer";
+            p = getConnection().prepareStatement(sql);
+
+            r = p.executeQuery();
+            while (r.next()) {
+                int designerId = r.getInt("designer_id");
+                String username = r.getString("username");
+
+                ModelUser user = new ModelUser(designerId, username);
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (r != null) {
+                    r.close();
+                }
+                if (p != null) {
+                    p.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return users;
     }
 
 }

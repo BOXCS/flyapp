@@ -3,6 +3,7 @@ package Dashboard.User;
 import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
 import Dashboard.User.ViewPortfolio.Main.ViewPortMain;
+import Dashboard.User.ViewPortfolio.Service.ServiceViewPortfolio;
 import LoginRegister.Model.ModelUser;
 import User.Cart.Main.CartMain;
 import notif.Panel.Notification;
@@ -22,16 +23,19 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.interpolation.SplineInterpolator;
 import java.util.Arrays;
+import java.util.List;
 import raven.popup.GlassPanePopup;
 
 public class DashboardUser extends javax.swing.JFrame {
 
     private final ModelUser user;
+    private ServiceViewPortfolio serviceViewPort;
 
     public DashboardUser(ModelUser user) {
         this.user = user;
         initComponents();
         init();
+        serviceViewPort = new ServiceViewPortfolio();
         getContentPane().setBackground(new Color(63, 109, 217));
 
         bg = new javax.swing.JPanel() {
@@ -44,7 +48,10 @@ public class DashboardUser extends javax.swing.JFrame {
         };
         MenuEvent event = (int index) -> {
             switch (index) {
-                case 0 -> showForm(new ViewPortMain(Arrays.asList(11, 12, 13)));
+                case 0 -> {
+                    List<ModelUser> designers = serviceViewPort.getUsersFromDatabase(); // Implement this method to get designers from database
+                    showForm(new ViewPortMain(designers));
+                }
                 case 1 -> {
                     try {
                         showForm(new PlaceOrderMain(user));
