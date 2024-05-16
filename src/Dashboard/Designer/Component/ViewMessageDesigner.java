@@ -38,8 +38,41 @@ public class ViewMessageDesigner extends javax.swing.JPanel {
     }
 
     public void addMessageCard(MessageCardDesigner messageCard) {
-        body.add(messageCard);
-        body.add(Box.createVerticalStrut(10));
+        // Mendapatkan nilai kepentingan pesan (Important, Medium, Low)
+        String priority = messageCard.getMessage().getMessageStatus();
+
+        // Menentukan posisi penambahan pesan berdasarkan prioritasnya
+        int insertIndex = body.getComponentCount();
+        switch (priority) {
+            case "Important":
+                // Important ditambahkan di awal
+                insertIndex = 0;
+                break;
+            case "Medium":
+                // Medium ditambahkan setelah Important
+                for (int i = 0; i < body.getComponentCount(); i++) {
+                    if (((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus().equals("Important")) {
+                        insertIndex = i + 1;
+                        break;
+                    }
+                }
+                break;
+            case "Low":
+                // Low ditambahkan setelah Medium
+                for (int i = 0; i < body.getComponentCount(); i++) {
+                    if (((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus().equals("Medium")) {
+                        insertIndex = i + 1;
+                        break;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        // Menambahkan pesan ke panel dengan memperhitungkan urutan prioritas
+        body.add(messageCard, insertIndex);
+        body.add(Box.createVerticalStrut(20)); // Menambahkan VerticalStrut setelah messageCard yang baru ditambahkan
         revalidate();
         repaint();
     }

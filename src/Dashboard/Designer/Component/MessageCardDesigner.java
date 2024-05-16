@@ -22,6 +22,17 @@ public class MessageCardDesigner extends javax.swing.JPanel {
         lbDesc.setText(message.getDescription());
     }
 
+    public ModelMessage getMessage() {
+        return message;
+    }
+
+    public String getPriority() {
+        if (message != null) {
+            return message.getMessageStatus();
+        }
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -53,7 +64,7 @@ public class MessageCardDesigner extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addComponent(lbDesc))
                     .addComponent(lbTitle))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -73,7 +84,9 @@ public class MessageCardDesigner extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 26, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

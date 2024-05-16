@@ -33,6 +33,7 @@ public class MailNotification {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", "smtp.gmail.com"); // Sesuaikan dengan SMTP server Anda (contoh: smtp.gmail.com)
         props.put("mail.smtp.port", "587"); // Sesuaikan port SMTP
+        props.put("mail.smtp.ssl.trust", "*");
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -55,5 +56,5 @@ public class MailNotification {
             throw new RuntimeException(e);
         }
     }
-    
+
 }

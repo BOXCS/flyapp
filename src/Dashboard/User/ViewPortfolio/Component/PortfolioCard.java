@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 public class PortfolioCard extends javax.swing.JPanel {
 
@@ -31,6 +32,7 @@ public class PortfolioCard extends javax.swing.JPanel {
         jScrollPane1.getViewport().setBackground(null);
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         jScrollPane1.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     }
 
     private void displayPortfoliosFromDatabase() {

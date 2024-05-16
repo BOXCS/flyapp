@@ -209,7 +209,6 @@ public class CartMain extends javax.swing.JPanel {
         cbSelect.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         cbSelect.setForeground(new java.awt.Color(255, 255, 255));
         cbSelect.setText("Select All");
-        cbSelect.setOpaque(false);
 
         cmdDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Dashboard/icon/delete.png"))); // NOI18N
         cmdDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -248,13 +247,14 @@ public class CartMain extends javax.swing.JPanel {
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap(43, Short.MAX_VALUE)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(lbPrice)
-                    .addComponent(cmdCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbSelect)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmdEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(lbPrice)
+                        .addComponent(cmdCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbSelect)))
                 .addGap(25, 25, 25))
         );
 

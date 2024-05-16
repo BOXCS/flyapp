@@ -249,7 +249,7 @@ public class ServicePricing {
     public boolean insertOrder(String productName, String designer, String level, double price, ModelUser user) {
         String transactionNumber = generateTransactionNumber();
         String transactionType = generateTransactionType();
-        String status = "Waiting";
+        String status = "Waiting"; // Ensure status is set
         Timestamp createdAt = getCurrentTimestamp();
 
         String query = "INSERT INTO transaction (transaction_number, product_name, designer, level, amount, status, created_at, username, type) "
@@ -261,9 +261,9 @@ public class ServicePricing {
             preparedStatement.setString(3, designer);
             preparedStatement.setString(4, level);
             preparedStatement.setDouble(5, price);
-            preparedStatement.setString(6, status);
+            preparedStatement.setString(6, status); // Ensure status is correctly included
             preparedStatement.setTimestamp(7, createdAt);
-            preparedStatement.setString(8, user.getUserName()); // Mengambil username dari objek ModelUser
+            preparedStatement.setString(8, user.getUserName());
             preparedStatement.setString(9, transactionType);
 
             // Execute the insert statement
@@ -276,7 +276,7 @@ public class ServicePricing {
                 // Insert revision based on product name and level
                 int revisionCount = getRevisionCount(productName, level);
                 String revisionText = "No Revision";
-                if (revisionCount > 0) { // Check if revisions are available
+                if (revisionCount > 0) {
                     insertNewRevision(transactionNumber, designer, productName, level, revisionText, revisionCount);
                 } else {
                     System.out.println("Ran out of Revision");
