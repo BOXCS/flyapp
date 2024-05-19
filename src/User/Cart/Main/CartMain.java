@@ -304,12 +304,21 @@ public class CartMain extends javax.swing.JPanel {
             boolean isChecked = (boolean) model.getValueAt(i, 5);
             if (isChecked) {
                 String productName = (String) model.getValueAt(i, 1);
-                if (serviceCart.updateTransactionStatus(productName, transactionSig)) {
-                    System.out.println("Product '" + productName + "' checked out successfully.");
-                    MessageAlerts.getInstance().showMessage("Success", "Checkout Success", MessageAlerts.MessageType.SUCCESS);
+                String designer = (String) model.getValueAt(i, 3);
+
+                // Cek apakah desainer tersedia
+                if (serviceCart.isDesignerAvailable(designer)) {
+                    if (serviceCart.updateTransactionStatus(productName, transactionSig)) {
+                        System.out.println("Product '" + productName + "' checked out successfully.");
+                        MessageAlerts.getInstance().showMessage("Success", "Checkout Success", MessageAlerts.MessageType.SUCCESS);
+                    } else {
+                        System.out.println("Failed to check out product '" + productName + "'.");
+                        MessageAlerts.getInstance().showMessage("Failed", "Checkout Failed", MessageAlerts.MessageType.ERROR);
+                    }
                 } else {
-                    System.out.println("Failed to check out product '" + productName + "'.");
-                    MessageAlerts.getInstance().showMessage("Failed", "Checkout Failed", MessageAlerts.MessageType.ERROR);
+                    // Desainer tidak tersedia, munculkan popup
+                    System.out.println("Designer for product '" + productName + "' is unavailable.");
+                    MessageAlerts.getInstance().showMessage("Error", "Designer Unavailable", MessageAlerts.MessageType.ERROR);
                 }
             }
         }

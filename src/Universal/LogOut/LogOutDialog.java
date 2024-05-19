@@ -35,6 +35,7 @@ public class LogOutDialog extends javax.swing.JDialog {
         }
         this.mainFrame = new Main();
         this.parentFrame = parent; // Store the reference to the parent frame
+        setUndecorated(true);
         initComponents();
         setLocationRelativeTo(parent);
         setSize(400, 200); // Set the size of the dialog

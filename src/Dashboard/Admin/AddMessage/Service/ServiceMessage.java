@@ -127,6 +127,22 @@ public class ServiceMessage {
         return null; // Return null jika tidak ditemukan
     }
 
+    // Tambahkan metode baru untuk mendapatkan semua desainer dengan ID mereka
+    public List<ModelName> getAllDesignersWithId() throws SQLException {
+        List<ModelName> designers = new ArrayList<>();
+        String sql = "SELECT designer_id, username FROM designer";
+        try (PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql)) {
+            try (ResultSet r = p.executeQuery()) {
+                while (r.next()) {
+                    int id = r.getInt("designer_id");
+                    String username = r.getString("username");
+                    designers.add(new ModelName(id, username));
+                }
+            }
+        }
+        return designers;
+    }
+
     public List<ModelMessage> getAllMessagesByUser(ModelUser user) throws SQLException {
         List<ModelMessage> messages = new ArrayList<>();
         String sql = "SELECT * FROM messages WHERE receiver_id = (SELECT designer_id FROM designer WHERE username = ?)";

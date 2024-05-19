@@ -31,6 +31,11 @@ public class ModelName {
         this.userName = userName;
     }
 
+    public ModelName(int Id, String userName) {
+        this.Id = Id;
+        this.userName = userName;
+    }
+
     @Override
     public String toString() {
         return "ModelName{"

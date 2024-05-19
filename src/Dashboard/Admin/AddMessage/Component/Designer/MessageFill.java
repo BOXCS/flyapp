@@ -19,48 +19,59 @@ public class MessageFill extends javax.swing.JFrame {
         initComponents();
 
         try {
+            // Tambahkan item "All" sebagai item pertama dan default
+            cbDesigner.addItem("All");
+
             List<ModelName> designers = new ServiceMessage().loadDesigner();
             for (ModelName designer : designers) {
                 cbDesigner.addItem(designer.getUserName());
             }
+            cbDesigner.setSelectedItem("All"); // Set item default sebagai "All"
         } catch (SQLException ex) {
             // Handle exception
             ex.printStackTrace();
         }
-
         // Di dalam ActionListener untuk tombol "SEND"
         cmdSend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int receiverID = 0; // Menggunakan 0 untuk "All", karena di database tidak ada receiver ID 0
                     String selectedDesigner = (String) cbDesigner.getSelectedItem();
-                    if (!selectedDesigner.equals("All")) {
+                    if (selectedDesigner.equals("All")) {
+                        // Jika "All" dipilih, kirim pesan ke semua desainer
+                        List<ModelName> allDesigners = new ServiceMessage().getAllDesignersWithId();
+                        for (ModelName designer : allDesigners) {
+                            insertMessageForDesigner(designer.getId());
+                        }
+                    } else {
                         // Jika dipilih desainer tertentu, cari receiverID berdasarkan username desainer
-                        receiverID = new ServiceMessage().getDesignerIDByUsername(selectedDesigner);
+                        int receiverID = new ServiceMessage().getDesignerIDByUsername(selectedDesigner);
+                        insertMessageForDesigner(receiverID);
                     }
-
-                    // Buat objek ModelMessage untuk disimpan ke database
-                    ModelMessage message = new ModelMessage();
-                    message.setReceiverID(receiverID);
-                    message.setTitle(txtTitle.getText());
-                    message.setDescription(txtContent.getText());
-                    message.setSentAt(new Date(System.currentTimeMillis())); // Tanggal saat ini
-                    message.setDeleteAt(new Date(jDateChooser1.getDate().getTime())); // Tanggal dari jDateChooser1
-                    if (rdImportant.isSelected()) {
-                        message.setMessageStatus("Important");
-                    } else if (rdMedium.isSelected()) {
-                        message.setMessageStatus("Medium");
-                    } else if (jRadioButton3.isSelected()) {
-                        message.setMessageStatus("Low");
-                    }
-
-                    // Simpan pesan ke database menggunakan insertMessage
-                    new ServiceMessage().insertMessage(message);
                 } catch (SQLException ex) {
                     // Handle exception
                     ex.printStackTrace();
                 }
+            }
+
+            private void insertMessageForDesigner(int receiverID) throws SQLException {
+                // Buat objek ModelMessage untuk disimpan ke database
+                ModelMessage message = new ModelMessage();
+                message.setReceiverID(receiverID);
+                message.setTitle(txtTitle.getText());
+                message.setDescription(txtContent.getText());
+                message.setSentAt(new Date(System.currentTimeMillis())); // Tanggal saat ini
+                message.setDeleteAt(new Date(jDateChooser1.getDate().getTime())); // Tanggal dari jDateChooser1
+                if (rdImportant.isSelected()) {
+                    message.setMessageStatus("Important");
+                } else if (rdMedium.isSelected()) {
+                    message.setMessageStatus("Medium");
+                } else if (jRadioButton3.isSelected()) {
+                    message.setMessageStatus("Low");
+                }
+
+                // Simpan pesan ke database menggunakan insertMessage
+                new ServiceMessage().insertMessage(message);
             }
         });
 

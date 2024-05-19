@@ -42,27 +42,32 @@ public class ViewMessageDesigner extends javax.swing.JPanel {
         String priority = messageCard.getMessage().getMessageStatus();
 
         // Menentukan posisi penambahan pesan berdasarkan prioritasnya
-        int insertIndex = body.getComponentCount();
+        int insertIndex = body.getComponentCount(); // Default insert index at the end
+
         switch (priority) {
             case "Important":
                 // Important ditambahkan di awal
                 insertIndex = 0;
                 break;
             case "Medium":
-                // Medium ditambahkan setelah Important
+                // Medium ditambahkan setelah semua pesan Important
                 for (int i = 0; i < body.getComponentCount(); i++) {
-                    if (((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus().equals("Important")) {
-                        insertIndex = i + 1;
+                    String currentStatus = ((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus();
+                    if (!currentStatus.equals("Important")) {
+                        insertIndex = i;
                         break;
                     }
                 }
                 break;
             case "Low":
-                // Low ditambahkan setelah Medium
+                // Low ditambahkan setelah semua pesan Medium
                 for (int i = 0; i < body.getComponentCount(); i++) {
-                    if (((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus().equals("Medium")) {
-                        insertIndex = i + 1;
+                    String currentStatus = ((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus();
+                    if (currentStatus.equals("Low")) {
+                        insertIndex = i;
                         break;
+                    } else if (currentStatus.equals("Important") || currentStatus.equals("Medium")) {
+                        insertIndex = i + 1;
                     }
                 }
                 break;
