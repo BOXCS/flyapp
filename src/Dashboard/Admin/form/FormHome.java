@@ -1,12 +1,15 @@
 package Dashboard.Admin.form;
 
+import Dashboard.Admin.AddMessage.Main.AddMessageMain;
 import Dashboard.Admin.Model.ModelDesigner;
 import Dashboard.Admin.Model.ModelName;
+import Dashboard.Admin.RatingView.Main.MainRatingView;
 import Dashboard.Admin.Service.ServiceDesigner;
 import Dashboard.Admin.Service.ServiceReport;
 import Dashboard.Swing.chart.ModelChart;
 import Dashboard.Swing.pieChart.ModelPieChart;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -14,13 +17,19 @@ import javax.swing.ImageIcon;
 
 public class FormHome extends javax.swing.JPanel {
 
+    private MainRatingView mainRatingView1;
+
     public FormHome() {
         initComponents();
         setOpaque(false);
+        this.setLayout(null);
         init();
+//        customLayout();
     }
 
     private void init() {
+        mainRatingView1 = new MainRatingView();
+
         chart.addLegend("Finished", new Color(5, 125, 0), new Color(95, 209, 69));
         chart.addLegend("Cancelled", new Color(186, 37, 37), new Color(241, 100, 120));
         chart.addLegend("Pending", new Color(12, 84, 175), new Color(0, 108, 247));
@@ -41,6 +50,31 @@ public class FormHome extends javax.swing.JPanel {
         } catch (Exception e) {
             System.err.println(e);
         }
+
+        add(mainRatingView1);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        customLayout();
+    }
+
+    private void customLayout() {
+        int panelWidth = getWidth(); // Mendapatkan lebar panel
+        int panelHeight = getHeight(); // Mendapatkan tinggi panel
+
+        // Mengatur posisi dan ukuran roundPanel1
+        roundPanel1.setBounds(0, 0, panelWidth, panelHeight - 400);
+
+        // Mengatur posisi dan ukuran chart
+        chart.setBounds(10, 10, panelWidth - 20, roundPanel1.getHeight() - 20);
+
+        // Mengatur posisi dan ukuran addMessageMain1
+        addMessageMain1.setBounds(0, roundPanel1.getY() + 340, panelWidth / 2, 390);
+
+        // Mengatur posisi dan ukuran mainRatingView1
+        mainRatingView1.setBounds(panelWidth / 2 + 5, roundPanel1.getHeight() + 10, panelWidth / 2 - 15, 385);
     }
 
     // Method untuk menentukan warna berdasarkan label
@@ -63,7 +97,6 @@ public class FormHome extends javax.swing.JPanel {
 
         roundPanel1 = new Dashboard.Swing.RoundPanel();
         chart = new Dashboard.Swing.chart.CurveChart();
-        mainRatingView1 = new Dashboard.Admin.RatingView.Main.MainRatingView();
         addMessageMain1 = new Dashboard.Admin.AddMessage.Main.AddMessageMain();
 
         roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
@@ -75,7 +108,7 @@ public class FormHome extends javax.swing.JPanel {
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 1358, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 1141, Short.MAX_VALUE)
                 .addContainerGap())
         );
         roundPanel1Layout.setVerticalGroup(
@@ -90,23 +123,20 @@ public class FormHome extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1370, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(addMessageMain1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(mainRatingView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(213, 213, 213)
+                .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1153, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(378, 378, 378)
+                .addComponent(addMessageMain1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(5, 5, 5)
                 .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(mainRatingView1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addMessageMain1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addGap(5, 5, 5)
+                .addComponent(addMessageMain1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -114,7 +144,6 @@ public class FormHome extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Dashboard.Admin.AddMessage.Main.AddMessageMain addMessageMain1;
     private Dashboard.Swing.chart.CurveChart chart;
-    private Dashboard.Admin.RatingView.Main.MainRatingView mainRatingView1;
     private Dashboard.Swing.RoundPanel roundPanel1;
     // End of variables declaration//GEN-END:variables
 }
