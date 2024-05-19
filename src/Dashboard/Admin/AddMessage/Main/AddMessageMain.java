@@ -69,9 +69,11 @@ public class AddMessageMain extends javax.swing.JPanel {
 
         roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
 
+        cmdAddMessage.setForeground(new java.awt.Color(255, 255, 255));
         cmdAddMessage.setText("+ Add Message");
         cmdAddMessage.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 
+        cmdAddTips.setForeground(new java.awt.Color(255, 255, 255));
         cmdAddTips.setText("+ Add Tips");
         cmdAddTips.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 

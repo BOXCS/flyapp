@@ -1,5 +1,6 @@
 package Dashboard.Admin;
 
+import Admin.AddAdmin.AddAdminMain;
 import Admin.AddDesigner.Main.AddDesignerMain;
 import Admin.Report.Revision.Main.ReportRevision;
 import Dashboard.Admin.Event.MenuEvent;
@@ -42,11 +43,12 @@ public class DashboardAdmin extends javax.swing.JFrame {
                 case 2:
                     showForm(new AddDesignerMain());
                     break;
+                case 3:
+                    showForm(new AddAdminMain());
+                    break;
                 case 5:
                     showForm(new ReportRevision());
                     break;
-                case 6:
-                    showLogOutPopup();
                 default:
                     showForm(new Form(index + ""));
                     break;
