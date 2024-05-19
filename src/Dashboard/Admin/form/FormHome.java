@@ -24,7 +24,6 @@ public class FormHome extends javax.swing.JPanel {
         setOpaque(false);
         this.setLayout(null);
         init();
-//        customLayout();
     }
 
     private void init() {
