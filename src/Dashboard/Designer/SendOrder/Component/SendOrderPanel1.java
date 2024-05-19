@@ -18,13 +18,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SendOrderPanel1 extends javax.swing.JPanel {
 
     private List<File> selectedFiles = new ArrayList<>();
+    private Set<String> fileTypes = new HashSet<>();
     private SendOrderMain sendOrderMain;
 
-//    private final ModelUser user;
+    // private final ModelUser user;
     private ServiceSendOrder serviceSendOrder;
     private DisplayResult playResult;
     private MainVideoJPreview videoPreview;
@@ -37,7 +40,7 @@ public class SendOrderPanel1 extends javax.swing.JPanel {
         setOpaque(false);
         configureScrollPane();
 
-//        serviceSendOrder = new ServiceSendOrder();
+        // serviceSendOrder = new ServiceSendOrder();
         cmdSend.addActionListener(e -> {
             processSendFiles(lbTransactionNumber.getText());
         });
@@ -53,36 +56,40 @@ public class SendOrderPanel1 extends javax.swing.JPanel {
         lbTransactionNumber.setText(transactionNumber);
     }
 
-    // Metode untuk memproses pengiriman file-file yang dipilih
+    // Method to process sending selected files
     public void processSendFiles(String transactionNumber) {
+        if (selectedFiles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No files selected. Please select files to send.", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (fileTypes.size() > 1) {
+            JOptionPane.showMessageDialog(this, "Incompatible file types. Please select either all images or all videos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         Connection connection = null;
         PreparedStatement p = null;
         ResultSet rs = null;
         try {
             connection = ServiceSendOrder.getConnection();
-
-            if (selectedFiles.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No files selected. Please select files to send.", "Warning", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-//            String recipientEmail = null;
-//            String query = "SELECT user.email FROM user INNER JOIN transaction ON user.username = transaction.username WHERE transaction.transaction_number = ?";
-//            p = connection.prepareStatement(query);
-//            p.setString(1, transactionNumber);
-//            rs = p.executeQuery();
-//            if (rs.next()) {
-//                recipientEmail = rs.getString("user.email");
-//            } else {
-//                throw new SQLException("Recipient email not found.");
-//            }
-
             serviceSendOrder.insertResult(transactionNumber, selectedFiles);
 
             JOptionPane.showMessageDialog(this, "All selected files sent successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Failed to send files: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (p != null) {
+                    p.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -200,10 +207,36 @@ public class SendOrderPanel1 extends javax.swing.JPanel {
 
         if (action) {
             File selectedFile = fileChooser.getSelectedFile();
+            String fileType = getFileType(selectedFile);
+
+            if (fileType == null) {
+                JOptionPane.showMessageDialog(this, "File format not supported.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!fileTypes.isEmpty() && !fileTypes.contains(fileType)) {
+                JOptionPane.showMessageDialog(this, "Incompatible file types. Please select either all images or all videos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            fileTypes.add(fileType);
             selectedFiles.add(selectedFile);
             addFileToBody(selectedFile);
         }
     }//GEN-LAST:event_addPortfolio1MouseClicked
+
+    private String getFileType(File file) {
+        String fileName = file.getName();
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+        if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("gif")) {
+            return "image";
+        } else if (extension.equals("mp4") || extension.equals("avi") || extension.equals("mov") || extension.equals("wmv")) {
+            return "video";
+        } else {
+            return null;
+        }
+    }
 
     private void addFileToBody(File file) {
         String fileName = file.getName();
@@ -214,7 +247,7 @@ public class SendOrderPanel1 extends javax.swing.JPanel {
             body.add(imagePreview);
         } else if (extension.equals("mp4") || extension.equals("avi") || extension.equals("mov") || extension.equals("wmv")) {
             String filePath = file.getAbsolutePath();
-//            MainVideoJPreview videoPreview = new MainVideoJPreview(filePath);
+            // MainVideoJPreview videoPreview = new MainVideoJPreview(filePath);
             DisplayResult displayResult = new DisplayResult(fileName);
             body.add(displayResult);
         } else {

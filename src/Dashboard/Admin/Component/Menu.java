@@ -53,9 +53,9 @@ public class Menu extends javax.swing.JPanel {
 //        addMenu("chat", "Chat", 3);
         split("Add");
         addMenu("2", "Add Designer", 2);
-        addMenu("2", "Add Admin", 3);
+        addMenu("2", "Manage Account", 3);
         split("Report");
-        addMenu("4", "Report Income", 4);
+        addMenu("4", "Analytic", 4);
         addMenu("4", "Report Revision", 5);
         space();
         addMenu("key", "Logout", 6);

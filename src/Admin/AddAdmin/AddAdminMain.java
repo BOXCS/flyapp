@@ -13,6 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import raven.alerts.MessageAlerts;
+import raven.popup.component.PopupCallbackAction;
+import raven.popup.component.PopupController;
 
 public class AddAdminMain extends javax.swing.JPanel {
 
@@ -116,44 +119,91 @@ public class AddAdminMain extends javax.swing.JPanel {
         cmdDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Ambil baris yang dipilih dari tableAdmin
-                int[] selectedRows = tableAdmin.getSelectedRows();
+                // Tampilkan dialog konfirmasi
+                MessageAlerts.getInstance().showMessage("Confirmation", "Delete Account?", MessageAlerts.MessageType.WARNING, MessageAlerts.YES_NO_OPTION, new PopupCallbackAction() {
+                    @Override
+                    public void action(PopupController pc, int x) {
+                        // Lanjutkan jika pengguna memilih 'Yes'
+                        if (x == MessageAlerts.YES_OPTION) {
+                            // Ambil baris yang dipilih dari tableAdmin
+                            int[] selectedRowsAdmin = tableAdmin.getSelectedRows();
+                            // Ambil baris yang dipilih dari tableDesigner
+                            int[] selectedRowsDesigner = tableDesigner.getSelectedRows();
 
-                // Periksa apakah ada baris yang dipilih
-                if (selectedRows.length > 0) {
-                    try {
-                        // Persiapkan query untuk menghapus data dari tabel admin
-                        String deleteQuery = "DELETE FROM admin WHERE adminID = ?";
-                        PreparedStatement deleteStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(deleteQuery);
+                            // Periksa apakah ada baris yang dipilih di tableAdmin
+                            if (selectedRowsAdmin.length > 0) {
+                                try {
+                                    // Persiapkan query untuk menghapus data dari tabel admin
+                                    String deleteAdminQuery = "DELETE FROM admin WHERE adminID = ?";
+                                    PreparedStatement deleteAdminStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(deleteAdminQuery);
 
-                        // Iterasi melalui baris yang dipilih
-                        for (int i = 0; i < selectedRows.length; i++) {
-                            // Ambil nilai boolean dari kolom "Action"
-                            boolean actionValue = (boolean) tableAdmin.getValueAt(selectedRows[i], 3); // Anggap kolom "Action" ada di indeks 3
+                                    // Iterasi melalui baris yang dipilih di tableAdmin
+                                    for (int i = 0; i < selectedRowsAdmin.length; i++) {
+                                        // Ambil nilai boolean dari kolom "Action"
+                                        boolean actionValue = (boolean) tableAdmin.getValueAt(selectedRowsAdmin[i], 3); // Anggap kolom "Action" ada di indeks 3
 
-                            // Periksa apakah nilai boolean adalah true
-                            if (actionValue) {
-                                // Ambil nilai adminID untuk baris yang dipilih
-                                String adminID = (String) tableAdmin.getValueAt(selectedRows[i], 0); // Anggap kolom "adminID" ada di indeks 0
+                                        // Periksa apakah nilai boolean adalah true
+                                        if (actionValue) {
+                                            // Ambil nilai adminID untuk baris yang dipilih
+                                            String adminID = (String) tableAdmin.getValueAt(selectedRowsAdmin[i], 0); // Anggap kolom "adminID" ada di indeks 0
 
-                                // Set parameter query
-                                deleteStatement.setString(1, adminID);
-                                // Eksekusi query untuk menghapus data dari database
-                                deleteStatement.executeUpdate();
+                                            // Set parameter query
+                                            deleteAdminStatement.setString(1, adminID);
+                                            // Eksekusi query untuk menghapus data dari database
+                                            deleteAdminStatement.executeUpdate();
 
-                                // Hapus baris dari tabel
-                                DefaultTableModel modelAdmin = (DefaultTableModel) tableAdmin.getModel();
-                                modelAdmin.removeRow(selectedRows[i] - i); // Perlu dikurangi i karena indeks akan bergeser setelah penghapusan
+                                            // Hapus baris dari tabel
+                                            DefaultTableModel modelAdmin = (DefaultTableModel) tableAdmin.getModel();
+                                            modelAdmin.removeRow(selectedRowsAdmin[i] - i); // Perlu dikurangi i karena indeks akan bergeser setelah penghapusan
+                                        }
+                                    }
+
+                                    // Tutup pernyataan penghapusan
+                                    deleteAdminStatement.close();
+
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+
+                            // Periksa apakah ada baris yang dipilih di tableDesigner
+                            if (selectedRowsDesigner.length > 0) {
+                                try {
+                                    // Persiapkan query untuk menghapus data dari tabel designer
+                                    String deleteDesignerQuery = "DELETE FROM designer WHERE designer_id = ?";
+                                    PreparedStatement deleteDesignerStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(deleteDesignerQuery);
+
+                                    // Iterasi melalui baris yang dipilih di tableDesigner
+                                    for (int i = 0; i < selectedRowsDesigner.length; i++) {
+                                        // Ambil nilai boolean dari kolom "Action"
+                                        boolean actionValue = (boolean) tableDesigner.getValueAt(selectedRowsDesigner[i], 3); // Anggap kolom "Action" ada di indeks 3
+
+                                        // Periksa apakah nilai boolean adalah true
+                                        if (actionValue) {
+                                            // Ambil nilai designerID untuk baris yang dipilih
+                                            String designerID = (String) tableDesigner.getValueAt(selectedRowsDesigner[i], 0); // Anggap kolom "designerID" ada di indeks 0
+
+                                            // Set parameter query
+                                            deleteDesignerStatement.setString(1, designerID);
+                                            // Eksekusi query untuk menghapus data dari database
+                                            deleteDesignerStatement.executeUpdate();
+
+                                            // Hapus baris dari tabel
+                                            DefaultTableModel modelDesigner = (DefaultTableModel) tableDesigner.getModel();
+                                            modelDesigner.removeRow(selectedRowsDesigner[i] - i); // Perlu dikurangi i karena indeks akan bergeser setelah penghapusan
+                                        }
+                                    }
+
+                                    // Tutup pernyataan penghapusan
+                                    deleteDesignerStatement.close();
+
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
                             }
                         }
-
-                        // Tutup pernyataan penghapusan
-                        deleteStatement.close();
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
-                }
+                });
             }
         });
 

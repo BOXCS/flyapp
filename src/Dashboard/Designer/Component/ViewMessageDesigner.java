@@ -42,44 +42,34 @@ public class ViewMessageDesigner extends javax.swing.JPanel {
         String priority = messageCard.getMessage().getMessageStatus();
 
         // Menentukan posisi penambahan pesan berdasarkan prioritasnya
-        int insertIndex = body.getComponentCount(); // Default insert index at the end
-
-        switch (priority) {
-            case "Important":
-                // Important ditambahkan di awal
-                insertIndex = 0;
-                break;
-            case "Medium":
-                // Medium ditambahkan setelah semua pesan Important
-                for (int i = 0; i < body.getComponentCount(); i++) {
-                    String currentStatus = ((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus();
-                    if (!currentStatus.equals("Important")) {
-                        insertIndex = i;
-                        break;
-                    }
-                }
-                break;
-            case "Low":
-                // Low ditambahkan setelah semua pesan Medium
-                for (int i = 0; i < body.getComponentCount(); i++) {
-                    String currentStatus = ((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus();
-                    if (currentStatus.equals("Low")) {
-                        insertIndex = i;
-                        break;
-                    } else if (currentStatus.equals("Important") || currentStatus.equals("Medium")) {
-                        insertIndex = i + 1;
-                    }
-                }
-                break;
-            default:
-                break;
-        }
+        int insertIndex = getInsertIndex(priority);
 
         // Menambahkan pesan ke panel dengan memperhitungkan urutan prioritas
         body.add(messageCard, insertIndex);
-        body.add(Box.createVerticalStrut(20)); // Menambahkan VerticalStrut setelah messageCard yang baru ditambahkan
+        body.add(Box.createVerticalStrut(20), insertIndex + 1); // Menambahkan VerticalStrut setelah messageCard yang baru ditambahkan
         revalidate();
         repaint();
+    }
+
+    private int getInsertIndex(String priority) {
+        int insertIndex = body.getComponentCount(); // Default insert index at the end
+
+        for (int i = 0; i < body.getComponentCount(); i++) {
+            if (body.getComponent(i) instanceof MessageCardDesigner) {
+                String currentStatus = ((MessageCardDesigner) body.getComponent(i)).getMessage().getMessageStatus();
+                if (priority.equals("Important") && !currentStatus.equals("Important")) {
+                    insertIndex = i;
+                    break;
+                } else if (priority.equals("Medium") && currentStatus.equals("Low")) {
+                    insertIndex = i;
+                    break;
+                } else if (priority.equals("Low")) {
+                    insertIndex = i + 1;
+                }
+            }
+        }
+
+        return insertIndex;
     }
 
     @SuppressWarnings("unchecked")

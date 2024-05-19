@@ -3,6 +3,8 @@ package Dashboard.Admin;
 import Admin.AddAdmin.AddAdminMain;
 import Admin.AddDesigner.Main.AddDesignerMain;
 import Admin.Report.Revision.Main.ReportRevision;
+import Admin.ViewOrder.Main.ViewOrder;
+import Admin.analytic.AnalyticAdminmain;
 import Dashboard.Admin.Event.MenuEvent;
 import Dashboard.Admin.form.Form;
 import Dashboard.Admin.form.FormHome;
@@ -40,14 +42,23 @@ public class DashboardAdmin extends javax.swing.JFrame {
                 case 0:
                     showForm(new FormHome());
                     break;
+                case 1:
+                    showForm(new ViewOrder());
+                    break;
                 case 2:
                     showForm(new AddDesignerMain());
                     break;
                 case 3:
                     showForm(new AddAdminMain());
                     break;
+                case 4:
+                    showForm(new AnalyticAdminmain());
+                    break;
                 case 5:
                     showForm(new ReportRevision());
+                    break;
+                case 6:
+                    showLogOutPopup();
                     break;
                 default:
                     showForm(new Form(index + ""));

@@ -1,92 +1,98 @@
-package Dashboard.Designer.Analythics.Main;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
+package Admin.analytic;
 
+import Admin.analytic.service.service;
 import Dashboard.Designer.Analythics.Model.modelChart;
-import Dashboard.Designer.Service.ServiceDesigner;
-import LoginRegister.Model.ModelUser;
 import java.awt.Color;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
-import javax.swing.SwingUtilities;
-import jnafilechooser.api.JnaFileChooser;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import raven.alerts.MessageAlerts;
 
-public class AnalythicsMain extends javax.swing.JPanel {
+/**
+ *
+ * @author LENOVO
+ */
+public class AnalyticAdminmain extends javax.swing.JPanel {
 
-    private final ModelUser user;
-    private ServiceDesigner serviceDesigner;
+    private service service;
 
-    public AnalythicsMain(ModelUser user) {
-        this.user = user;
-        this.serviceDesigner = new ServiceDesigner();
+    public AnalyticAdminmain() {
         initComponents();
-
-        setOpaque(false);
-
+        service = new service();
         init();
-
-        displayEarnToDate();
+        setOpaque(false);
+        earnTodate();
+        mostSellingLevel();
+        orderComplete();
         displayCompletion();
+
         displayEarnInMonth();
-        displayCompleted();
-        displayMostLevel();
-
-        cmdDownloadExcel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdDownloadExcelActionPerformed(evt);
-            }
-        });
     }
-
     private void init() {
-        chart.addLegend("Sales", new Color(12, 84, 175), new Color(0, 108, 247));
-        chart.addLegend("Cancelled", new Color(54, 4, 143), new Color(104, 49, 200));
-        chart.addLegend("Completed", new Color(5, 125, 0), new Color(95, 209, 69));
+        chart1.addLegend("Sales", new Color(12, 84, 175), new Color(0, 108, 247));
+        chart1.addLegend("Cancelled", new Color(54, 4, 143), new Color(104, 49, 200));
+        chart1.addLegend("Completed", new Color(5, 125, 0), new Color(95, 209, 69));
         updateChart();
-        chart.start();
+        chart1.start();
     }
 
-    private void displayEarnToDate() {
-        String username = user.getUserName();
-
+    private void earnTodate() {
         try {
-            double totalEarning = serviceDesigner.getTotalAmount(username);
+            double totalEarning = service.getTotalAmount();
 
             String formattedEarning = String.format("$ %.1f", totalEarning);
 
-            lbEarnToDate.setText(formattedEarning);
+            total.setText(formattedEarning);
         } catch (Exception e) {
             System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
-            lbEarnToDate.setText("N/A");
+            total.setText("N/A");
+        }
+    }
+
+    private void mostSellingLevel() {
+
+        try {
+            String mostLevel = service.getMostFrequentLevel();
+
+            lbAvgLevel.setText(mostLevel);
+        } catch (Exception e) {
+            System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
+            lbAvgLevel.setText("N/A");
+        }
+    }
+
+    private void orderComplete() {
+        try {
+            int Complete = service.getFinishedStatus();
+            lbCompleted.setText(String.valueOf(Complete));
+        } catch (Exception e) {
+            System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
+            lbCompleted.setText("N/A");
+
         }
     }
 
     private void displayCompletion() {
-        String username = user.getUserName();
 
         try {
-            double averageSuccessRate = serviceDesigner.getAverageSuccessRate(username);
+            double averageSuccessRate = service.getAverageSuccessRate();
 
             lbCompletion.setText(String.format("%.2f%%", averageSuccessRate));
         } catch (Exception e) {
             System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
-            lbEarnToDate.setText("N/A");
+            total.setText("N/A");
         }
     }
 
     private void displayEarnInMonth() {
-        String username = user.getUserName();
 
         try {
             // Mendapatkan total penghasilan untuk bulan saat ini dan nama bulan dari serviceDesigner
-            Map<String, Double> totalEarningsByMonth = serviceDesigner.getTotalAmountForCurrentMonth(username);
+            Map<String, Double> totalEarningsByMonth = service.getTotalAmountForCurrentMonth();
 
             // Cek apakah Map berisi data untuk bulan saat ini
             if (!totalEarningsByMonth.isEmpty()) {
@@ -110,51 +116,26 @@ public class AnalythicsMain extends javax.swing.JPanel {
 
                 lbMonth.setText("Earned in " + formattedMonthName);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.out.println("error" + e.getMessage());
             System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
+            e.printStackTrace();
             lbEarnMonth.setText("N/A");
             lbMonth.setText("N/A");
         }
     }
-
-    private void displayCompleted() {
-        String username = user.getUserName();
-
-        try {
-            int finishedCount = serviceDesigner.getCountOfFinishedStatus(username);
-
-            lbCompleted.setText(String.valueOf(finishedCount));
-        } catch (Exception e) {
-            System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
-            lbCompleted.setText("N/A");
-        }
-    }
-
-    private void displayMostLevel() {
-        String username = user.getUserName();
-
-        try {
-            String mostLevel = serviceDesigner.getMostFrequentLevel(username);
-
-            lbAvgLevel.setText(mostLevel);
-        } catch (Exception e) {
-            System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
-            lbAvgLevel.setText("N/A");
-        }
-    }
-
     private void updateChart() {
-        String username = user.getUserName();
+        
 
         try {
             // Mendapatkan data total amount per bulan saat ini
-            Map<String, Double> totalAmountByMonth = serviceDesigner.getTotalAmountByMonth(username);
+            Map<String, Double> totalAmountByMonth = service.getTotalAmountByMonth();
 
             // Mendapatkan jumlah transaksi dengan status "Cancelled"
-            Map<String, Integer> cancelledCountByMonth = serviceDesigner.getCountOfCancelledStatus(username);
+            Map<String, Integer> cancelledCountByMonth = service.getCountOfCancelledStatus();
 
             // Mendapatkan jumlah transaksi dengan status "Finished"
-            Map<String, Integer> completedCountByMonth = serviceDesigner.getCountOfFinishedStatusByMonth(username);
+            Map<String, Integer> completedCountByMonth = service.getCountOfFinishedStatusByMonth();
 
             // Iterasi melalui total amount per bulan
             for (Map.Entry<String, Double> entry : totalAmountByMonth.entrySet()) {
@@ -169,7 +150,7 @@ public class AnalythicsMain extends javax.swing.JPanel {
                 int completedCount = completedCountByMonth.getOrDefault(monthName, 0);
 
                 // Tambahkan data ke dalam chart untuk bulan yang sesuai
-                chart.addData(new modelChart(monthName, new double[]{
+                chart1.addData(new modelChart(monthName, new double[]{
                     salesAmount, // Data untuk legend "Sales"
                     (double) cancelledCount, // Data untuk legend "Cancelled"
                     (double) completedCount // Data untuk legend "Completed"
@@ -177,63 +158,18 @@ public class AnalythicsMain extends javax.swing.JPanel {
             }
 
             // Mulai chart jika diperlukan
-            chart.start();
+            chart1.start();
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Terjadi kesalahan saat mengakses database: " + e.getMessage());
         }
     }
 
-    private void cmdDownloadExcelActionPerformed(java.awt.event.ActionEvent evt) {
-        JnaFileChooser fileDialog = new JnaFileChooser();
-        fileDialog.setTitle("Specify a file to save");
-
-        // Show save dialog
-        if (fileDialog.showSaveDialog((java.awt.Window) SwingUtilities.getWindowAncestor(this))) {
-            File fileToSave = fileDialog.getSelectedFile();
-            if (fileToSave != null) {
-                saveExcelFile(fileToSave);
-            }
-        }
-    }
-
-    private void saveExcelFile(File fileToSave) {
-        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            XSSFSheet sheet = workbook.createSheet("Analytics Report");
-
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Metric");
-            headerRow.createCell(1).setCellValue("Value");
-
-            // Create data rows
-            createDataRow(sheet, 1, "Earnings to Date", lbEarnToDate.getText());
-            createDataRow(sheet, 2, "Avg. Selling Level", lbAvgLevel.getText());
-            createDataRow(sheet, 3, "Order Completion", lbCompletion.getText());
-            createDataRow(sheet, 4, "Orders Completed", lbCompleted.getText());
-            createDataRow(sheet, 5, "Earnings in Current Month", lbEarnMonth.getText());
-
-            // Adjust column width to fit the content
-            for (int i = 0; i < 2; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            // Save the Excel file
-            try (FileOutputStream outputStream = new FileOutputStream(fileToSave.getAbsolutePath() + ".xlsx")) {
-                workbook.write(outputStream);
-            }
-
-            MessageAlerts.getInstance().showMessage("Success", "Download Success", MessageAlerts.MessageType.SUCCESS);
-        } catch (Exception e) {
-            MessageAlerts.getInstance().showMessage("ERROR", "Download Error", MessageAlerts.MessageType.ERROR);
-        }
-    }
-
-    private void createDataRow(XSSFSheet sheet, int rowIndex, String metric, String value) {
-        Row row = sheet.createRow(rowIndex);
-        row.createCell(0).setCellValue(metric);
-        row.createCell(1).setCellValue(value);
-    }
-
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is alwaysk
+     * regenerated by the Form Editor.
+     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -241,17 +177,18 @@ public class AnalythicsMain extends javax.swing.JPanel {
         roundPanel1 = new Dashboard.Swing.RoundPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        lbEarnToDate = new javax.swing.JLabel();
+        total = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         lbAvgLevel = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         lbCompletion = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         lbCompleted = new javax.swing.JLabel();
-        lbEarnMonth = new javax.swing.JLabel();
         lbMonth = new javax.swing.JLabel();
-        chart = new Dashboard.Designer.Analythics.Chart.Chart();
-        cmdDownloadExcel = new Dashboard.Swing.Button();
+        lbEarnMonth = new javax.swing.JLabel();
+        chart1 = new Dashboard.Designer.Analythics.Chart.Chart();
+
+        setPreferredSize(new java.awt.Dimension(1366, 768));
 
         roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
 
@@ -263,10 +200,10 @@ public class AnalythicsMain extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Earnings to date");
 
-        lbEarnToDate.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        lbEarnToDate.setForeground(new java.awt.Color(255, 255, 255));
-        lbEarnToDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbEarnToDate.setText("$ Amount");
+        total.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        total.setForeground(new java.awt.Color(255, 255, 255));
+        total.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        total.setText("$ Amount");
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -295,72 +232,58 @@ public class AnalythicsMain extends javax.swing.JPanel {
         lbCompleted.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbCompleted.setText("Completed");
 
-        lbEarnMonth.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        lbEarnMonth.setForeground(new java.awt.Color(255, 255, 255));
-        lbEarnMonth.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbEarnMonth.setText("$ Amount");
-
         lbMonth.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         lbMonth.setForeground(new java.awt.Color(255, 255, 255));
         lbMonth.setText("Earned in Month");
 
-        cmdDownloadExcel.setBackground(new java.awt.Color(132, 132, 215));
-        cmdDownloadExcel.setForeground(new java.awt.Color(255, 255, 255));
-        cmdDownloadExcel.setText("Download Report File");
-        cmdDownloadExcel.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lbEarnMonth.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        lbEarnMonth.setForeground(new java.awt.Color(255, 255, 255));
+        lbEarnMonth.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbEarnMonth.setText("$ Amount");
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(37, 37, 37)
+                .addComponent(jLabel1)
+                .addContainerGap(1233, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(chart1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbEarnToDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(105, 105, 105)
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(total)))
+                        .addGap(68, 68, 68)
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbAvgLevel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lbAvgLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(104, 104, 104)
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbCompletion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lbCompletion, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(100, 100, 100)
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbCompleted, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lbCompleted, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(96, 96, 96)
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lbMonth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbEarnMonth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 227, Short.MAX_VALUE))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cmdDownloadExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(68, 68, 68))
+                            .addComponent(lbEarnMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(236, 236, 236))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
+                .addComponent(jLabel1)
+                .addGap(24, 24, 24)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(cmdDownloadExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(52, 52, 52)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lbEarnToDate))
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -376,17 +299,21 @@ public class AnalythicsMain extends javax.swing.JPanel {
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(lbMonth)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lbEarnMonth)))
-                .addGap(18, 18, 18)
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
-                .addContainerGap())
+                        .addComponent(lbEarnMonth))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(total)))
+                .addGap(87, 87, 87)
+                .addComponent(chart1, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,8 +323,7 @@ public class AnalythicsMain extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private Dashboard.Designer.Analythics.Chart.Chart chart;
-    private Dashboard.Swing.Button cmdDownloadExcel;
+    private Dashboard.Designer.Analythics.Chart.Chart chart1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -407,8 +333,8 @@ public class AnalythicsMain extends javax.swing.JPanel {
     private javax.swing.JLabel lbCompleted;
     private javax.swing.JLabel lbCompletion;
     private javax.swing.JLabel lbEarnMonth;
-    private javax.swing.JLabel lbEarnToDate;
     private javax.swing.JLabel lbMonth;
     private Dashboard.Swing.RoundPanel roundPanel1;
+    private javax.swing.JLabel total;
     // End of variables declaration//GEN-END:variables
 }
