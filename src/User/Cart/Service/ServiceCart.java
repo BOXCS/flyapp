@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
 
 public class ServiceCart {
 
@@ -112,26 +113,85 @@ public class ServiceCart {
     }
 
     public boolean updateDesigner(String transactionNumber, String designer) {
-        // Query SQL untuk memperbarui desainer dalam transaksi tertentu
-        String query = "UPDATE cart SET designer = ? WHERE transaction_number = ?";
+        // Query SQL untuk memperbarui desainer dalam tabel cart
+        String updateCartQuery = "UPDATE cart SET designer = ? WHERE transaction_number = ?";
+        // Query SQL untuk memperbarui desainer dalam tabel transaction
+        String updateTransactionQuery = "UPDATE transaction SET designer = ? WHERE transaction_number = ?";
+
         try {
-            // Persiapkan statement SQL
-            try (PreparedStatement pstmt = DatabaseConnection.getInstance().getConnection().prepareStatement(query)) {
-                // Set parameter
-                pstmt.setString(1, designer); // Update desainer
-                pstmt.setString(2, transactionNumber); // Filter berdasarkan nomor transaksi
+            // Mendapatkan koneksi dan memulai transaksi
+            Connection connection = DatabaseConnection.getInstance().getConnection();
+            connection.setAutoCommit(false); // Memulai transaksi
 
-                // Eksekusi perintah update
-                int rowsAffected = pstmt.executeUpdate();
+            try (PreparedStatement pstmtCart = connection.prepareStatement(updateCartQuery); PreparedStatement pstmtTransaction = connection.prepareStatement(updateTransactionQuery)) {
 
-                // Jika ada baris yang terpengaruh, return true (berhasil)
-                return rowsAffected > 0;
+                // Set parameter untuk query pada tabel cart
+                pstmtCart.setString(1, designer);
+                pstmtCart.setString(2, transactionNumber);
+
+                // Set parameter untuk query pada tabel transaction
+                pstmtTransaction.setString(1, designer);
+                pstmtTransaction.setString(2, transactionNumber);
+
+                // Eksekusi perintah update pada kedua tabel
+                int rowsAffectedCart = pstmtCart.executeUpdate();
+                int rowsAffectedTransaction = pstmtTransaction.executeUpdate();
+
+                // Log hasil update
+                System.out.println("Rows affected in cart: " + rowsAffectedCart);
+                System.out.println("Rows affected in transaction: " + rowsAffectedTransaction);
+
+                // Jika ada baris yang terpengaruh di kedua tabel, commit transaksi
+                if (rowsAffectedCart > 0 && rowsAffectedTransaction > 0) {
+                    connection.commit();
+                    return true;
+                } else {
+                    // Jika tidak, rollback transaksi
+                    connection.rollback();
+                    return false;
+                }
+            } catch (SQLException ex) {
+                // Jika ada kesalahan, rollback transaksi
+                connection.rollback();
+                ex.printStackTrace();
+                return false;
+            } finally {
+                connection.setAutoCommit(true); // Kembali ke autocommit
             }
         } catch (SQLException ex) {
             // Tangani kesalahan jika terjadi
             ex.printStackTrace();
             return false;
         }
+    }
+
+    public boolean isDesignerAvailable(String designerUsername) {
+        // Query SQL untuk memeriksa apakah desainer tersedia (status 'Available')
+        String query = "SELECT COUNT(*) AS count FROM designer WHERE username = ? AND Status = 'Available'";
+        try {
+            // Persiapkan statement SQL
+            try (PreparedStatement pstmt = DatabaseConnection.getInstance().getConnection().prepareStatement(query)) {
+                // Set parameter
+                pstmt.setString(1, designerUsername); // Filter berdasarkan username desainer
+
+                // Eksekusi query
+                ResultSet rs = pstmt.executeQuery();
+
+                // Periksa hasil query
+                if (rs.next()) {
+                    int count = rs.getInt("count");
+                    // Jika count lebih besar dari 0, berarti desainer tersedia
+                    return count > 0;
+                }
+
+                rs.close();
+            }
+        } catch (SQLException ex) {
+            // Tangani kesalahan jika terjadi
+            ex.printStackTrace();
+        }
+        // Jika terjadi kesalahan atau desainer tidak tersedia, return false
+        return false;
     }
 
 }

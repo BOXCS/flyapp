@@ -16,26 +16,23 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="roundPanel1" pref="1370" max="32767" attributes="0"/>
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="addMessageMain1" max="32767" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="mainRatingView1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace min="213" pref="213" max="-2" attributes="0"/>
+              <Component id="roundPanel1" pref="1153" max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" attributes="0">
+              <EmptySpace min="378" pref="378" max="-2" attributes="0"/>
+              <Component id="addMessageMain1" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
               <Component id="roundPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="mainRatingView1" min="-2" max="-2" attributes="0"/>
-                  <Component id="addMessageMain1" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="8" max="32767" attributes="0"/>
+              <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
+              <Component id="addMessageMain1" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -56,7 +53,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="chart" pref="1358" max="32767" attributes="0"/>
+                  <Component id="chart" pref="1141" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -76,8 +73,6 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="Dashboard.Admin.RatingView.Main.MainRatingView" name="mainRatingView1">
-    </Component>
     <Component class="Dashboard.Admin.AddMessage.Main.AddMessageMain" name="addMessageMain1">
     </Component>
   </SubComponents>

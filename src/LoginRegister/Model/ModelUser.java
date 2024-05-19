@@ -17,19 +17,24 @@ public class ModelUser {
         this.verifyCode = verifyCode;
         this.role = role;
     }
-    
+
     public ModelUser(int userID, String userName, String email, String role) {
         this.userID = userID;
         this.userName = userName;
         this.email = email;
         this.role = role;
     }
-    
+
     public ModelUser(String password, String userName, String email, int userID) {
         this.password = password;
         this.userName = userName;
         this.email = email;
         this.userID = userID;
+    }
+
+    public ModelUser(int userID, String userName) {
+        this.userID = userID;
+        this.userName = userName;
     }
 
     public ModelUser(String userName) {
@@ -38,10 +43,8 @@ public class ModelUser {
 
     public ModelUser() {
     }
-    
 
     // getters and setters
-
     public String getRole() {
         return role;
     }

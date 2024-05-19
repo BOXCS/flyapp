@@ -3,7 +3,11 @@ package Dashboard.User;
 import Dashboard.User.Event.MenuEvent;
 import Dashboard.User.Form.Form;
 import Dashboard.User.ViewPortfolio.Main.ViewPortMain;
+import Dashboard.User.ViewPortfolio.Service.ServiceViewPortfolio;
+import LoginRegister.Main;
 import LoginRegister.Model.ModelUser;
+import Universal.LogOut.LogOutDialog;
+import Universal.LogOut.LogOutMain;
 import User.Cart.Main.CartMain;
 import notif.Panel.Notification;
 import User.JobApply.Designer.DesignerApply;
@@ -22,16 +26,22 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.interpolation.SplineInterpolator;
 import java.util.Arrays;
+import java.util.List;
+import javax.swing.JFrame;
 import raven.popup.GlassPanePopup;
 
 public class DashboardUser extends javax.swing.JFrame {
 
     private final ModelUser user;
+    private ServiceViewPortfolio serviceViewPort;
+    private JFrame Frame;
+    private Main mainFrame;
 
     public DashboardUser(ModelUser user) {
         this.user = user;
         initComponents();
         init();
+        serviceViewPort = new ServiceViewPortfolio();
         getContentPane().setBackground(new Color(63, 109, 217));
 
         bg = new javax.swing.JPanel() {
@@ -44,7 +54,10 @@ public class DashboardUser extends javax.swing.JFrame {
         };
         MenuEvent event = (int index) -> {
             switch (index) {
-                case 0 -> showForm(new ViewPortMain(Arrays.asList(11, 12, 13)));
+                case 0 -> {
+                    List<ModelUser> designers = serviceViewPort.getUsersFromDatabase(); // Implement this method to get designers from database
+                    showForm(new ViewPortMain(designers));
+                }
                 case 1 -> {
                     try {
                         showForm(new PlaceOrderMain(user));
@@ -52,10 +65,16 @@ public class DashboardUser extends javax.swing.JFrame {
                         Logger.getLogger(DashboardUser.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                case 2 -> showForm(new CartMain(user));
-                case 3 -> showForm(new SeeOrderMain(user));
-                case 4 -> showForm(new DesignerApply());
-                default -> showForm(new Form(index + ""));
+                case 2 ->
+                    showForm(new CartMain(user));
+                case 3 ->
+                    showForm(new SeeOrderMain(user));
+                case 4 ->
+                    showForm(new DesignerApply());
+                case 6 ->
+                    showLogOutPopup();
+                default ->
+                    showForm(new Form(index + ""));
             }
         };
         menu.initMenu(event);
@@ -72,6 +91,11 @@ public class DashboardUser extends javax.swing.JFrame {
         body.add(com);
         body.revalidate();
         body.repaint();
+    }
+
+    private void showLogOutPopup() {
+        LogOutDialog logOutDialog = new LogOutDialog(this, this, mainFrame);
+        logOutDialog.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -129,7 +153,7 @@ public class DashboardUser extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(DashboardUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the form */
@@ -142,6 +166,6 @@ public class DashboardUser extends javax.swing.JFrame {
     private javax.swing.JPanel bg;
     private javax.swing.JPanel body;
     private javax.swing.JLabel jLabel1;
-    private Dashboard.User.Component.Menu menu;
+    public Dashboard.User.Component.Menu menu;
     // End of variables declaration//GEN-END:variables
 }

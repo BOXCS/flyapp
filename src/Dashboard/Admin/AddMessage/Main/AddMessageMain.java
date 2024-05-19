@@ -1,17 +1,26 @@
 package Dashboard.Admin.AddMessage.Main;
 
+import Dashboard.Admin.AddMessage.Component.Designer.MessageCard;
 import Dashboard.Admin.AddMessage.Component.Designer.MessageFill;
+import Dashboard.Admin.AddMessage.Model.ModelMessage;
+import Dashboard.Admin.AddMessage.Service.ServiceMessage;
 import Dashboard.Swing.ModernScrollBarUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
 
 public class AddMessageMain extends javax.swing.JPanel {
+
+    private ServiceMessage serviceMessage;
 
     public AddMessageMain() {
         initComponents();
         setOpaque(false);
-        
+
         configureScrollPane();
+        
+        serviceMessage = new ServiceMessage();
 
         cmdAddMessage.addActionListener(new ActionListener() {
             @Override
@@ -21,8 +30,18 @@ public class AddMessageMain extends javax.swing.JPanel {
             }
         });
 
+        try {
+            List<ModelMessage> messages = serviceMessage.getAllMessages();
+            for (ModelMessage message : messages) {
+                MessageCard messageCard = new MessageCard(message.getMessageID());
+                body.add(messageCard);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(); // Handle exception
+        }
+
     }
-    
+
     private void configureScrollPane() {
         jScrollPane1.setOpaque(false);
         jScrollPane1.setBackground(null);
@@ -50,9 +69,11 @@ public class AddMessageMain extends javax.swing.JPanel {
 
         roundPanel1.setBackground(new java.awt.Color(0, 0, 0, 50));
 
+        cmdAddMessage.setForeground(new java.awt.Color(255, 255, 255));
         cmdAddMessage.setText("+ Add Message");
         cmdAddMessage.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 
+        cmdAddTips.setForeground(new java.awt.Color(255, 255, 255));
         cmdAddTips.setText("+ Add Tips");
         cmdAddTips.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 

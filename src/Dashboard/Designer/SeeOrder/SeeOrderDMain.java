@@ -1,9 +1,14 @@
 package Dashboard.Designer.SeeOrder;
 
+import Dashboard.Designer.SeeOrder.Component.CancelOrder;
 import Dashboard.Designer.SeeOrder.Service.ServiceOrderD;
 import Dashboard.Designer.SeeOrder.Swing.CellActive.CellActiveRenderer;
 import Dashboard.Designer.SeeOrder.Swing.CellActive.TableActionActiveEvent;
 import Dashboard.Designer.SeeOrder.Swing.CellActive.TableActiveCellEditor;
+import Dashboard.Designer.SeeOrder.Swing.CellFinished.CellFinishedRenderer;
+import Dashboard.Designer.SeeOrder.Swing.CellFinished.TableActionFinishedEvent;
+import Dashboard.Designer.SeeOrder.Swing.CellFinished.TableFinishedCellEditor;
+import Dashboard.Designer.SeeOrder.Swing.CellPending.TableActionPendingEvent;
 import Dashboard.Designer.SeeOrder.Swing.CellPending.TablePendingCellEditor;
 import Dashboard.Designer.SeeOrder.Swing.CellPending.TablePendingCellRenderer;
 import Dashboard.Designer.SeeOrder.Swing.CellWaiting.CellWaitingRenderer;
@@ -11,9 +16,15 @@ import Dashboard.Designer.SeeOrder.Swing.CellWaiting.TableActionWaitingEvent;
 import Dashboard.Designer.SeeOrder.Swing.CellWaiting.TableWaitingCellEditor;
 import LoginRegister.Component.Message;
 import LoginRegister.Model.ModelUser;
+import Test.DisplayImage.Main.DisplayImageFromDatabase;
+import Test.DisplayImage.Main.DisplayImageFromDatabasePreview;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import raven.alerts.MessageAlerts;
+import video.MainVideoJ;
+import video.MainVideoJPreview;
 
 public class SeeOrderDMain extends javax.swing.JPanel {
 
@@ -43,16 +54,16 @@ public class SeeOrderDMain extends javax.swing.JPanel {
             @Override
             public void onReceipt(int row) {
                 int selectedRow = tableActive.getSelectedRow();
-                if (selectedRow != 1) {
-                    Object transactionNumber = tableActive.getValueAt(selectedRow, 0);
-                    ServiceOrderD.printReceipt(transactionNumber.toString());
+                if (selectedRow != -1) {
+                    Object type = tableActive.getValueAt(selectedRow, 0);
+                    ServiceOrderD.printReceipt(type.toString());
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderDMain.this, "Please select a row first.");
                 }
             }
         };
-        tableActive.getColumnModel().getColumn(8).setCellRenderer(new CellActiveRenderer());
-        tableActive.getColumnModel().getColumn(8).setCellEditor(new TableActiveCellEditor(eventA));
+        tableActive.getColumnModel().getColumn(9).setCellRenderer(new CellActiveRenderer());
+        tableActive.getColumnModel().getColumn(9).setCellEditor(new TableActiveCellEditor(eventA));
 
         TableActionWaitingEvent eventW = new TableActionWaitingEvent() {
             @Override
@@ -74,11 +85,92 @@ public class SeeOrderDMain extends javax.swing.JPanel {
 
             @Override
             public void onCancel(int row) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                if (row >= 0) {
+                    Object transactionNumber = tableWaiting.getValueAt(row, 0);
+                    Object userName = tableWaiting.getValueAt(row, 1);
+                    CancelOrder cancelOrder = new CancelOrder(transactionNumber.toString(), userName.toString());
+                    cancelOrder.setVisible(true);
+                    DefaultTableModel model = (DefaultTableModel) tableWaiting.getModel();
+                    model.removeRow(row);
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderDMain.this, "Please select a row first.");
+                }
             }
         };
         tableWaiting.getColumnModel().getColumn(8).setCellRenderer(new CellWaitingRenderer());
         tableWaiting.getColumnModel().getColumn(8).setCellEditor(new TableWaitingCellEditor(eventW));
+
+        TableActionPendingEvent eventP = new TableActionPendingEvent() {
+            @Override
+            public void onPlay(int row) {
+                int selectedRow = tablePending.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tablePending.getValueAt(selectedRow, 0);
+                    Object product = tablePending.getValueAt(selectedRow, 2); // Mengambil nilai kolom "Product"
+
+                    if (product != null && product.toString().equalsIgnoreCase("Video Editing")) {
+                        // Memainkan video dengan MainVideoJ
+                        MainVideoJPreview videoPlayer = new MainVideoJPreview(transactionNumber.toString());
+                        videoPlayer.playVideoFromDatabase();
+                    } else if (product != null && (product.toString().equalsIgnoreCase("Design Graphic") || product.toString().equalsIgnoreCase("3D Modelling"))) {
+                        // Menampilkan gambar dengan DisplayImageFromDatabase
+                        DisplayImageFromDatabasePreview imageViewerP = new DisplayImageFromDatabasePreview(transactionNumber.toString());
+                        imageViewerP.displayCurrentImage();
+                    } else {
+                        JOptionPane.showMessageDialog(SeeOrderDMain.this, "Unsupported product type.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderDMain.this, "Please select a row first.");
+                }
+            }
+        };
+        tablePending.getColumnModel().getColumn(8).setCellRenderer(new TablePendingCellRenderer());
+        tablePending.getColumnModel().getColumn(8).setCellEditor(new TablePendingCellEditor(eventP));
+
+        TableActionFinishedEvent eventF = new TableActionFinishedEvent() {
+            @Override
+            public void onPlay(int row) {
+                int selectedRow = tableFinished.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableFinished.getValueAt(selectedRow, 0);
+                    Object product = tableFinished.getValueAt(selectedRow, 2); // Mengambil nilai kolom "Product"
+
+                    if (product != null && product.toString().equalsIgnoreCase("Video Editing")) {
+                        // Memainkan video dengan MainVideoJ
+                        MainVideoJ videoPlayer = new MainVideoJ(transactionNumber.toString());
+                        videoPlayer.playVideoFromDatabase();
+                    } else if (product != null && (product.toString().equalsIgnoreCase("Design Graphic") || product.toString().equalsIgnoreCase("3D Modelling"))) {
+                        // Menampilkan gambar dengan DisplayImageFromDatabase
+                        DisplayImageFromDatabase imageViewer = new DisplayImageFromDatabase(transactionNumber.toString());
+                        imageViewer.displayImageFromDatabase();
+                    } else {
+                        JOptionPane.showMessageDialog(SeeOrderDMain.this, "Unsupported product type.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderDMain.this, "Please select a row first.");
+                }
+            }
+
+            @Override
+            public void onPortfolio(int row) {
+                int selectedRow = tableFinished.getSelectedRow();
+                if (selectedRow != -1) {
+                    Object transactionNumber = tableFinished.getValueAt(selectedRow, 0);
+                    Object product = tableFinished.getValueAt(selectedRow, 2); // Mengambil nilai kolom "Product"
+
+                    if (product != null) {
+                        String productType = product.toString();
+                        ServiceOrderD.insertIntoPortfolio(transactionNumber.toString(), user.getUserID(), productType);
+                    } else {
+                        JOptionPane.showMessageDialog(SeeOrderDMain.this, "Product type is null.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SeeOrderDMain.this, "Please select a row first.");
+                }
+            }
+        };
+        tableFinished.getColumnModel().getColumn(8).setCellRenderer(new CellFinishedRenderer());
+        tableFinished.getColumnModel().getColumn(8).setCellEditor(new TableFinishedCellEditor(eventF));
     }
 
     @SuppressWarnings("unchecked")
@@ -131,9 +223,12 @@ public class SeeOrderDMain extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Transaction", "Username", "Product", "level", "Designer", "Due On", "Amount", "Status", "Action"
+                "type", "No Transaction", "Username", "Product", "level", "Designer", "Due On", "Amount", "Status", "Action"
             }
         ));
+        tableActive.getColumnModel().getColumn(0).setMinWidth(0); // Atur lebar kolom menjadi 0 piksel
+        tableActive.getColumnModel().getColumn(0).setMaxWidth(0);
+        tableActive.getColumnModel().getColumn(0).setWidth(0);
         jScrollPane2.setViewportView(tableActive);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

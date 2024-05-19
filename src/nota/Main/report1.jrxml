@@ -8,8 +8,7 @@
 		<![CDATA[SELECT *, SUM(amount) AS total_amount 
 FROM transactionreport 
 WHERE type = $P{type} 
-GROUP BY transaction_number, product_name, designer, level, created_at, type
-]]>
+GROUP BY transaction_number, product_name, designer, level, created_at, type]]>
 	</queryString>
 	<field name="transaction_number" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -48,14 +47,14 @@ GROUP BY transaction_number, product_name, designer, level, created_at, type
 	<title>
 		<band height="71" splitType="Stretch">
 			<staticText>
-				<reportElement x="101" y="0" width="100" height="20" uuid="c622a05a-d79d-4d31-9a1d-d480bd1863fa"/>
+				<reportElement x="53" y="0" width="100" height="20" uuid="c622a05a-d79d-4d31-9a1d-d480bd1863fa"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[FLY.STUDIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="101" y="20" width="100" height="47" uuid="1923ab75-8ed8-42f1-af4e-1e72805a1b6c"/>
+				<reportElement x="53" y="20" width="100" height="47" uuid="1923ab75-8ed8-42f1-af4e-1e72805a1b6c"/>
 				<textElement textAlignment="Center">
 					<font size="11"/>
 				</textElement>

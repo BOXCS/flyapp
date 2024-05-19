@@ -343,15 +343,15 @@ public class SeeOrderMain extends javax.swing.JPanel {
             public void onReceipt(int row) {
                 int selectedRow = tableActive.getSelectedRow();
                 if (selectedRow != -1) {
-                    Object transactionNumber = tableActive.getValueAt(selectedRow, 0);
-                    ServiceMyOrder.printReceipt(transactionNumber.toString());
+                    Object type = tableActive.getValueAt(selectedRow, 0);
+                    ServiceMyOrder.printReceipt(type.toString());
                 } else {
                     JOptionPane.showMessageDialog(SeeOrderMain.this, "Please select a row first.");
                 }
             }
         };
-        tableActive.getColumnModel().getColumn(8).setCellRenderer(new CellActiveRenderer());
-        tableActive.getColumnModel().getColumn(8).setCellEditor(new TableActiveCellEditor(eventA));
+        tableActive.getColumnModel().getColumn(9).setCellRenderer(new CellActiveRenderer());
+        tableActive.getColumnModel().getColumn(9).setCellEditor(new TableActiveCellEditor(eventA));
     }
 
     @SuppressWarnings("unchecked")
@@ -403,27 +403,30 @@ public class SeeOrderMain extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Transaction", "Username", "Product", "Level", "Designer", "Due On", "Amount", "Status", "Action"
+                "type", "No Transaction", "Username", "Product", "Level", "Designer", "Due On", "Amount", "Status", "Action"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false, false, false, true
+                true, true, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        tableActive.getColumnModel().getColumn(0).setMinWidth(0); // Atur lebar kolom menjadi 0 piksel
+        tableActive.getColumnModel().getColumn(0).setMaxWidth(0);
+        tableActive.getColumnModel().getColumn(0).setWidth(0);
         jScrollPane7.setViewportView(tableActive);
         if (tableActive.getColumnModel().getColumnCount() > 0) {
-            tableActive.getColumnModel().getColumn(1).setResizable(false);
             tableActive.getColumnModel().getColumn(2).setResizable(false);
             tableActive.getColumnModel().getColumn(3).setResizable(false);
             tableActive.getColumnModel().getColumn(4).setResizable(false);
             tableActive.getColumnModel().getColumn(5).setResizable(false);
             tableActive.getColumnModel().getColumn(6).setResizable(false);
-            tableActive.getColumnModel().getColumn(6).setPreferredWidth(10);
             tableActive.getColumnModel().getColumn(7).setResizable(false);
+            tableActive.getColumnModel().getColumn(7).setPreferredWidth(10);
+            tableActive.getColumnModel().getColumn(8).setResizable(false);
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

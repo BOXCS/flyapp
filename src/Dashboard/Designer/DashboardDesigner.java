@@ -8,8 +8,10 @@ import Dashboard.Designer.Form.FormDesigner;
 import Dashboard.Designer.Profile.Main.ProfileMain;
 import Dashboard.Designer.SeeOrder.SeeOrderDMain;
 import Dashboard.Designer.SendOrder.Main.SendOrderMain;
+import LoginRegister.Main;
 //import Dashboard.Admin.form.FormHome;
 import LoginRegister.Model.ModelUser;
+import Universal.LogOut.LogOutDialog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -20,6 +22,7 @@ import raven.popup.GlassPanePopup;
 public class DashboardDesigner extends javax.swing.JFrame {
 
     private final ModelUser user;
+    private Main mainFrame;
 
     public DashboardDesigner(ModelUser user) {
         this.user = user;
@@ -38,18 +41,27 @@ public class DashboardDesigner extends javax.swing.JFrame {
         MenuEvent event = new MenuEvent() {
             @Override
             public void menuSelected(int index) {
-                if (index == 0) {
-                    showForm(new FormDesigner(user));
-                } else if (index == 1) {
-                    showForm(new AnalythicsMain(user));
-                }else if (index == 2) {
-                    showForm(new SeeOrderDMain(user));
-                } else if (index == 3) {
-                    showForm(new ProfileMain(user));
-                } else if (index == 4) {
-                    showForm(new SendOrderMain());
-                } else {
-                    showForm(new Form(index + ""));
+                switch (index) {
+                    case 0:
+                        showForm(new FormDesigner(user));
+                        break;
+                    case 1:
+                        showForm(new AnalythicsMain(user));
+                        break;
+                    case 2:
+                        showForm(new SeeOrderDMain(user));
+                        break;
+                    case 3:
+                        showForm(new ProfileMain(user));
+                        break;
+                    case 4:
+                        showForm(new SendOrderMain());
+                        break;
+                    case 6:
+                        showLogOutPopup();
+                    default:
+                        showForm(new Form(index + ""));
+                        break;
                 }
             }
         };
@@ -63,6 +75,11 @@ public class DashboardDesigner extends javax.swing.JFrame {
         body.add(com);
         body.revalidate();
         body.repaint();
+    }
+
+    private void showLogOutPopup() {
+        LogOutDialog logOutDialog = new LogOutDialog(this, this, mainFrame);
+        logOutDialog.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -142,6 +159,6 @@ public class DashboardDesigner extends javax.swing.JFrame {
     private javax.swing.JPanel bg;
     private javax.swing.JPanel body;
     private javax.swing.JLabel jLabel1;
-    private Dashboard.Designer.Component.Menu menu;
+    public Dashboard.Designer.Component.Menu menu;
     // End of variables declaration//GEN-END:variables
 }

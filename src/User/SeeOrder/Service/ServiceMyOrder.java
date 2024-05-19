@@ -27,12 +27,13 @@ public class ServiceMyOrder {
 
         try {
             // Query untuk mendapatkan data dari tabel transaction dengan status Active dan username pengguna yang login
-            String sql = "SELECT transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Active' AND username = ?";
+            String sql = "SELECT type, transaction_number, username, product_name, level, designer, created_at, amount, status FROM transaction WHERE status = 'Active' AND username = ?";
             PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
             p.setString(1, loggedInUsername); // Set parameter username pengguna yang login
             ResultSet r = p.executeQuery();
 
             while (r.next()) {
+                String type = r.getString("type");
                 String number = r.getString("transaction_number");
                 String username = r.getString("username");
                 String product = r.getString("product_name");
@@ -46,7 +47,7 @@ public class ServiceMyOrder {
                 String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
 
                 // Menambahkan data ke dalam tabel
-                model.addRow(new Object[]{number, username, product, level, designer, formattedDate, "$" + amount, status});
+                model.addRow(new Object[]{type, number, username, product, level, designer, formattedDate, "$" + amount, status});
             }
 
             r.close();
@@ -191,7 +192,7 @@ public class ServiceMyOrder {
             e.printStackTrace();
         }
     }
-    
+
     public static void fetchLateOrders(DefaultTableModel model, String loggedInUsername) {
         model.setRowCount(0); // Menghapus semua baris yang ada pada tabel
 
@@ -242,28 +243,30 @@ public class ServiceMyOrder {
     }
 
     // Fungsi untuk mencetak nota berdasarkan nomor transaksi
-    public static void printReceipt(String transactionNumber) {
+    public static void printReceipt(String type) {
         try {
-            // Query untuk mendapatkan data transaksi berdasarkan nomor transaksi
-            String sql = "SELECT * FROM transaction WHERE transaction_number = ?";
+            // Query to get transaction data based on transaction type
+            String sql = "SELECT * FROM transactionreport WHERE type = ?";
             PreparedStatement p = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            p.setString(1, transactionNumber); // Set parameter nomor transaksi
+            p.setString(1, type); // Set the transaction type parameter
             ResultSet r = p.executeQuery();
 
-            // Jika data transaksi ditemukan
+            // If transaction data is found
             if (r.next()) {
+                String transactionNumber = r.getString("transaction_number");
                 String username = r.getString("username");
                 String product = r.getString("product_name");
                 String level = r.getString("level");
                 String designer = r.getString("designer");
                 Timestamp created_at = r.getTimestamp("created_at");
                 double amount = r.getDouble("amount");
-                String status = r.getString("status");
+                String typeSig = r.getString("type");
+//                String status = r.getString("status");
 
-                // Format tanggal
+                // Format date
                 String formattedDate = new SimpleDateFormat("MMM dd, yyyy").format(created_at);
 
-                // Menyiapkan parameter untuk laporan nota
+                // Prepare parameters for the report
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("transaction_number", transactionNumber);
                 parameters.put("username", username);
@@ -272,19 +275,29 @@ public class ServiceMyOrder {
                 parameters.put("designer", designer);
                 parameters.put("created_at", formattedDate);
                 parameters.put("amount", amount);
-                parameters.put("status", status);
+                parameters.put("type", typeSig);
+//                parameters.put("status", status);
 
-                // Mengisi laporan nota
+                // Select the report file based on transaction type
+                String reportFilePath = "C:\\Users\\aisya\\OneDrive\\Documents\\NetBeansProjects\\flyapp_secondary\\src\\nota\\Main\\report1.jasper";
+
+                // Fill the report with data and parameters
                 JasperPrint jasperPrint = JasperFillManager.fillReport(
-                        "D:\\Zaky\\NeatBeans Project\\flyapp\\src\\nota\\Main\\report1.jasper",
+                        reportFilePath,
                         parameters,
                         DatabaseConnection.getInstance().getConnection()
                 );
 
-                // Menampilkan laporan nota ke pengguna
+                // Check if the JasperPrint object has pages
+                if (jasperPrint.getPages().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "The report document has no pages.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Display the report to the user
                 JasperViewer.viewReport(jasperPrint, false);
 
-                // Simpan laporan nota ke file PDF
+                // Save the report to a PDF file
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Save PDF File");
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -293,15 +306,15 @@ public class ServiceMyOrder {
                 int option = fileChooser.showSaveDialog(null);
                 if (option == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    // Ekspor laporan ke PDF menggunakan JasperExportManager
+                    // Export the report to PDF using JasperExportManager
                     JasperExportManager.exportReportToPdfFile(jasperPrint, file.getAbsolutePath());
                     JOptionPane.showMessageDialog(null, "Receipt successfully exported to PDF.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Operation canceled by the user.", "Cancel", JOptionPane.WARNING_MESSAGE);
                 }
             } else {
-                // Jika nomor transaksi tidak ditemukan, tampilkan pesan kesalahan
-                JOptionPane.showMessageDialog(null, "Transaction number not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                // If transaction number not found, show error message
+                JOptionPane.showMessageDialog(null, "Transaction type not found.", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
             r.close();

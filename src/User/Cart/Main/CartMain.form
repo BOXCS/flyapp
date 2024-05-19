@@ -161,13 +161,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace pref="43" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbPrice" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cmdCheckout" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                          <Component id="cbSelect" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="cmdDelete" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="cmdEdit" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbPrice" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cmdCheckout" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                              <Component id="cbSelect" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   </Group>
@@ -223,7 +225,6 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Select All"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="User.SeeOrder.Swing.ButtonDash" name="cmdDelete">

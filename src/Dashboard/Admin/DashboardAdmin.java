@@ -1,12 +1,14 @@
-
 package Dashboard.Admin;
 
+import Admin.AddAdmin.AddAdminMain;
 import Admin.AddDesigner.Main.AddDesignerMain;
 import Admin.Report.Revision.Main.ReportRevision;
 import Dashboard.Admin.Event.MenuEvent;
 import Dashboard.Admin.form.Form;
 import Dashboard.Admin.form.FormHome;
+import LoginRegister.Main;
 import LoginRegister.Model.ModelUser;
+import Universal.LogOut.LogOutDialog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -17,46 +19,56 @@ import raven.popup.GlassPanePopup;
 public class DashboardAdmin extends javax.swing.JFrame {
 
     private final ModelUser user;
-    
+    private Main mainFrame;
+
     public DashboardAdmin(ModelUser user) {
         this.user = user;
         GlassPanePopup.install(this);
         initComponents();
         getContentPane().setBackground(new Color(63, 109, 217));
-        
+
         bg = new javax.swing.JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Image img = new ImageIcon(getClass().getResource("/png/Group 17.png")).getImage();
                 g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-            }     
+            }
         };
-        MenuEvent event = new MenuEvent() {
-            @Override
-            public void menuSelected(int index) {
-                if (index == 0) {
+        MenuEvent event = (int index) -> {
+            switch (index) {
+                case 0:
                     showForm(new FormHome());
-                } else if (index == 2) {
+                    break;
+                case 2:
                     showForm(new AddDesignerMain());
-                } else if (index == 5) {
+                    break;
+                case 3:
+                    showForm(new AddAdminMain());
+                    break;
+                case 5:
                     showForm(new ReportRevision());
-                } else {
+                    break;
+                default:
                     showForm(new Form(index + ""));
-                    
-                }
+                    break;
             }
         };
         menu.initMenu(event);
         menu.setSelected(0);
         setExtendedState(MAXIMIZED_BOTH);
     }
-    
+
     private void showForm(Component com) {
         body.removeAll();
         body.add(com);
         body.revalidate();
         body.repaint();
+    }
+
+    private void showLogOutPopup() {
+        LogOutDialog logOutDialog = new LogOutDialog(this, this, mainFrame);
+        logOutDialog.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -135,6 +147,6 @@ public class DashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JPanel bg;
     private javax.swing.JPanel body;
     private javax.swing.JLabel jLabel1;
-    private Dashboard.Admin.Component.Menu menu;
+    public Dashboard.Admin.Component.Menu menu;
     // End of variables declaration//GEN-END:variables
 }

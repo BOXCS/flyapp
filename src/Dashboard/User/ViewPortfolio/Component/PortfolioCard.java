@@ -5,23 +5,26 @@ import Dashboard.Designer.Component.ModernScrollBarUI;
 import Dashboard.Designer.Component.VideoPortfolio;
 import Dashboard.User.ViewPortfolio.Model.ModelViewPortfolio;
 import Dashboard.User.ViewPortfolio.Service.ServiceViewPortfolio;
+import LoginRegister.Model.ModelUser;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 public class PortfolioCard extends javax.swing.JPanel {
 
     private int designerId;
+    private ModelUser user;
 
-    public PortfolioCard(int designerId) {
+    public PortfolioCard(ModelUser user) {
         initComponents();
         setOpaque(false);
-        this.designerId = designerId;
+        this.user = user;
         configureScrollPane();
         displayPortfoliosFromDatabase();
     }
-    
+
     private void configureScrollPane() {
         jScrollPane1.setOpaque(false);
         jScrollPane1.setBackground(null);
@@ -29,11 +32,12 @@ public class PortfolioCard extends javax.swing.JPanel {
         jScrollPane1.getViewport().setBackground(null);
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         jScrollPane1.getHorizontalScrollBar().setUI(new ModernScrollBarUI());
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     }
 
     private void displayPortfoliosFromDatabase() {
         ServiceViewPortfolio service = new ServiceViewPortfolio();
-        List<ModelViewPortfolio> portfolios = service.fetchDataPortfolioByDesignerId(designerId);
+        List<ModelViewPortfolio> portfolios = service.fetchDataPortfolioByDesignerId(user.getUserID());
 
         for (ModelViewPortfolio portfolio : portfolios) {
             PlayPortfolio playPortfolio = new PlayPortfolio(portfolio.toString());
@@ -46,10 +50,9 @@ public class PortfolioCard extends javax.swing.JPanel {
             });
 
             body.add(playPortfolio);
-
-            lbDesigner.setText(portfolio.getUsername());
-            body.add(lbDesigner);
         }
+
+        lbDesigner.setText(user.getUserName());
 
         body.revalidate();
         body.repaint();

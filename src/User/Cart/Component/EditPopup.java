@@ -14,7 +14,7 @@ public class EditPopup extends javax.swing.JPanel {
     public EditPopup() {
         initComponents();
         this.serviceCart = new ServiceCart();
-        
+
         // Menambahkan ActionListener untuk tombol OK
         cmdOK.addActionListener(new ActionListener() {
             @Override
@@ -52,6 +52,7 @@ public class EditPopup extends javax.swing.JPanel {
     private void updateDesigner() {
         String selectedDesigner = (String) cbListDesigner.getSelectedItem();
         String transactionNumber = lbTransaction.getText();
+
         if (selectedDesigner != null && !selectedDesigner.isEmpty()) {
             if (serviceCart.updateDesigner(transactionNumber, selectedDesigner)) {
                 // Jika pembaruan berhasil
